@@ -11,14 +11,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "lib": [
-      "dom",
-      "dom.iterable"
-    ],
-    "types": [
-      "jest",
-      "node"
-    ],
+    "lib": ["dom", "dom.iterable"],
+    "types": ["jest", "node"],
     "plugins": [
       {
         "name": "next"

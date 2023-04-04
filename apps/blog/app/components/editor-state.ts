@@ -1,57 +1,62 @@
-import { ControlPanelData } from './control-panel';
-import { ImagePanelData } from './image-panel';
-import { DividerPanelData } from './divider-panel';
+import { ControlPanel } from './panels/control-panel';
 import { DeepReadonly } from '../types';
+import { TypedStructure } from './panels/editor-panel';
+import { DividerPanel } from './panels/divider-panel';
 
-export type RawEditorNode =
-  | ControlPanelData
-  | ImagePanelData
-  | DividerPanelData;
+export type RawEditorState = TypedStructure[];
 
-export type RawEditorState = (
-  | ControlPanelData
-  | ImagePanelData
-  | DividerPanelData
-)[];
+class StateHolder {
+  private timeout?: number;
 
-class State {
-  constructor(private _editorState: RawEditorState) {}
-}
-
-export class EditorState {
-  private editorState: RawEditorState;
-
-  constructor(private triggerUpdate: () => void, editorState?: RawEditorState) {
-    this.editorState = editorState ?? [
-      {
-        type: 'control-panel',
-        focus: true,
-      },
-    ];
-  }
+  constructor(
+    private _editorState: RawEditorState,
+    private triggerUpdate: () => void
+  ) {}
 
   public get state(): DeepReadonly<RawEditorState> {
-    return this.editorState;
+    return this._editorState;
   }
 
-  public addNodeAt(position: number, ...node: RawEditorNode[]) {
-    const clone = [...this.editorState];
+  protected set state(editorState: DeepReadonly<RawEditorState>) {
+    this._editorState = editorState as RawEditorState;
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.triggerUpdate();
+    }, 2) as unknown as number;
+  }
+}
+
+export class EditorState extends StateHolder {
+  constructor(triggerUpdate: () => void, editorState?: RawEditorState) {
+    super(
+      editorState ?? [DividerPanel.empty(), ControlPanel.empty()],
+      triggerUpdate
+    );
+  }
+
+  public addNodeAt(position: number, ...node: TypedStructure[]) {
+    const clone = [...this.state];
     clone.splice(position, 0, ...node);
-    this.editorState = clone;
-    this.triggerUpdate();
+    this.state = clone;
   }
 
   addControlAt(position: number, focus = true) {
-    this.addNodeAt(position, {
-      type: 'control-panel',
-      focus,
-    });
+    this.addNodeAt(position, ControlPanel.empty());
   }
 
-  public replaceNodeAt(position: number, node: RawEditorNode) {
-    const clone = [...this.editorState];
-    clone.splice(position, 0, node);
-    this.editorState = clone;
-    this.triggerUpdate();
+  addControlAtEnd(focus = true) {
+    this.addNodeAt(this.state.length, ControlPanel.empty());
+  }
+
+  public replaceNodeAt(position: number, node: TypedStructure) {
+    const clone = [...this.state];
+    clone.splice(position, 1, node);
+    this.state = clone;
+  }
+
+  public removeNodeAt(position: number) {
+    const clone = [...this.state];
+    clone.splice(position, 1);
+    this.state = clone;
   }
 }

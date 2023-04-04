@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from 'react';
-import { IoAddSharp } from 'react-icons/io5';
-import { RxDragHandleDots2 } from 'react-icons/rx';
 import c from './slot.module.scss';
+import { AddIcon, DragIcon } from './icons';
 
 export const Slot: FC<{
   children: ReactNode;
@@ -10,12 +9,10 @@ export const Slot: FC<{
   return (
     <div className={`flex items-center p-s ${c.slot}`}>
       <button onClick={onNew}>
-        <IoAddSharp
-          style={{ width: 'var(--icon-m)', height: 'var(--icon-m)' }}
-        />
+        <AddIcon style={{ width: 'var(--icon-m)', height: 'var(--icon-m)' }} />
       </button>
       <button>
-        <RxDragHandleDots2 />
+        <DragIcon style={{ width: 'var(--icon-m)', height: 'var(--icon-m)' }} />
       </button>
       <div className="flex-grow">{children}</div>
     </div>
