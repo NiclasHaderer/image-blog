@@ -1,5 +1,6 @@
-import { EditorPanel, TypedStructure } from './editor-panel';
+import { EditorPanel, PanelState, TypedStructure } from './editor-panel';
 import { ImageIcon } from '../icons';
+import { DividerPanelState } from './divider-panel';
 
 export interface ImagePanelData extends TypedStructure {
   type: 'image';
@@ -8,7 +9,9 @@ export interface ImagePanelData extends TypedStructure {
   width?: string;
 }
 
-export const ImagePanel: EditorPanel<ImagePanelData> = {
+export type ImagePanelState = PanelState;
+
+export const ImagePanel: EditorPanel<ImagePanelData, ImagePanelState> = {
   name: 'Image',
   Icon: ({ size }) => <ImageIcon style={{ width: size, height: size }} />,
   Edit: ({ src, width, caption }) => {

@@ -1,11 +1,13 @@
-import { EditorPanel, TypedStructure } from './editor-panel';
+import { EditorPanel, PanelState, TypedStructure } from './editor-panel';
 import { DividerIcon } from '../icons';
 
 export interface DividerPanelData extends TypedStructure {
   type: 'divider';
 }
 
-export const DividerPanel: EditorPanel<DividerPanelData> = {
+export type DividerPanelState = PanelState;
+
+export const DividerPanel: EditorPanel<DividerPanelData, DividerPanelState> = {
   name: 'Divider',
   Icon: ({ size }) => <DividerIcon style={{ width: size, height: size }} />,
   Edit: () => {

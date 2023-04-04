@@ -1,54 +1,24 @@
 import c from './control-panel.module.scss';
-import { FC, KeyboardEvent, useRef, useState } from 'react';
+import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useFocusTrap, useTabModifier } from '../../hooks/tap-focus';
-import { useOnMount } from '../../hooks/livecycle';
-import { EditorPanel, TypedStructure } from './editor-panel';
+import { EditorPanel, PanelState, TypedStructure } from './editor-panel';
 import { usePanels } from '../main-editor';
 
 export interface ControlPanelData extends TypedStructure {
   type: 'control-panel';
-  focus: boolean;
 }
 
-const PanelOutlet: FC<
-  Pick<ControlPanelData, 'onCreate'> & { search: string }
-> = ({ onCreate, search }) => {
-  const panels = usePanels()
-    .filter((p) => p.name !== 'Control Panel')
-    .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
-  return (
-    <div className={c.controlPanelOutlet}>
-      {panels.map((p) => {
-        return (
-          <button
-            key={p.name}
-            className={`${c.action} cursor-pointer w-full flex items-center`}
-            onClick={() => onCreate?.(p.empty())}
-          >
-            {<p.Icon size={'var(--icon-m)'} />}{' '}
-            <span className="p-s">{p.name}</span>
-          </button>
-        );
-      })}
+export type ControlPanelState = PanelState;
 
-      {panels.length === 0 && <div className="p-s">No blocks found</div>}
-    </div>
-  );
-};
-
-export const ControlPanel: EditorPanel<ControlPanelData> = {
+export const ControlPanel: EditorPanel<ControlPanelData, ControlPanelState> = {
   name: 'Control Panel',
   Icon: () => null,
-  Edit: ({ onCreate, onUpdate, focus }) => {
+  Edit: ({ onCreate, onUpdate, onDelete, focused }) => {
     const editableDiv = useRef<HTMLDivElement>(null);
     const outerDiv = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState<string>();
     const [isClosed, setIsClosed] = useState(true);
-
-    useOnMount(() => {
-      if (!focus) return;
-      editableDiv.current?.focus();
-    });
+    if (focused) editableDiv.current?.focus();
 
     const shouldShow = (): boolean => {
       return !isClosed && search !== undefined && search.length > 0;
@@ -61,13 +31,20 @@ export const ControlPanel: EditorPanel<ControlPanelData> = {
         className={c.controlPanelWrapper}
         ref={outerDiv}
         onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
-          if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            focusPrevious();
-          } else if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            focusNext();
-          } else if (event.key === 'Escape') {
+          if (shouldShow()) {
+            if (event.key === 'ArrowUp') {
+              event.preventDefault();
+              focusPrevious();
+            } else if (event.key === 'ArrowDown') {
+              event.preventDefault();
+              focusNext();
+            }
+          }
+          if (event.key === 'Escape') {
+            // Do not propagate if the PanelOutlet is not closed, as then the event will trigger the close of the PanelOutlet
+            if (shouldShow()) {
+              event.stopPropagation();
+            }
             setIsClosed(true);
             editableDiv.current?.focus();
           } else {
@@ -80,6 +57,7 @@ export const ControlPanel: EditorPanel<ControlPanelData> = {
           ref={editableDiv}
           onKeyDown={(e) => {
             if (e.key === 'Enter') e.preventDefault();
+            if (e.key === 'Backspace' && !search) onDelete?.();
           }}
           contentEditable={true}
           data-empty-text="Search for blocks"
@@ -99,9 +77,7 @@ export const ControlPanel: EditorPanel<ControlPanelData> = {
           }}
           className={c.controlPanel}
         ></div>
-        {shouldShow() && (
-          <PanelOutlet onCreate={onCreate} search={search ?? ''} />
-        )}
+        {shouldShow() && <PanelOutlet onCreate={onCreate} search={search ?? ''} />}
       </div>
     );
   },
@@ -114,7 +90,29 @@ export const ControlPanel: EditorPanel<ControlPanelData> = {
   empty(): ControlPanelData {
     return {
       type: 'control-panel',
-      focus: true,
     };
   },
+};
+
+const PanelOutlet: FC<Pick<ControlPanelState, 'onCreate'> & { search: string }> = ({ onCreate, search }) => {
+  const panels = usePanels()
+    .filter((p) => p.name !== 'Control Panel')
+    .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+  return (
+    <div className={c.controlPanelOutlet}>
+      {panels.map((p) => {
+        return (
+          <button
+            key={p.name}
+            className={`${c.action} cursor-pointer w-full flex items-center`}
+            onClick={() => onCreate?.(p.empty())}
+          >
+            {<p.Icon size={'var(--icon-m)'} />} <span className="p-s">{p.name}</span>
+          </button>
+        );
+      })}
+
+      {panels.length === 0 && <div className="p-s">No blocks found</div>}
+    </div>
+  );
 };
