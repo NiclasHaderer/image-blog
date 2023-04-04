@@ -1,0 +1,10 @@
+.slot {
+  > button {
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  &:hover > button, &:focus > button, &:active > button, &:focus-within > button {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *:focus, *:active, *:focus-within {
+  outline: none;
+}
+
+:root {
+  // Boarder
+  --radius: .5rem;
+  --radius-m: .5rem;
+  --radius-l: 1rem;
+  --border-color: #e1e1e1;
+
+  // Shadow
+  --shadow: 0 5px 25px 10px rgba(0, 0, 0, .2);
+
+  // Padding/Margin
+  --p: .5rem;
+  --p-m: 1rem;
+  --p-l: 2rem;
+
+  // Icons
+  --icon-s: 1rem;
+  --icon-m: 1.5rem;
+  --icon-l: 2rem;
+
+  // Color
+  // https://colorhunt.co/palette/f38181fce38aeaffd095e1d3
+  --surface: #fff;
+  --surface-1: #f1f1f1;
+  --surface-2: #e1e1e1;
+  --text: #000;
+  --primary: #000;
+  --primary-active: #3a3a3a;
+  --text-primary: #fff;
+  --secondary: #EAFFD0;
+  --secondary-active: #d2eebb;
+  --text-secondary: #000;
+  --accent: #F38181;
+  --accent-active: #ffa6a6;
+  --text-accent: #000;
+}
+

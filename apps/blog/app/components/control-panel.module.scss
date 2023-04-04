@@ -1,0 +1,35 @@
+
+.controlPanel {
+  padding: var(--p);
+  &:empty:after {
+    content: attr(data-empty-text);
+    cursor: text;
+  }
+}
+
+.controlPanelWrapper {
+  position: relative;
+}
+
+.controlPanelOutlet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--p);
+  transform: translateY(100%);
+  background: var(--surface-1);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow);
+  border: solid var(--border-color) 2px;
+}
+
+
+.action {
+  padding: var(--p);
+  border-radius: var(--radius);
+
+  &:hover, &:focus, &:active {
+    background: aliceblue;
+  }
+}
