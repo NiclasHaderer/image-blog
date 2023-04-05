@@ -6,7 +6,10 @@ export interface PanelState {
   onUpdate?: <V extends TypedStructure>(newState: V) => void;
   onCreate?: <V extends TypedStructure>(newState: V) => void;
   onDelete?: () => void;
-  focused: boolean;
+  focus?: Readonly<{
+    focused: boolean;
+    force: boolean;
+  }>;
   outerFocused: boolean;
 }
 

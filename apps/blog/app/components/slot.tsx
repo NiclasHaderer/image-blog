@@ -4,16 +4,15 @@ import { AddIcon, DragIcon } from './icons';
 
 export const Slot: FC<{
   children: ReactNode;
-  onNew?: () => void;
   focused: boolean;
+  onNew?: () => void;
   onEscape: () => void;
   onNext: () => void;
   onPrevious: () => void;
   onEnter: () => void;
   onDelete: () => void;
-  onInnerFocus: () => void;
-  onFocusLoss: () => void;
-}> = ({ children, onDelete, focused, onInnerFocus, onFocusLoss, onNext, onPrevious, onEnter, onEscape, onNew }) => {
+  onInnerFocus: (force: boolean) => void;
+}> = ({ children, onDelete, focused, onInnerFocus, onNext, onPrevious, onEnter, onEscape, onNew }) => {
   const slotRef = useRef<HTMLDivElement>(null);
   if (focused && slotRef.current) slotRef.current.focus();
   // TODO enter always causes inner focus
@@ -31,12 +30,11 @@ export const Slot: FC<{
       }}
       onFocus={(e) => {
         if (e.target !== e.currentTarget && e.currentTarget.contains(e.target)) {
-          onInnerFocus();
+          onInnerFocus(false);
         }
       }}
       className={`flex items-center p-s ${c.slot} ${focused ? 'bg-secondary' : ''}`}
     >
-      {focused.toString()}
       <button onClick={onNew}>
         <AddIcon style={{ width: 'var(--icon-m)', height: 'var(--icon-m)' }} />
       </button>

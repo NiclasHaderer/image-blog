@@ -22,23 +22,25 @@ export const Editor = () => {
             key={index}
             focused={editorState.isOuterFocused(index)}
             onEscape={() => editorState.outerFocus(index)}
-            onEnter={() => editorState.focusPanel(index)}
+            onEnter={() => editorState.focusPanel(index, true)}
             onPrevious={() => editorState.outerFocusNext()}
             onNext={() => editorState.outerFocusPrevious()}
             onDelete={() => editorState.removeNodeAt(index)}
-            onNew={() => editorState.addControlAt(index + 1)}
-            onFocusLoss={() => editorState.resetOuterFocus()}
-            onInnerFocus={() => editorState.focusPanel(index)}
+            onNew={() => {
+              editorState.addControlAt(index + 1);
+              editorState.focusPanel(index + 1, true);
+            }}
+            onInnerFocus={(force) => editorState.focusPanel(index, force)}
           >
             <Panel.Edit
               {...item}
               onCreate={(node) => {
                 editorState.replaceNodeAt(index, node);
-                editorState.addControlAtEnd();
+                editorState.focusPanel(index, true);
               }}
               onDelete={() => editorState.removeNodeAt(index)}
               onUpdate={(node) => editorState.replaceNodeAt(index, node)}
-              focused={editorState.isFocused(index)}
+              focus={editorState.isFocused(index)}
               outerFocused={editorState.isOuterFocused(index)}
             />
           </Slot>

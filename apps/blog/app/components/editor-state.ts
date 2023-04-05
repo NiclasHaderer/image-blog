@@ -5,7 +5,7 @@ import { DividerPanel } from './panels/divider-panel';
 
 export type RawEditorState = TypedStructure[];
 
-export type UserState = { outerFocus?: number; focusedPanel?: number };
+export type UserState = { outerFocus?: number; focusedPanel?: { force: boolean; index: number } };
 
 class StateHolder {
   private stateTimeout?: number;
@@ -26,7 +26,6 @@ class StateHolder {
   }
 
   protected set userState(state: DeepReadonly<UserState>) {
-    console.log(state);
     this._userState = state;
     this.scheduleRepaint();
   }
@@ -66,18 +65,14 @@ export class EditorState extends StateHolder {
 
   public removeNodeAt(position: number) {
     const clone = [...this.state];
+    this.isOuterFocused(position) && this.outerFocusPrevious();
     clone.splice(position, 1);
     this.state = clone;
   }
 
-  public focusPanel(index: number) {
-    this.userState = { focusedPanel: index };
-  }
-
-  public resetOuterFocus() {
+  public focusPanel(index: number, forceFocus: boolean) {
     this.userState = {
-      ...this.userState,
-      outerFocus: undefined,
+      focusedPanel: { index, force: forceFocus },
     };
   }
 
@@ -85,8 +80,13 @@ export class EditorState extends StateHolder {
     return this.userState.outerFocus === index;
   }
 
-  public isFocused(index: number): boolean {
-    return this.userState.focusedPanel === index;
+  public isFocused(index: number): Readonly<{ force: boolean; focused: boolean }> | undefined {
+    const focusedPanel = this.userState.focusedPanel;
+    if (!focusedPanel) return undefined;
+    return {
+      force: focusedPanel.force,
+      focused: focusedPanel.index === index,
+    };
   }
 
   public outerFocus(index: number) {

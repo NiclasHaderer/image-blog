@@ -13,12 +13,15 @@ export type ControlPanelState = PanelState;
 export const ControlPanel: EditorPanel<ControlPanelData, ControlPanelState> = {
   name: 'Control Panel',
   Icon: () => null,
-  Edit: ({ onCreate, onUpdate, onDelete, focused }) => {
+  Edit: ({ onCreate, onUpdate, onDelete, focus }) => {
     const editableDiv = useRef<HTMLDivElement>(null);
     const outerDiv = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState<string>();
     const [isClosed, setIsClosed] = useState(true);
-    if (focused) editableDiv.current?.focus();
+    useEffect(() => {
+      // Put this in a useEffect, so that the focus is only set when the focused value changes from false to true
+      if (focus?.focused && focus.force) editableDiv.current?.focus();
+    }, [focus]);
 
     const shouldShow = (): boolean => {
       return !isClosed && search !== undefined && search.length > 0;
@@ -84,10 +87,10 @@ export const ControlPanel: EditorPanel<ControlPanelData, ControlPanelState> = {
   Render: () => {
     return null;
   },
-  canHandle(type: TypedStructure): type is ControlPanelData {
+  canHandle: (type: TypedStructure): type is ControlPanelData => {
     return type.type === 'control-panel';
   },
-  empty(): ControlPanelData {
+  empty: (): ControlPanelData => {
     return {
       type: 'control-panel',
     };

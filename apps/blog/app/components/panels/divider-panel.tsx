@@ -17,7 +17,7 @@ export const DividerPanel: EditorPanel<DividerPanelData, DividerPanelState> = {
     return <hr />;
   },
   canHandle: (node): node is DividerPanelData => node.type === 'divider',
-  empty(): DividerPanelData {
+  empty: (): DividerPanelData => {
     return {
       type: 'divider',
     };
