@@ -18,7 +18,8 @@
               }
             ]
           }
-        ]
+        ],
+        "prefer-const": ["error", { "destructuring": "all" }]
       }
     },
     {
