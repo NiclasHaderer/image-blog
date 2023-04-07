@@ -4,7 +4,6 @@ import { ControlPanel } from '../panels/control-panel';
 import { ImagePanel } from '../panels/image-panel';
 import { DividerPanel } from '../panels/divider-panel';
 import { PanelProps } from './editor-state';
-import { RootPanel } from '../panels/root-panel';
 
 const Panels = createContext({
   panels: [],
@@ -17,9 +16,5 @@ export const usePanels = () => {
 };
 
 export const PanelProvider: FC<{ children: ReactElement }> = ({ children }) => {
-  return (
-    <Panels.Provider value={{ panels: [RootPanel, ControlPanel, ImagePanel, DividerPanel] }}>
-      {children}
-    </Panels.Provider>
-  );
+  return <Panels.Provider value={{ panels: [ControlPanel, ImagePanel, DividerPanel] }}>{children}</Panels.Provider>;
 };

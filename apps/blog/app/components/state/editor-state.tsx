@@ -1,5 +1,5 @@
 import { createContext, FC, ReactNode, useContext, useReducer } from 'react';
-import { EditorAction, EditorActions, editorReducer } from './update/reducer';
+import { EditorAction, EditorActions, editorReducer, getPanelAt } from './update/reducer';
 import { usePanels } from './panels';
 import { ControlPanel } from '../panels/control-panel';
 import { Slot } from '../common/slot';
@@ -111,4 +111,26 @@ export const useUpdateEditor = () => {
       payload: payload as any,
     });
   };
+};
+
+export const usePanelProps = () => {
+  const rootContext = useContext(_RootEditorContext).data;
+  const { index } = useContext(_ChildContext);
+
+  return getPanelAt(rootContext, index);
+};
+
+export const usePanel = () => {
+  const panelProps = usePanelProps();
+  const panels = usePanels();
+  const panel = panels.find((p) => p.canHandle(panelProps));
+  if (!panel) {
+    throw new Error('No panel found for panelProps');
+  }
+  return panel;
+};
+
+export const usePanelCapabilities = () => {
+  const panel = usePanel();
+  return panel.capabilities;
 };
