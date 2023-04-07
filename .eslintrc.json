@@ -19,7 +19,8 @@
             ]
           }
         ],
-        "prefer-const": ["error", { "destructuring": "all" }]
+        "prefer-const": ["error", { "destructuring": "all" }],
+        "@typescript-eslint/no-non-null-assertion": "off"
       }
     },
     {

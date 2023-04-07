@@ -5,6 +5,12 @@ export function useGlobalEvent<T extends keyof WindowEventMap>(
   listener: (event: WindowEventMap[T]) => any,
   filter?: (event: WindowEventMap[T]) => boolean,
   options?: boolean | AddEventListenerOptions
+): void;
+export function useGlobalEvent<T extends keyof WindowEventMap>(
+  type: T,
+  listener: (event: WindowEventMap[T]) => any,
+  filter?: (event: WindowEventMap[T]) => boolean,
+  options?: boolean | AddEventListenerOptions
 ) {
   useEffect(() => {
     const handler = (event: WindowEventMap[T]) => {

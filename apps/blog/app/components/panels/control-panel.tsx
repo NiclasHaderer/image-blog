@@ -1,9 +1,10 @@
 import c from './control-panel.module.scss';
-import { FC, KeyboardEvent, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap, useTabModifier } from '../../hooks/tap-focus';
 import { EditorPanel } from '../state/editor-panel';
-import { PanelProps, useUpdateEditor } from '../state/editor-state';
+import { PanelProps, useIsFocused, useUpdateEditor } from '../state/editor-state';
 import { usePanels } from '../state/panels';
+import { useGlobalEvent } from '../../hooks/global-events';
 
 export type ControlPanelProps = PanelProps;
 
@@ -22,6 +23,21 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
     const [search, setSearch] = useState<string>();
     const [isClosed, setIsClosed] = useState(true);
     const dispatch = useUpdateEditor();
+    const isFocused = useIsFocused();
+    useEffect(() => {
+      if (isFocused) controlInput.current?.focus();
+    });
+    useGlobalEvent('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (shouldShow()) {
+          event.stopPropagation();
+        }
+        setIsClosed(true);
+        controlInput.current?.focus();
+      }
+    });
+
+    useGlobalEvent('click', () => setIsClosed(true));
 
     const shouldShow = (): boolean => {
       return !isClosed && search !== undefined && search.length > 0;
@@ -33,7 +49,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
       <div
         className={c.controlPanelWrapper}
         ref={outerDiv}
-        onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
+        onKeyDown={(event) => {
           if (shouldShow()) {
             if (event.key === 'ArrowUp') {
               event.preventDefault();
@@ -43,16 +59,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
               focusNext();
             }
           }
-          if (event.key === 'Escape') {
-            // Do not propagate if the PanelOutlet is not closed, as then the event will trigger the close of the PanelOutlet
-            if (shouldShow()) {
-              event.stopPropagation();
-            }
-            setIsClosed(true);
-            controlInput.current?.focus();
-          } else {
-            setIsClosed(false);
-          }
+          setIsClosed(false);
         }}
       >
         <input
@@ -64,7 +71,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
           contentEditable={true}
           data-empty-text="Search for blocks"
           onInput={(e) => setSearch(e.currentTarget.value)}
-          className="w-full p-1"
+          className="w-full p-1 bg-transparent"
         ></input>
         {shouldShow() && <PanelOutlet search={search ?? ''} />}
       </div>
@@ -77,10 +84,6 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
   empty(): ControlPanelProps {
     return {
       name: this.name,
-      ethereal: {
-        focused: false,
-        outerFocused: false,
-      },
       data: undefined,
     };
   },

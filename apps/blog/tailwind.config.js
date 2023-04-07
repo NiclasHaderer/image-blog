@@ -22,6 +22,7 @@ module.exports = {
       3: 'var(--p-l)',
     },
     colors: {
+      transparent: 'transparent',
       surface: 'var(--surface)',
       'surface-1': 'var(--surface-1)',
       'surface-2': 'var(--surface-2)',

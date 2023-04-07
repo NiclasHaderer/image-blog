@@ -19,23 +19,68 @@ type DeleteAction = {
   payload: null;
 };
 
-export type EditorAction<T> = { type: string; path: number[]; payload: T };
-export type EditorActions = ReplaceAction | CreateAction | DeleteAction;
+type FocusNextAction = {
+  type: 'focus-next';
+  path: number[];
+  payload: null;
+};
 
-export const editorReducer = ({ ...state }: RootPanelProps, action: EditorActions) => {
-  let newState;
+type FocusPreviousAction = {
+  type: 'focus-previous';
+  path: number[];
+  payload: null;
+};
+
+type FocusAction = {
+  type: 'focus';
+  path: number[];
+  payload: null;
+};
+
+type OuterFocusAction = {
+  type: 'outer-focus';
+  path: number[];
+  payload: null;
+};
+
+type OuterFocusNextAction = {
+  type: 'outer-focus-next';
+  path: number[];
+  payload: null;
+};
+
+type OuterFocusPreviousAction = {
+  type: 'outer-focus-previous';
+  path: number[];
+  payload: null;
+};
+
+export type EditorAction<T> = { type: string; path: number[]; payload: T };
+export type EditorActions =
+  | ReplaceAction
+  | CreateAction
+  | DeleteAction
+  | FocusNextAction
+  | FocusPreviousAction
+  | FocusAction
+  | OuterFocusAction
+  | OuterFocusNextAction
+  | OuterFocusPreviousAction;
+
+export const editorReducer = (state: RootPanelProps, action: EditorActions) => {
+  let newState: RootPanelProps;
   switch (action.type) {
     case 'replace': {
       const parentPath = action.path.slice(0, action.path.length - 1);
       newState = updateChildren(state, parentPath, (children) => {
-        children[action.path[action.path.length - 1]] = action.payload;
+        children[action.path.at(-1)!] = action.payload;
       });
       break;
     }
     case 'add': {
       const parentPath = action.path.slice(0, action.path.length - 1);
       newState = updateChildren(state, parentPath, (children) => {
-        children.splice(action.path[action.path.length - 1], 0, action.payload);
+        children.splice(action.path.at(-1)! + 1, 0, action.payload);
       });
       break;
     }
@@ -46,6 +91,69 @@ export const editorReducer = ({ ...state }: RootPanelProps, action: EditorAction
       });
       break;
     }
+    case 'focus-next': {
+      if (!state.focusedNode) {
+        console.warn("No focused node, can't focus previous");
+        return state;
+      }
+      newState = {
+        ...state,
+        focusedNode: getNextNode(state, state.focusedNode),
+        outerFocusedNode: null,
+      };
+      break;
+    }
+    case 'focus-previous': {
+      if (!state.focusedNode) {
+        console.warn("No focused node, can't focus previous");
+        return state;
+      }
+      newState = {
+        ...state,
+        focusedNode: getPreviousNode(state, state.focusedNode),
+        outerFocusedNode: null,
+      };
+      break;
+    }
+    case 'focus': {
+      newState = {
+        ...state,
+        focusedNode: action.path,
+        outerFocusedNode: null,
+      };
+      break;
+    }
+    case 'outer-focus': {
+      newState = {
+        ...state,
+        outerFocusedNode: action.path,
+        focusedNode: null,
+      };
+      break;
+    }
+    case 'outer-focus-next': {
+      if (!state.outerFocusedNode) {
+        console.warn("No outer focused node, can't focus previous");
+        return state;
+      }
+      newState = {
+        ...state,
+        outerFocusedNode: getNextNode(state, state.outerFocusedNode),
+        focusedNode: null,
+      };
+      break;
+    }
+    case 'outer-focus-previous': {
+      if (!state.outerFocusedNode) {
+        console.warn("No outer focused node, can't focus previous");
+        return state;
+      }
+      newState = {
+        ...state,
+        outerFocusedNode: getPreviousNode(state, state.outerFocusedNode),
+        focusedNode: null,
+      };
+    }
   }
 
   // If there are no children add a ControlPanel to the root
@@ -54,13 +162,60 @@ export const editorReducer = ({ ...state }: RootPanelProps, action: EditorAction
   }
   return newState;
 };
+
+export const getPreviousNode = (root: RootPanelProps, path: number[]): number[] | null => {
+  const parentPath = path.slice(0, path.length - 1);
+  const parent = getNode(root, parentPath);
+
+  if (!parent || !parent.children) {
+    console.warn('No node found for path', path);
+    return null;
+  }
+  const index = path.at(-1)!;
+  if (index > 0) {
+    return [...parentPath, index - 1];
+  } else {
+    return parentPath;
+  }
+};
+
+const getNode = (root: RootPanelProps, path: number[]): PanelProps | null => {
+  let stateIterator: PanelProps = root;
+  for (const key of path) {
+    if (!stateIterator.children) {
+      console.warn('No children found for path', path);
+      return null;
+    }
+    stateIterator = stateIterator.children[key];
+  }
+  return stateIterator;
+};
+
+export const getNextNode = (root: RootPanelProps, path: number[]): number[] | null => {
+  const parentPath = path.slice(0, path.length - 1);
+  const parent = getNode(root, parentPath);
+
+  if (!parent || !parent.children) {
+    console.warn('No node found for path', path);
+    return null;
+  }
+
+  const index = path.at(-1)!;
+  if (index < parent.children.length) {
+    return [...parentPath, index + 1];
+  } else {
+    // TODO check if perhaps one should go to the next sibling of the parent
+    return [...parentPath, parent.children.length - 1];
+  }
+};
+
 export const updateChildren = (
   editorState: RootPanelProps,
   path: number[],
   action: (children: PanelProps[]) => void
-) => {
+): RootPanelProps => {
   const newState = { ...editorState };
-  let stateIterator = newState;
+  let stateIterator: PanelProps | RootPanelProps = newState;
 
   if (path.length === 0) {
     if (!stateIterator.children) stateIterator.children = [];

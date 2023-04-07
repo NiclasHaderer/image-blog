@@ -4,20 +4,17 @@ import { usePanels } from './panels';
 import { ControlPanel } from '../panels/control-panel';
 import { Slot } from '../common/slot';
 
-export interface PanelEthereal {
-  focused: boolean;
-  outerFocused: boolean;
-}
-
 export interface PanelProps<T = unknown> {
   name: string;
-  ethereal: PanelEthereal;
   children?: PanelProps[];
   data: T;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface RootPanelProps extends PanelProps {}
+export interface RootPanelProps extends PanelProps {
+  focusedNode: number[] | null;
+  outerFocusedNode: number[] | null;
+}
 
 const _RootEditorContext = createContext({
   update: (newData: EditorActions): void => {
@@ -31,10 +28,8 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
     children: [ControlPanel.empty()],
     name: 'root',
     data: {},
-    ethereal: {
-      focused: true,
-      outerFocused: false,
-    },
+    focusedNode: [0],
+    outerFocusedNode: null,
   } satisfies RootPanelProps);
 
   return (
@@ -133,4 +128,16 @@ export const usePanel = () => {
 export const usePanelCapabilities = () => {
   const panel = usePanel();
   return panel.capabilities;
+};
+
+export const useIsFocused = () => {
+  const rootContext = useContext(_RootEditorContext).data;
+  const { index } = useContext(_ChildContext);
+  return rootContext.focusedNode?.join('.') === index.join('.');
+};
+
+export const useIsOuterFocused = () => {
+  const rootContext = useContext(_RootEditorContext).data;
+  const { index } = useContext(_ChildContext);
+  return rootContext.outerFocusedNode?.join('.') === index.join('.');
 };

@@ -48,10 +48,6 @@ export const ImagePanel: EditorPanel<ImagePanelProps> = {
         caption: '',
         width: '50%',
       },
-      ethereal: {
-        focused: false,
-        outerFocused: false,
-      },
     };
   },
 };

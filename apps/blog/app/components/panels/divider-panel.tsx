@@ -26,10 +26,6 @@ export const DividerPanel: EditorPanel<DividerPanelProps> = {
     return {
       name: this.name,
       data: undefined,
-      ethereal: {
-        focused: false,
-        outerFocused: false,
-      },
     };
   },
 };
