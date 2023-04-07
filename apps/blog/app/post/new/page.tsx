@@ -1,7 +1,7 @@
 'use client';
 
-import { MainEditor } from '../../components/main-editor';
+import { Editor } from '../../components/editor';
 
 export default function Page() {
-  return <MainEditor />;
+  return <Editor />;
 }

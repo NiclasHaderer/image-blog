@@ -1,27 +1,27 @@
 import c from './control-panel.module.scss';
-import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { FC, KeyboardEvent, useRef, useState } from 'react';
 import { useFocusTrap, useTabModifier } from '../../hooks/tap-focus';
-import { EditorPanel, PanelState, TypedStructure } from './editor-panel';
-import { usePanels } from '../main-editor';
+import { EditorPanel } from '../state/editor-panel';
+import { PanelProps, useUpdateEditor } from '../state/editor-state';
+import { usePanels } from '../state/panels';
 
-export interface ControlPanelData extends TypedStructure {
-  type: 'control-panel';
-}
+export type ControlPanelProps = PanelProps;
 
-export type ControlPanelState = PanelState;
-
-export const ControlPanel: EditorPanel<ControlPanelData, ControlPanelState> = {
+export const ControlPanel: EditorPanel<ControlPanelProps> = {
   name: 'Control Panel',
+  capabilities: {
+    canBeDeleted: true,
+    canHaveChildren: false,
+    canBeInnerFocused: true,
+    canBeDragged: true,
+  },
   Icon: () => null,
-  Edit: ({ onCreate, onUpdate, onDelete, focus }) => {
-    const editableDiv = useRef<HTMLDivElement>(null);
+  Edit: () => {
+    const controlInput = useRef<HTMLInputElement>(null);
     const outerDiv = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState<string>();
     const [isClosed, setIsClosed] = useState(true);
-    useEffect(() => {
-      // Put this in a useEffect, so that the focus is only set when the focused value changes from false to true
-      if (focus?.focused && focus.force) editableDiv.current?.focus();
-    }, [focus]);
+    const dispatch = useUpdateEditor();
 
     const shouldShow = (): boolean => {
       return !isClosed && search !== undefined && search.length > 0;
@@ -49,55 +49,45 @@ export const ControlPanel: EditorPanel<ControlPanelData, ControlPanelState> = {
               event.stopPropagation();
             }
             setIsClosed(true);
-            editableDiv.current?.focus();
+            controlInput.current?.focus();
           } else {
             setIsClosed(false);
           }
         }}
       >
-        <div
-          tabIndex={1}
-          ref={editableDiv}
+        <input
+          ref={controlInput}
+          placeholder={'Search for blocks'}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') e.preventDefault();
-            if (e.key === 'Backspace' && !search) onDelete?.();
+            if (e.key === 'Backspace' && !search) dispatch('delete', null);
           }}
           contentEditable={true}
           data-empty-text="Search for blocks"
-          onInput={(e) => {
-            // Remove <br> when empty
-            if (editableDiv.current) {
-              if (editableDiv.current.innerHTML === '<br>') {
-                editableDiv.current.innerText = '';
-              }
-            }
-
-            onUpdate?.({
-              type: 'control-panel',
-              focus: true,
-            });
-            setSearch(e.currentTarget.innerText);
-          }}
-          className={c.controlPanel}
-        ></div>
-        {shouldShow() && <PanelOutlet onCreate={onCreate} search={search ?? ''} />}
+          onInput={(e) => setSearch(e.currentTarget.value)}
+          className="w-full p-1"
+        ></input>
+        {shouldShow() && <PanelOutlet search={search ?? ''} />}
       </div>
     );
   },
-  Render: () => {
-    return null;
+  View: () => null,
+  canHandle(type: PanelProps) {
+    return type.name === this.name;
   },
-  canHandle: (type: TypedStructure): type is ControlPanelData => {
-    return type.type === 'control-panel';
-  },
-  empty: (): ControlPanelData => {
+  empty(): ControlPanelProps {
     return {
-      type: 'control-panel',
+      name: this.name,
+      ethereal: {
+        focused: false,
+        outerFocused: false,
+      },
+      data: undefined,
     };
   },
 };
 
-const PanelOutlet: FC<Pick<ControlPanelState, 'onCreate'> & { search: string }> = ({ onCreate, search }) => {
+const PanelOutlet: FC<{ search: string }> = ({ search }) => {
+  const dispatch = useUpdateEditor();
   const panels = usePanels()
     .filter((p) => p.name !== 'Control Panel')
     .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
@@ -108,7 +98,7 @@ const PanelOutlet: FC<Pick<ControlPanelState, 'onCreate'> & { search: string }> 
           <button
             key={p.name}
             className={`${c.action} cursor-pointer w-full flex items-center`}
-            onClick={() => onCreate?.(p.empty())}
+            onClick={() => dispatch('replace', p.empty())}
           >
             {<p.Icon size={'var(--icon-m)'} />} <span className="p-s">{p.name}</span>
           </button>

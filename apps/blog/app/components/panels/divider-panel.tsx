@@ -1,25 +1,35 @@
-import { EditorPanel, PanelState, TypedStructure } from './editor-panel';
-import { DividerIcon } from '../icons';
+import { EditorPanel } from '../state/editor-panel';
+import { DividerIcon } from '../common/icons';
+import { PanelProps } from '../state/editor-state';
 
-export interface DividerPanelData extends TypedStructure {
-  type: 'divider';
-}
+export type DividerPanelProps = PanelProps<undefined>;
 
-export type DividerPanelState = PanelState;
-
-export const DividerPanel: EditorPanel<DividerPanelData, DividerPanelState> = {
+export const DividerPanel: EditorPanel<DividerPanelProps> = {
   name: 'Divider',
+  capabilities: {
+    canBeInnerFocused: false,
+    canBeDragged: true,
+    canHaveChildren: false,
+    canBeDeleted: true,
+  },
   Icon: ({ size }) => <DividerIcon style={{ width: size, height: size }} />,
-  Edit: () => {
+  Edit: (_) => {
     return <hr />;
   },
-  Render: () => {
-    return <hr />;
+  View(_) {
+    return this.Edit(_);
   },
-  canHandle: (node): node is DividerPanelData => node.type === 'divider',
-  empty: (): DividerPanelData => {
+  canHandle(node) {
+    return node.name === this.name;
+  },
+  empty(): DividerPanelProps {
     return {
-      type: 'divider',
+      name: this.name,
+      data: undefined,
+      ethereal: {
+        focused: false,
+        outerFocused: false,
+      },
     };
   },
 };

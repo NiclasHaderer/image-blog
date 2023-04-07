@@ -11,15 +11,15 @@ module.exports = {
     extend: {},
     padding: {
       0: '0',
-      s: 'var(--p)',
-      m: 'var(--p-m)',
-      l: 'var(--p-l)',
+      1: 'var(--p)',
+      2: 'var(--p-m)',
+      3: 'var(--p-l)',
     },
     margin: {
       0: '0',
-      s: 'var(--p)',
-      m: 'var(--p-m)',
-      l: 'var(--p-l)',
+      1: 'var(--p)',
+      2: 'var(--p-m)',
+      3: 'var(--p-l)',
     },
     colors: {
       surface: 'var(--surface)',

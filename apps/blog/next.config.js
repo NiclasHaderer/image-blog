@@ -10,6 +10,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  reactStrictMode: true,
   nx: {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr
