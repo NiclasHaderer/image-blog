@@ -14,6 +14,7 @@ export interface PanelProps<T = unknown> {
 export interface RootPanelProps extends PanelProps {
   focusedNode: number[] | null;
   outerFocusedNode: number[] | null;
+  forceFocus: boolean;
 }
 
 const _RootEditorContext = createContext({
@@ -30,6 +31,7 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
     data: {},
     focusedNode: [0],
     outerFocusedNode: null,
+    forceFocus: false,
   } satisfies RootPanelProps);
 
   return (
@@ -133,7 +135,11 @@ export const usePanelCapabilities = () => {
 export const useIsFocused = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
-  return rootContext.focusedNode?.join('.') === index.join('.');
+  const isFocused = rootContext.focusedNode?.join('.') === index.join('.');
+  return {
+    isFocused,
+    force: rootContext.forceFocus,
+  };
 };
 
 export const useIsOuterFocused = () => {

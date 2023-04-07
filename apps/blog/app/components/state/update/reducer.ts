@@ -22,19 +22,19 @@ type DeleteAction = {
 type FocusNextAction = {
   type: 'focus-next';
   path: number[];
-  payload: null;
+  payload: { force: boolean; reference: 'currentNode' | 'currentFocus' };
 };
 
 type FocusPreviousAction = {
   type: 'focus-previous';
   path: number[];
-  payload: null;
+  payload: { force: boolean; reference: 'currentNode' | 'currentFocus' };
 };
 
 type FocusAction = {
   type: 'focus';
   path: number[];
-  payload: null;
+  payload: { force: boolean };
 };
 
 type OuterFocusAction = {
@@ -68,6 +68,7 @@ export type EditorActions =
   | OuterFocusPreviousAction;
 
 export const editorReducer = (state: RootPanelProps, action: EditorActions) => {
+  console.log(action);
   let newState: RootPanelProps;
   switch (action.type) {
     case 'replace': {
@@ -92,26 +93,36 @@ export const editorReducer = (state: RootPanelProps, action: EditorActions) => {
       break;
     }
     case 'focus-next': {
-      if (!state.focusedNode) {
-        console.warn("No focused node, can't focus previous");
+      const reference =
+        action.payload.reference === 'currentNode' ? action.path : state.focusedNode ?? state.outerFocusedNode;
+      if (!reference) {
+        console.warn("No focused node, can't focus next");
         return state;
       }
+      const nextNode = getNextNode(state, reference);
+      if (!nextNode) return state;
       newState = {
         ...state,
-        focusedNode: getNextNode(state, state.focusedNode),
+        focusedNode: nextNode,
         outerFocusedNode: null,
+        forceFocus: action.payload.force,
       };
       break;
     }
     case 'focus-previous': {
-      if (!state.focusedNode) {
+      const reference =
+        action.payload.reference === 'currentNode' ? action.path : state.focusedNode ?? state.outerFocusedNode;
+      if (!reference) {
         console.warn("No focused node, can't focus previous");
         return state;
       }
+      const previousNode = getPreviousNode(state, reference);
+      if (!previousNode) return state;
       newState = {
         ...state,
-        focusedNode: getPreviousNode(state, state.focusedNode),
+        focusedNode: previousNode,
         outerFocusedNode: null,
+        forceFocus: action.payload.force,
       };
       break;
     }
@@ -120,6 +131,7 @@ export const editorReducer = (state: RootPanelProps, action: EditorActions) => {
         ...state,
         focusedNode: action.path,
         outerFocusedNode: null,
+        forceFocus: action.payload.force,
       };
       break;
     }
@@ -128,6 +140,7 @@ export const editorReducer = (state: RootPanelProps, action: EditorActions) => {
         ...state,
         outerFocusedNode: action.path,
         focusedNode: null,
+        forceFocus: false,
       };
       break;
     }
@@ -136,10 +149,13 @@ export const editorReducer = (state: RootPanelProps, action: EditorActions) => {
         console.warn("No outer focused node, can't focus previous");
         return state;
       }
+      const nextNode = getNextNode(state, state.outerFocusedNode);
+      if (!nextNode) return state;
       newState = {
         ...state,
-        outerFocusedNode: getNextNode(state, state.outerFocusedNode),
+        outerFocusedNode: nextNode,
         focusedNode: null,
+        forceFocus: false,
       };
       break;
     }
@@ -148,10 +164,13 @@ export const editorReducer = (state: RootPanelProps, action: EditorActions) => {
         console.warn("No outer focused node, can't focus previous");
         return state;
       }
+      const previousNode = getPreviousNode(state, state.outerFocusedNode);
+      if (!previousNode) return state;
       newState = {
         ...state,
-        outerFocusedNode: getPreviousNode(state, state.outerFocusedNode),
+        outerFocusedNode: previousNode,
         focusedNode: null,
+        forceFocus: false,
       };
     }
   }
@@ -175,6 +194,9 @@ export const getPreviousNode = (root: RootPanelProps, path: number[]): number[] 
   if (index > 0) {
     return [...parentPath, index - 1];
   } else {
+    if (parentPath.length === 0) {
+      return null;
+    }
     return parentPath;
   }
 };
@@ -201,11 +223,14 @@ export const getNextNode = (root: RootPanelProps, path: number[]): number[] | nu
   }
 
   const index = path.at(-1)!;
-  if (index < parent.children.length) {
+  if (index < parent.children.length - 1) {
     return [...parentPath, index + 1];
   } else {
-    // TODO check if perhaps one should go to the next sibling of the parent
-    return [...parentPath, parent.children.length - 1];
+    if (parentPath.length === 0) {
+      return null;
+    }
+    // We are in the last node of this parent, so we need to go to the next node in the parent
+    return getNextNode(root, parentPath);
   }
 };
 

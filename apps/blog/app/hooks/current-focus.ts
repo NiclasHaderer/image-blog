@@ -5,11 +5,11 @@ export const useCurrentFocus = () => {
   useEffect(() => {
     const updateCurrentFocus = (e: Event) => setCurrentFocus(e.target as unknown as HTMLElement);
 
-    document.addEventListener('keyup', updateCurrentFocus, true);
-    document.addEventListener('mouseup', updateCurrentFocus, true);
+    document.addEventListener('focus', updateCurrentFocus, true);
+    document.addEventListener('blur', updateCurrentFocus, true);
     return () => {
-      document.removeEventListener('keyup', updateCurrentFocus, true);
-      document.removeEventListener('mouseup', updateCurrentFocus, true);
+      document.removeEventListener('focus', updateCurrentFocus, true);
+      document.removeEventListener('blur', updateCurrentFocus, true);
     };
   }, []);
 

@@ -23,19 +23,21 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
     const [search, setSearch] = useState<string>();
     const [isClosed, setIsClosed] = useState(true);
     const dispatch = useUpdateEditor();
-    const isFocused = useIsFocused();
+    const { isFocused, force } = useIsFocused();
     useEffect(() => {
-      if (isFocused) controlInput.current?.focus();
-    });
-    useGlobalEvent('keydown', (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        if (shouldShow()) {
-          event.stopPropagation();
-        }
-        setIsClosed(true);
+      if (isFocused && force) {
         controlInput.current?.focus();
       }
     });
+    useGlobalEvent(
+      'keydown',
+      () => {
+        setIsClosed(true);
+        console.log("I'm here");
+        controlInput.current?.focus();
+      },
+      (event) => event.key === 'Escape' && shouldShow()
+    );
 
     useGlobalEvent('click', () => setIsClosed(true));
 
@@ -57,6 +59,10 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
             } else if (event.key === 'ArrowDown') {
               event.preventDefault();
               focusNext();
+            } else if (event.key === 'Escape') {
+              // Do not propagate, as we only want to close the panel
+              if (shouldShow()) event.stopPropagation();
+              setIsClosed(true);
             }
           }
           setIsClosed(false);
