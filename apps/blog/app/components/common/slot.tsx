@@ -47,10 +47,13 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
       tabIndex={0}
       className={`${c.slot} ${isOuterFocused ? 'bg-secondary' : ''}`}
       onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          dispatch('outer-focus', { at: path });
+        }
+        // TODO check if the origin of the evnet is the slot, otherwise discard
+
         if (e.key === 'Enter') {
           dispatch('focus', { force: true, at: path });
-        } else if (e.key === 'Escape') {
-          dispatch('outer-focus', { at: path });
         } else if (e.key === 'ArrowUp') {
           if (e.shiftKey && e.altKey) {
             dispatch('move-outer-focused-up', null);
@@ -68,8 +71,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
             dispatch('outer-focus-next', { mode: 'replace' });
           }
         } else if ((e.key === 'Delete' && isOuterFocused) || (e.key === 'Backspace' && isOuterFocused)) {
-          // TODO delete all selected panels (including the range)
-          dispatch('delete', { at: path });
+          dispatch('delete', { selection: true });
         }
       }}
     >

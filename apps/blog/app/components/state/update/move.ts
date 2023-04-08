@@ -1,13 +1,5 @@
 import { RootPanelProps } from '../editor-state';
-import {
-  deleteRange,
-  getFirstPath,
-  getLastPath,
-  getNextNode,
-  getNodeOffsetBy,
-  getPanelRange,
-  getPreviousNode,
-} from './utils';
+import { deleteRange, getFirstPath, getLastPath, getNextNode, getPanelRange, getPreviousNode } from './utils';
 import { addPanel } from './state';
 
 export const moveOuterFocusedDown = (editorState: RootPanelProps): RootPanelProps => {
@@ -70,11 +62,6 @@ export const moveOuterFocusedUp = (editorState: RootPanelProps): RootPanelProps 
   // Delete the panels from the old position and then add them to the new position
   editorState = deleteRange(editorState, outerFocused, focusRange);
   editorState = addPanel(editorState, destination, 'before', ...panelsToMove.map(([, panel]) => panel));
-
-  console.log(
-    destination,
-    editorState.children!.map((c) => c.name)
-  );
 
   // Update the outer focused node to the new position
   const newOuterFocused = [...outerFocused];

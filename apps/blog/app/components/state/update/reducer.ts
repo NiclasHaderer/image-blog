@@ -3,6 +3,7 @@ import { ControlPanel } from '../../panels/control-panel';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
 import { addPanel, deletePanel, replacePanel } from './state';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
+import { deleteRange } from './utils';
 
 type ReplaceAction = {
   type: 'replace';
@@ -25,9 +26,11 @@ type CreateAction = {
 type DeleteAction = {
   type: 'delete';
   origin: number[];
-  payload: {
-    at: number[];
-  };
+  payload:
+    | {
+        at: number[];
+      }
+    | { selection: true };
 };
 
 type FocusNextAction = {
@@ -97,8 +100,7 @@ export type EditorActions =
   | MoveOuterFocusedDownAction
   | MoveOuterFocusedUpAction;
 
-export const editorReducer = (state: RootPanelProps, { origin, payload, type }: EditorActions) => {
-  console.log(type, payload);
+export const editorReducer = (state: RootPanelProps, { payload, type }: EditorActions) => {
   let newState: RootPanelProps;
   switch (type) {
     case 'replace': {
@@ -110,7 +112,12 @@ export const editorReducer = (state: RootPanelProps, { origin, payload, type }: 
       break;
     }
     case 'delete': {
-      newState = deletePanel(state, payload.at);
+      if ('selection' in payload) {
+        if (!state.outerFocusedNode || !state.outerFocusedRange) return state;
+        newState = deleteRange(state, state.outerFocusedNode, state.outerFocusedRange);
+      } else {
+        newState = deletePanel(state, payload.at);
+      }
       break;
     }
     case 'focus-next': {
