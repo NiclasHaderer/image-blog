@@ -8,10 +8,19 @@ export const replacePanel = (state: RootPanelProps, path: number[], payload: Pan
   });
 };
 
-export const addPanel = (state: RootPanelProps, path: number[], payload: PanelProps): RootPanelProps => {
+export const addPanel = (
+  state: RootPanelProps,
+  path: number[],
+  insertMode: 'before' | 'after',
+  ...payload: PanelProps[]
+): RootPanelProps => {
   const parentPath = path.slice(0, path.length - 1);
   return updateChildren(state, parentPath, (children) => {
-    children.splice(path.at(-1)! + 1, 0, payload);
+    if (insertMode === 'before') {
+      children.splice(path.at(-1)!, 0, ...payload);
+    } else {
+      children.splice(path.at(-1)! + 1, 0, ...payload);
+    }
   });
 };
 

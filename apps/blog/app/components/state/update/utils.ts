@@ -149,7 +149,7 @@ export const getNodeOffsetBy = (root: RootPanelProps, path: number[], offset: nu
   return path;
 };
 
-export const getPanelRange = (root: RootPanelProps, origin: number[], range: number): PanelProps[] => {
+export const getPanelRange = (root: RootPanelProps, origin: number[], range: number): [number[], PanelProps][] => {
   const nodes = getNodesInRange(root, origin, range);
 
   // Get the node which is the furthest up in the tree
@@ -161,14 +161,18 @@ export const getPanelRange = (root: RootPanelProps, origin: number[], range: num
   // We are only concerned with the nodes which are on the same level as the first node, as the other ones are
   // children of these sameLevelNodes
 
-  return sameLevelNodes.map((node) => getNode(root, node)!);
+  return sameLevelNodes.map((node) => [node, getNode(root, node)!]);
 };
 
 export const deleteRange = (root: RootPanelProps, origin: number[], range: number): RootPanelProps => {
-  const nodes = getNodesInRange(root, origin, range);
-  const firstPath = getFirstPath(nodes)!;
-  const sameLevelNodes = nodes.filter((node) => node.length === firstPath?.length);
+  // Get the nodes which should be removed
+  const nodes = getPanelRange(root, origin, range).map(([path]) => path);
+  if (nodes.length === 0) return root;
+  const parentPath = nodes[0].slice(0, -1);
 
-  // TODO remove the sameLevelNodes from the parent
-  return root;
+  return updateChildren(root, parentPath, (children) => {
+    const deleteCount = nodes.length;
+    const deleteIndex = nodes[0].at(-1)!;
+    children.splice(deleteIndex, deleteCount);
+  });
 };

@@ -2,7 +2,7 @@ import c from './control-panel.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap, useTabModifier } from '../../hooks/tap-focus';
 import { EditorPanel } from '../state/editor-panel';
-import { PanelProps, useIsFocused, useUpdateEditor } from '../state/editor-state';
+import { PanelProps, useIsFocused, usePanelIndex, useUpdateEditor } from '../state/editor-state';
 import { usePanels } from '../state/panels';
 import { useGlobalEvent } from '../../hooks/global-events';
 
@@ -23,6 +23,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
     const [search, setSearch] = useState<string>();
     const [isClosed, setIsClosed] = useState(true);
     const dispatch = useUpdateEditor();
+    const path = usePanelIndex();
     const { isFocused, force } = useIsFocused();
     useEffect(() => {
       if (isFocused && force) {
@@ -72,7 +73,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
           ref={controlInput}
           placeholder={'Search for blocks'}
           onKeyDown={(e) => {
-            if (e.key === 'Backspace' && !search) dispatch('delete', null);
+            if (e.key === 'Backspace' && !search) dispatch('delete', { at: path });
           }}
           contentEditable={true}
           data-empty-text="Search for blocks"
@@ -97,6 +98,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
 
 const PanelOutlet: FC<{ search: string }> = ({ search }) => {
   const dispatch = useUpdateEditor();
+  const path = usePanelIndex();
   const panels = usePanels()
     .filter((p) => p.name !== 'Control Panel')
     .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
@@ -107,7 +109,12 @@ const PanelOutlet: FC<{ search: string }> = ({ search }) => {
           <button
             key={p.name}
             className={`${c.action} cursor-pointer w-full flex items-center`}
-            onClick={() => dispatch('replace', p.empty())}
+            onClick={() =>
+              dispatch('replace', {
+                at: path,
+                with: p.empty(),
+              })
+            }
           >
             {<p.Icon size={'var(--icon-m)'} />} <span className="p-s">{p.name}</span>
           </button>

@@ -47,21 +47,22 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
       tabIndex={0}
       className={`${c.slot} ${isOuterFocused ? 'bg-secondary' : ''}`}
       onKeyDown={(e) => {
-        console.log(e);
         if (e.key === 'Enter') {
           dispatch('focus', { force: true, at: path });
         } else if (e.key === 'Escape') {
           dispatch('outer-focus', { at: path });
         } else if (e.key === 'ArrowUp') {
-          if (e.shiftKey) {
-            dispatch('outer-focus-previous', {
-              mode: 'add',
-            });
+          if (e.shiftKey && e.altKey) {
+            dispatch('move-outer-focused-up', null);
+          } else if (e.shiftKey) {
+            dispatch('outer-focus-previous', { mode: 'add' });
           } else {
             dispatch('outer-focus-previous', { mode: 'replace' });
           }
         } else if (e.key === 'ArrowDown') {
-          if (e.shiftKey) {
+          if (e.shiftKey && e.altKey) {
+            dispatch('move-outer-focused-down', null);
+          } else if (e.shiftKey) {
             dispatch('outer-focus-next', { mode: 'add' });
           } else {
             dispatch('outer-focus-next', { mode: 'replace' });

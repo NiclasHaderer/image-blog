@@ -2,6 +2,7 @@ import { PanelProps, RootPanelProps } from '../editor-state';
 import { ControlPanel } from '../../panels/control-panel';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
 import { addPanel, deletePanel, replacePanel } from './state';
+import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
 
 type ReplaceAction = {
   type: 'replace';
@@ -70,6 +71,18 @@ type OuterFocusPreviousAction = {
   payload: { mode: 'add' | 'replace' };
 };
 
+type MoveOuterFocusedDownAction = {
+  type: 'move-outer-focused-down';
+  origin: number[];
+  payload: null;
+};
+
+type MoveOuterFocusedUpAction = {
+  type: 'move-outer-focused-up';
+  origin: number[];
+  payload: null;
+};
+
 export type EditorAction<T> = { type: string; origin: number[]; payload: T };
 export type EditorActions =
   | ReplaceAction
@@ -80,9 +93,12 @@ export type EditorActions =
   | FocusAction
   | OuterFocusAction
   | OuterFocusNextAction
-  | OuterFocusPreviousAction;
+  | OuterFocusPreviousAction
+  | MoveOuterFocusedDownAction
+  | MoveOuterFocusedUpAction;
 
 export const editorReducer = (state: RootPanelProps, { origin, payload, type }: EditorActions) => {
+  console.log(type, payload);
   let newState: RootPanelProps;
   switch (type) {
     case 'replace': {
@@ -90,7 +106,7 @@ export const editorReducer = (state: RootPanelProps, { origin, payload, type }: 
       break;
     }
     case 'add': {
-      newState = addPanel(state, payload.at, payload.panel);
+      newState = addPanel(state, payload.at, 'after', payload.panel);
       break;
     }
     case 'delete': {
@@ -119,6 +135,14 @@ export const editorReducer = (state: RootPanelProps, { origin, payload, type }: 
     }
     case 'outer-focus-previous': {
       newState = outerFocusPrevious(state, payload.mode);
+      break;
+    }
+    case 'move-outer-focused-down': {
+      newState = moveOuterFocusedDown(state);
+      break;
+    }
+    case 'move-outer-focused-up': {
+      newState = moveOuterFocusedUp(state);
       break;
     }
   }
