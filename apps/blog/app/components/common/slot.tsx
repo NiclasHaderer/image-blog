@@ -67,6 +67,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
             dispatch('outer-focus-next', { mode: 'replace' });
           }
         } else if ((e.key === 'Delete' && isOuterFocused) || (e.key === 'Backspace' && isOuterFocused)) {
+          // TODO delete all selected panels (including the range)
           dispatch('delete', { at: path });
         }
       }}
