@@ -1,17 +1,25 @@
 import { AddIcon, DragIcon } from './icons';
 import { CSSProperties, FC, ReactNode, useEffect, useRef } from 'react';
-import { useIsFocused, useIsOuterFocused, usePanelCapabilities, useUpdateEditor } from '../state/editor-state';
+import {
+  useIsFocused,
+  useIsOuterFocused,
+  usePanelCapabilities,
+  usePanelIndex,
+  useUpdateEditor,
+} from '../state/editor-state';
 import { ControlPanel } from '../panels/control-panel';
 import c from './slot.module.scss';
-import { useCurrentFocus } from '../../hooks/current-focus';
+import { usePageFocus } from '../../hooks/page-focus';
 
 export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
-  const dispatch = useUpdateEditor();
   const slotRef = useRef<HTMLDivElement>(null);
+
+  const dispatch = useUpdateEditor();
   const panel = usePanelCapabilities();
   const isOuterFocused = useIsOuterFocused();
-  const { isFocused: isInnerFocused } = useIsFocused();
-  const currentFocus = useCurrentFocus();
+  const panelFocus = useIsFocused();
+  const currentFocus = usePageFocus();
+  const path = usePanelIndex();
 
   useEffect(() => {
     if (!isOuterFocused || !slotRef.current) return;
@@ -20,7 +28,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const isFocusInside = !!slotRef.current?.contains(document.activeElement!) && slotRef.current !== currentFocus;
-    if (isFocusInside && !isInnerFocused) dispatch('focus', { force: false });
+    if (isFocusInside && !panelFocus.isFocused) dispatch('focus', { force: false, at: path });
     // DO NOT ADD ANYTHING ELSE, AS THIS WILL OTHERWISE CAUSE AN INFINITE LOOP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFocus]);
@@ -35,28 +43,41 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div
       ref={slotRef}
+      data-path={path.join('.')}
       tabIndex={0}
       className={`${c.slot} ${isOuterFocused ? 'bg-secondary' : ''}`}
       onKeyDown={(e) => {
+        console.log(e);
         if (e.key === 'Enter') {
-          dispatch('focus', { force: true });
+          dispatch('focus', { force: true, at: path });
         } else if (e.key === 'Escape') {
-          dispatch('outer-focus', null);
+          dispatch('outer-focus', { at: path });
         } else if (e.key === 'ArrowUp') {
-          dispatch('outer-focus-previous', null);
+          if (e.shiftKey) {
+            dispatch('outer-focus-previous', {
+              mode: 'add',
+            });
+          } else {
+            dispatch('outer-focus-previous', { mode: 'replace' });
+          }
         } else if (e.key === 'ArrowDown') {
-          dispatch('outer-focus-next', null);
-        } else if (e.key === 'Delete' && isOuterFocused) {
-          dispatch('delete', null);
-        } else if (e.key === 'Backspace' && isOuterFocused) {
-          dispatch('delete', null);
+          if (e.shiftKey) {
+            dispatch('outer-focus-next', { mode: 'add' });
+          } else {
+            dispatch('outer-focus-next', { mode: 'replace' });
+          }
+        } else if ((e.key === 'Delete' && isOuterFocused) || (e.key === 'Backspace' && isOuterFocused)) {
+          dispatch('delete', { at: path });
         }
       }}
     >
       <button
         onClick={() => {
-          dispatch('add', ControlPanel.empty());
-          dispatch('focus-next', { force: true, reference: 'currentNode' });
+          dispatch('add', {
+            at: path,
+            panel: ControlPanel.empty(),
+          });
+          dispatch('focus-next', { force: true });
         }}
       >
         <AddIcon style={{ width: 'var(--icon-m)', height: 'var(--icon-m)' }} />

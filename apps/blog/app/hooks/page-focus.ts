@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export const useCurrentFocus = () => {
+export const usePageFocus = () => {
   const [currentFocus, setCurrentFocus] = useState<HTMLElement>();
   useEffect(() => {
     const updateCurrentFocus = (e: Event) => setCurrentFocus(e.target as unknown as HTMLElement);

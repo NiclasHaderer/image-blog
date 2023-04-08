@@ -1,8 +1,9 @@
 import { createContext, FC, ReactNode, useContext, useReducer } from 'react';
-import { EditorAction, EditorActions, editorReducer, getPanelAt } from './update/reducer';
+import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { usePanels } from './panels';
 import { ControlPanel } from '../panels/control-panel';
 import { Slot } from '../common/slot';
+import { getNode, getNodesInRange } from './update/utils';
 
 export interface PanelProps<T = unknown> {
   name: string;
@@ -13,8 +14,9 @@ export interface PanelProps<T = unknown> {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface RootPanelProps extends PanelProps {
   focusedNode: number[] | null;
-  outerFocusedNode: number[] | null;
   forceFocus: boolean;
+  outerFocusedNode: number[] | null;
+  outerFocusedRange: number | null;
 }
 
 const _RootEditorContext = createContext({
@@ -31,6 +33,7 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
     data: {},
     focusedNode: [0],
     outerFocusedNode: null,
+    outerFocusedRange: null,
     forceFocus: false,
   } satisfies RootPanelProps);
 
@@ -104,7 +107,7 @@ export const useUpdateEditor = () => {
   ) => {
     rootContext.update({
       type: action,
-      path: index,
+      origin: index,
       payload: payload as any,
     });
   };
@@ -113,8 +116,10 @@ export const useUpdateEditor = () => {
 export const usePanelProps = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
+  const node = getNode(rootContext, index);
+  if (!node) throw new Error('No node found for index');
 
-  return getPanelAt(rootContext, index);
+  return node;
 };
 
 export const usePanel = () => {
@@ -145,5 +150,15 @@ export const useIsFocused = () => {
 export const useIsOuterFocused = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
-  return rootContext.outerFocusedNode?.join('.') === index.join('.');
+
+  const outerFocusNode = rootContext.outerFocusedNode;
+  const range = rootContext.outerFocusedRange ?? 0;
+  if (!outerFocusNode) return false;
+  const focusedNodes = getNodesInRange(rootContext, outerFocusNode, range);
+  return focusedNodes.some((node) => node.join('.') === index.join('.'));
+};
+
+export const usePanelIndex = () => {
+  const { index } = useContext(_ChildContext);
+  return index;
 };
