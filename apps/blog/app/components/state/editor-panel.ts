@@ -1,19 +1,26 @@
 import { PanelProps } from './editor-state';
+
 export interface PanelCapabilities {
-  canHaveChildren: boolean;
-  canBeDragged: boolean;
+  canBeMoved: boolean;
   canBeDeleted: boolean;
   canBeInnerFocused: boolean;
+  noControls: boolean;
+  standalone: boolean;
 }
 
 export interface EditorPanel<T extends PanelProps> {
-  name: string;
-  capabilities: PanelCapabilities;
-  View: <V extends T>(props: V) => JSX.Element | null;
-  Edit: <V extends T>(props: V) => JSX.Element | null;
-  Icon: (props: { size: number | string }) => JSX.Element | null;
+  readonly id: string;
+  readonly capabilities: Readonly<PanelCapabilities>;
+
+  Render<V extends T>(props: V): JSX.Element | null;
+
+  Icon(props: { size: number | string }): JSX.Element | null;
+
+  Name(): JSX.Element | string | null;
 
   canHandle(type: T): boolean;
+
+  distance(query: string): number;
 
   empty(): T;
 }

@@ -1,15 +1,15 @@
 .slot {
   display: flex;
   align-items: center;
+  border: solid 1px;
+  border-color: var(--border-color);
+
   > button {
     opacity: 0;
     transition: opacity 0.3s;
   }
 
-  &:hover > button,
-  &:focus > button,
-  &:active > button,
-  &:focus-within > button {
+  &:hover > button{
     opacity: 1;
   }
 }

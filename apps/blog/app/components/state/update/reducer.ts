@@ -3,7 +3,7 @@ import { ControlPanel } from '../../panels/control-panel';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
 import { addPanel, deletePanel, replacePanel } from './state';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
-import { deleteRange } from './utils';
+import { deleteRange, getNode, getNodesInRange } from './utils';
 
 type ReplaceAction = {
   type: 'replace';
@@ -100,8 +100,8 @@ export type EditorActions =
   | MoveOuterFocusedDownAction
   | MoveOuterFocusedUpAction;
 
-export const editorReducer = (state: RootPanelProps, { payload, type }: EditorActions) => {
-  let newState: RootPanelProps;
+export const editorReducer = (state: RootPanelProps, { payload, type }: EditorActions): RootPanelProps => {
+  let newState: RootPanelProps | null = null;
   switch (type) {
     case 'replace': {
       newState = replacePanel(state, payload.at, payload.with);
@@ -113,11 +113,16 @@ export const editorReducer = (state: RootPanelProps, { payload, type }: EditorAc
     }
     case 'delete': {
       if ('selection' in payload) {
-        if (!state.outerFocusedNode || !state.outerFocusedRange) return state;
-        newState = deleteRange(state, state.outerFocusedNode, state.outerFocusedRange);
+        if (state.outerFocusedNode === null || state.outerFocusedRange === null) return state;
+        newState = outerFocusPrevious(state, 'replace');
+        newState = deleteRange(newState, state.outerFocusedNode, state.outerFocusedRange);
       } else {
-        newState = deletePanel(state, payload.at);
+        if (payload.at.join('') === state.focusedNode?.join('')) {
+          newState = focusPrevious(state, true);
+        }
+        newState = deletePanel(newState ?? state, payload.at);
       }
+
       break;
     }
     case 'focus-next': {
@@ -157,6 +162,20 @@ export const editorReducer = (state: RootPanelProps, { payload, type }: EditorAc
   // If there are no children add a ControlPanel to the root
   if (newState.children?.length === 0) {
     newState.children = [ControlPanel.empty()];
+    newState = focus(newState, [0], true);
   }
   return newState;
+};
+
+export const getReferencedInSelection = (state: RootPanelProps): PanelProps[] => {
+  if (state.outerFocusedNode !== null && state.outerFocusedRange !== null) {
+    getNodesInRange(state, state.outerFocusedNode, state.outerFocusedRange);
+  } else if (state.focusedNode !== null) {
+    const node = getNode(state, state.focusedNode);
+    if (node !== null) {
+      return [node];
+    }
+    return [];
+  }
+  return [];
 };

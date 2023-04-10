@@ -21,7 +21,9 @@ export const getPreviousNode = (root: RootPanelProps, path: number[] | null | un
 };
 
 export const getNode = (root: RootPanelProps, path: number[] | null | undefined): PanelProps | null => {
-  if (!path) return null;
+  if (!path) {
+    return null;
+  }
   let stateIterator: PanelProps = root;
   for (const key of path) {
     if (!stateIterator.children) {
@@ -63,14 +65,7 @@ export const updateChildren = (
   const newState = { ...editorState };
   let stateIterator: PanelProps | RootPanelProps = newState;
 
-  if (path.length === 0) {
-    if (!stateIterator.children) stateIterator.children = [];
-    else stateIterator.children = [...stateIterator.children];
-    action(stateIterator.children);
-    return newState;
-  }
-
-  for (let [index, key] of path.entries()) {
+  for (let key of path) {
     // Create children if they do not already exist
     if (!stateIterator.children) {
       stateIterator.children = [];
@@ -82,16 +77,15 @@ export const updateChildren = (
       key = stateIterator.children.length;
     }
 
-    // We are at the end of the chain, therefore we can set the new data
-    const isLast = index === path.length - 1;
+    // We are not at the end of the chain, therefore we need to go deeper
     stateIterator.children = [...stateIterator.children];
-    if (isLast) {
-      action(stateIterator.children);
-    } else {
-      // We are not at the end of the chain, therefore we need to go deeper
-      stateIterator = { ...stateIterator.children[key] };
-    }
+    stateIterator.children[key] = { ...stateIterator.children[key] };
+    stateIterator = stateIterator.children[key];
   }
+  if (!stateIterator.children) stateIterator.children = [];
+  else stateIterator.children = [...stateIterator.children];
+  action(stateIterator.children);
+
   return newState;
 };
 
@@ -160,7 +154,6 @@ export const getPanelRange = (root: RootPanelProps, origin: number[], range: num
 
   // We are only concerned with the nodes which are on the same level as the first node, as the other ones are
   // children of these sameLevelNodes
-
   return sameLevelNodes.map((node) => [node, getNode(root, node)!]);
 };
 

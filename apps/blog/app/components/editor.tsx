@@ -5,7 +5,7 @@ export const Editor = () => {
   return (
     <PanelProvider>
       <RootEditorContextProvider>
-        <RootEditorOutlet mode={'edit'} />
+        <RootEditorOutlet />
       </RootEditorContextProvider>
     </PanelProvider>
   );

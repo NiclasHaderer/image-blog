@@ -6,12 +6,11 @@ import { Slot } from '../common/slot';
 import { getNode, getNodesInRange } from './update/utils';
 
 export interface PanelProps<T = unknown> {
-  name: string;
+  id: string;
   children?: PanelProps[];
   data: T;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface RootPanelProps extends PanelProps {
   focusedNode: number[] | null;
   forceFocus: boolean;
@@ -29,7 +28,7 @@ const _RootEditorContext = createContext({
 export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [editorState, setEditorState] = useReducer(editorReducer, {
     children: [ControlPanel.empty()],
-    name: 'root',
+    id: 'root',
     data: {},
     focusedNode: [0],
     outerFocusedNode: null,
@@ -49,9 +48,9 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
   );
 };
 
-export const RootEditorOutlet: FC<{ mode: 'view' | 'edit' }> = ({ mode }) => {
+export const RootEditorOutlet: FC = () => {
   const rootContext = useContext(_RootEditorContext);
-  return <EditorChildren mode={mode}>{rootContext.data}</EditorChildren>;
+  return <EditorChildren>{rootContext.data}</EditorChildren>;
 };
 
 const UnsetChildContext = Symbol('unset-child-context');
@@ -59,21 +58,17 @@ const _ChildContext = createContext({
   index: UnsetChildContext as unknown as number[],
 });
 
-const PanelRenderer: FC<{ panel: PanelProps; mode: 'view' | 'edit' }> = ({ panel, mode }) => {
+const PanelRenderer: FC<{ panel: PanelProps }> = ({ panel }) => {
   const panels = usePanels();
   const Panel = panels.find((p) => p.canHandle(panel));
   if (!Panel) {
-    return <>Unknown component {panel.name}</>;
+    return <>Unknown component {panel.id}</>;
   }
 
-  if (mode === 'view') {
-    return <Panel.View {...panel} />;
-  } else {
-    return <Panel.Edit {...panel} />;
-  }
+  return <Panel.Render {...panel} />;
 };
 
-export const EditorChildren: FC<{ children: PanelProps; mode: 'view' | 'edit' }> = ({ children, mode }) => {
+export const EditorChildren: FC<{ children: PanelProps }> = ({ children }) => {
   const childContext = useContext(_ChildContext);
   const contextToUse = (childContext.index as unknown) === UnsetChildContext ? { index: [] } : childContext;
 
@@ -81,19 +76,26 @@ export const EditorChildren: FC<{ children: PanelProps; mode: 'view' | 'edit' }>
     <>
       {children.children?.map((child, index) => {
         return (
-          <_ChildContext.Provider
-            key={index}
-            value={{
-              index: [...contextToUse.index, index],
-            }}
-          >
-            <Slot>
-              <PanelRenderer panel={child} mode={mode} />
-            </Slot>
-          </_ChildContext.Provider>
+          <EditorChild key={index} index={[...contextToUse.index, index]}>
+            {child}
+          </EditorChild>
         );
       })}
     </>
+  );
+};
+
+export const EditorChild: FC<{ index: number[]; children: PanelProps }> = ({ index, children }) => {
+  return (
+    <_ChildContext.Provider
+      value={{
+        index,
+      }}
+    >
+      <Slot>
+        <PanelRenderer panel={children} />
+      </Slot>
+    </_ChildContext.Provider>
   );
 };
 
@@ -117,7 +119,10 @@ export const usePanelProps = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
   const node = getNode(rootContext, index);
-  if (!node) throw new Error('No node found for index');
+  if (!node) {
+    console.log('No node found for index', index, rootContext);
+    throw new Error('No node found for index');
+  }
 
   return node;
 };
