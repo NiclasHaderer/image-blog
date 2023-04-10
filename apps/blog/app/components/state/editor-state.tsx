@@ -19,7 +19,7 @@ export interface RootPanelProps extends PanelProps {
 }
 
 const _RootEditorContext = createContext({
-  update: (newData: EditorActions): void => {
+  update: (_: EditorActions): void => {
     throw new Error('Do not use the update function of the RootEditorContext outside of the RootEditorContextProvider');
   },
   data: {} as RootPanelProps,

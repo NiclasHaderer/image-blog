@@ -10,7 +10,6 @@ import {
 import { ControlPanel } from '../panels/control-panel';
 import c from './slot.module.scss';
 import { usePageFocus } from '../../hooks/page-focus';
-import { useShortcut } from '../keyboard-event';
 
 export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
   const slotRef = useRef<HTMLDivElement>(null);
@@ -46,6 +45,11 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
       data-is-slot={true}
       data-path={path.join('.')}
       tabIndex={0}
+      onClick={() => {
+        if (!capabilities.canBeInnerFocused) {
+          dispatch('outer-focus', { at: path });
+        }
+      }}
       className={`${c.slot} ${isOuterFocused ? 'bg-secondary' : ''}`}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
@@ -56,7 +60,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
         // Check if the origin of the evnet is the slot, otherwise discard because another slot will handle it
         if (e.target !== slotRef.current) return;
 
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && capabilities.canBeInnerFocused) {
           dispatch('focus', { force: true, at: path });
         } else if (e.key === 'ArrowUp') {
           if (e.shiftKey && e.altKey) {

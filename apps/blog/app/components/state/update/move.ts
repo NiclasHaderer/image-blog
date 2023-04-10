@@ -11,7 +11,7 @@ export const moveOuterFocusedDown = (editorState: RootPanelProps): RootPanelProp
   const focusRange = editorState.outerFocusedRange ?? 0;
 
   // Find the panels which should be moved. This will only return the panels which are at the top level of the move
-  // operation. The children will berefore be moved with the parent.
+  // operation. The children will before be moved with the parent.
   const panelsToMove = getPanelRange(editorState, outerFocused, focusRange);
   const panelPositions = panelsToMove.map(([path]) => path);
 
@@ -50,7 +50,7 @@ export const moveOuterFocusedUp = (editorState: RootPanelProps): RootPanelProps 
   const focusRange = editorState.outerFocusedRange ?? 0;
 
   // Find the panels which should be moved. This will only return the panels which are at the top level of the move
-  // operation. The children will berefore be moved with the parent.
+  // operation. The children will before be moved with the parent.
   const panelsToMove = getPanelRange(editorState, outerFocused, focusRange);
   const panelPositions = panelsToMove.map(([path]) => path);
 

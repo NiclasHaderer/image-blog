@@ -3,8 +3,6 @@ import { EditorChild, EditorChildren, PanelProps, usePanelIndex } from '../state
 import { ControlPanel } from './control-panel';
 import { ColumnIcon } from '../common/icons';
 import * as fuzzysort from 'fuzzysort';
-import { types } from 'sass';
-import Number = types.Number;
 
 type PanelData = {
   lWidth: string;
@@ -30,7 +28,7 @@ export const ColumnPanelOutlet: EditorPanel<ColumnPanelOutletProps> = {
   },
   Name: () => null,
   distance: () => -Infinity,
-  Icon: (props: { size: number | string }) => null,
+  Icon: () => null,
   canHandle(type: PanelProps): boolean {
     return type.id === this.id;
   },

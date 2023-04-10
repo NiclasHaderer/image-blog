@@ -158,8 +158,8 @@ export const editorReducer = (state: RootPanelProps, { payload, type }: EditorAc
       break;
     }
   }
-
   // If there are no children add a ControlPanel to the root
+  // noinspection JSObjectNullOrUndefined
   if (newState.children?.length === 0) {
     newState.children = [ControlPanel.empty()];
     newState = focus(newState, [0], true);
