@@ -1,10 +1,10 @@
 import c from './control-node.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
-import { useFocusTrap, useTabModifier } from '../../hooks/tap-focus';
+import { useFocusTrap, useTabModifier } from '../hooks/tap-focus';
 import { EditorNode } from './editor-node';
 import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
 import { useNodeHandlersQuery } from './nodes';
-import { useGlobalEvent } from '../../hooks/global-events';
+import { useGlobalEvent } from '../hooks/global-events';
 
 export type ControlNodeProps = NodeProps;
 

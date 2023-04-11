@@ -8,7 +8,7 @@ import {
   useUpdateEditor,
 } from '../state/editor-state';
 import c from './slot.module.scss';
-import { usePageFocus } from '../../hooks/page-focus';
+import { usePageFocus } from '../hooks/page-focus';
 import { ControlNode } from '../nodes/control-node';
 
 export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
