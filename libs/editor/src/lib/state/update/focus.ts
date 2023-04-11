@@ -12,10 +12,7 @@ export const outerFocus = (state: RootNodeProps, path: number[]): RootNodeProps 
 };
 
 export const outerFocusNext = (state: RootNodeProps, mode: 'add' | 'replace'): RootNodeProps => {
-  if (!state.outerFocusedNode) {
-    console.warn("No outer focused node, can't focus previous");
-    return state;
-  }
+  if (!state.outerFocusedNode) return state;
 
   const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange + 1 : 1;
   if (mode === 'add') {
@@ -39,10 +36,7 @@ export const outerFocusNext = (state: RootNodeProps, mode: 'add' | 'replace'): R
 };
 
 export const outerFocusPrevious = (state: RootNodeProps, mode: 'add' | 'replace'): RootNodeProps => {
-  if (!state.outerFocusedNode) {
-    console.warn("No outer focused node, can't focus previous");
-    return state;
-  }
+  if (!state.outerFocusedNode) return state;
 
   const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange - 1 : -1;
   if (mode === 'add') {
@@ -77,7 +71,7 @@ export const focus = (state: RootNodeProps, path: number[], force: boolean): Roo
 
 export const focusPrevious = (state: RootNodeProps, force: boolean): RootNodeProps => {
   const reference = state.focusedNode || state.outerFocusedNode;
-  const previousNode = getPreviousNode(state, reference);
+  const previousNode = getPreviousNode(state, reference, true);
   if (!previousNode) return state;
   return {
     ...state,
@@ -90,7 +84,7 @@ export const focusPrevious = (state: RootNodeProps, force: boolean): RootNodePro
 
 export const focusNext = (state: RootNodeProps, force: boolean): RootNodeProps => {
   const reference = state.focusedNode || state.outerFocusedNode;
-  const nextNode = getNextNode(state, reference);
+  const nextNode = getNextNode(state, reference, true);
   if (!nextNode) return state;
   return {
     ...state,

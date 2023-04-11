@@ -21,7 +21,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
 
   // Find the next node of the last selected node. This will be the destination of the move operation.
   const lastPath = getLastPath(nodePositions)!;
-  const destination = getNextNode(editorState, lastPath);
+  const destination = getNextNode(editorState, lastPath, true);
   if (!destination) return editorState;
 
   // Add the nodes to the new position and delete the old ones
@@ -63,7 +63,7 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
 
   // Find the previous node of the first selected node. This will be the destination of the move operation.
   const lastPath = getFirstPath(nodePositions)!;
-  const destination = getPreviousNode(editorState, lastPath);
+  const destination = getPreviousNode(editorState, lastPath, true);
   if (!destination) return editorState;
 
   // Delete the nodes from the old position and then add them to the new position

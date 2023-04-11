@@ -4,7 +4,9 @@ import { updateChildren } from './utils';
 export const replaceNode = (state: RootNodeProps, path: number[], payload: NodeProps): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
   return updateChildren(state, parentPath, (children) => {
-    children[path.at(-1)!] = payload;
+    const position = path.at(-1)!;
+    if (!children[position].capabilities.canBeDeleted) return;
+    children[position] = payload;
   });
 };
 
@@ -27,6 +29,8 @@ export const addNode = (
 export const deleteNode = (state: RootNodeProps, path: number[]): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
   return updateChildren(state, parentPath, (children) => {
-    children.splice(path.at(-1)!, 1);
+    const position = path.at(-1)!;
+    if (!children[position].capabilities.canBeDeleted) return;
+    children.splice(position, 1);
   });
 };

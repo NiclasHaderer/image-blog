@@ -2,7 +2,7 @@ import { createContext, FC, ReactNode, useContext, useReducer } from 'react';
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { useNodeHandlers } from '../nodes/nodes';
 import { Slot } from '../common/slot';
-import { getNode, getNodesInRange } from './update/utils';
+import { getNodeProps, getNodesInRange } from './update/utils';
 import { ControlNode } from '../nodes/control-node';
 import { NodeCapabilities } from '../nodes/editor-node';
 
@@ -125,7 +125,7 @@ export const useUpdateEditor = () => {
 export const useNode = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
-  const node = getNode(rootContext, index);
+  const node = getNodeProps(rootContext, index);
   if (!node) {
     console.log('No node found for index', index, rootContext);
     throw new Error('No node found for index');
