@@ -11,8 +11,12 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
   const focusRange = editorState.outerFocusedRange ?? 0;
 
   // Find the nodes which should be moved. This will only return the nodes which are at the top level of the move
-  // operation. The children will berefore be moved with the parent.
-  const nodesToMove = getNodeRange(editorState, outerFocused, focusRange);
+  // operation. The children will before be moved with the parent.
+  let nodesToMove = getNodeRange(editorState, outerFocused, focusRange);
+
+  // Filter out nodes that can't be deleted on their own
+  nodesToMove = nodesToMove.filter(([, props]) => props.capabilities.canBeDeleted);
+
   const nodePositions = nodesToMove.map(([path]) => path);
 
   // Find the next node of the last selected node. This will be the destination of the move operation.
@@ -51,7 +55,10 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
 
   // Find the nodes which should be moved. This will only return the nodes which are at the top level of the move
   // operation. The children will berefore be moved with the parent.
-  const nodesToMove = getNodeRange(editorState, outerFocused, focusRange);
+  let nodesToMove = getNodeRange(editorState, outerFocused, focusRange);
+  // Filter out nodes that can't be deleted on their own
+  nodesToMove = nodesToMove.filter(([, props]) => props.capabilities.canBeDeleted);
+
   const nodePositions = nodesToMove.map(([path]) => path);
 
   // Find the previous node of the first selected node. This will be the destination of the move operation.

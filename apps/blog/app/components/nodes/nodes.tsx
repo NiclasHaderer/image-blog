@@ -6,18 +6,18 @@ import { DividerNode } from './divider-node';
 import { NodeProps } from '../state/editor-state';
 import { AbstractNode, ColumnNodeOutlet } from './abstract-node';
 
-const NodeContext = createContext({
+const NodeHandlerContext = createContext({
   nodes: [],
 } as {
   nodes: EditorNode<NodeProps>[];
 });
 
-export const useNodes = () => {
-  return useContext(NodeContext).nodes;
+export const useNodeHandlers = () => {
+  return useContext(NodeHandlerContext).nodes;
 };
 
-export const useNodeQuery = (query: string) => {
-  return useNodes()
+export const useNodeHandlersQuery = (query: string) => {
+  return useNodeHandlers()
     .map((p) => [p, p.distance(query)] as [EditorNode<NodeProps>, number])
     .filter(([, distance]) => distance > -Infinity)
     .sort(([, a], [, b]) => a - b)
@@ -26,12 +26,12 @@ export const useNodeQuery = (query: string) => {
 
 export const NodeProvider: FC<{ children: ReactElement }> = ({ children }) => {
   return (
-    <NodeContext.Provider
+    <NodeHandlerContext.Provider
       value={{
         nodes: [new ControlNode(), new ImageNode(), new DividerNode(), new AbstractNode(), new ColumnNodeOutlet()],
       }}
     >
       {children}
-    </NodeContext.Provider>
+    </NodeHandlerContext.Provider>
   );
 };

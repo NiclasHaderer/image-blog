@@ -1,14 +1,16 @@
 import { createContext, FC, ReactNode, useContext, useReducer } from 'react';
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
-import { useNodes } from '../nodes/nodes';
+import { useNodeHandlers } from '../nodes/nodes';
 import { Slot } from '../common/slot';
 import { getNode, getNodesInRange } from './update/utils';
 import { ControlNode } from '../nodes/control-node';
+import { NodeCapabilities } from '../nodes/editor-node';
 
 export interface NodeProps<T = any> {
   id: string;
   children?: NodeProps[];
   data: T;
+  capabilities: NodeCapabilities;
 }
 
 export interface RootNodeProps extends NodeProps {
@@ -34,6 +36,11 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
     outerFocusedNode: null,
     outerFocusedRange: null,
     forceFocus: false,
+    capabilities: {
+      canBeDeleted: false,
+      structural: true,
+      canBeInnerFocused: false,
+    },
   } satisfies RootNodeProps);
 
   return (
@@ -59,7 +66,7 @@ const _ChildContext = createContext({
 });
 
 const NodeRenderer: FC<{ node: NodeProps }> = ({ node }) => {
-  const nodes = useNodes();
+  const nodes = useNodeHandlers();
   const Node = nodes.find((n) => n.canHandle(node));
   if (!Node) {
     return <>Unknown component {node.id}</>;
@@ -115,7 +122,7 @@ export const useUpdateEditor = () => {
   };
 };
 
-export const useNodeProps = () => {
+export const useNode = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
   const node = getNode(rootContext, index);
@@ -127,9 +134,14 @@ export const useNodeProps = () => {
   return node;
 };
 
-export const useNode = () => {
-  const nodeProps = useNodeProps();
-  const nodes = useNodes();
+export const useNodeData = () => {
+  const node = useNode();
+  return node.data;
+};
+
+export const useNodeHandler = () => {
+  const nodeProps = useNode();
+  const nodes = useNodeHandlers();
   const node = nodes.find((p) => p.canHandle(nodeProps));
   if (!node) {
     throw new Error(`No node for nodeProps with id ${nodeProps.id}`);
@@ -142,7 +154,7 @@ export const useNodeCapabilities = () => {
   return node.capabilities;
 };
 
-export const useIsFocused = () => {
+export const useIsNodeInnerFocused = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
   const isFocused = rootContext.focusedNode?.join('.') === index.join('.');
@@ -152,7 +164,7 @@ export const useIsFocused = () => {
   };
 };
 
-export const useIsOuterFocused = () => {
+export const useIsNodeOuterFocused = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
 

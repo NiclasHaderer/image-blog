@@ -1,8 +1,8 @@
 import { AddIcon } from './icons';
 import { FC, ReactNode, useEffect, useRef } from 'react';
 import {
-  useIsFocused,
-  useIsOuterFocused,
+  useIsNodeInnerFocused,
+  useIsNodeOuterFocused,
   useNodeCapabilities,
   useNodeIndex,
   useUpdateEditor,
@@ -16,10 +16,10 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
 
   const dispatch = useUpdateEditor();
   const capabilities = useNodeCapabilities();
-  const isOuterFocused = useIsOuterFocused();
-  const nodeFocus = useIsFocused();
-  const currentFocus = usePageFocus();
+  const isOuterFocused = useIsNodeOuterFocused();
+  const nodeFocus = useIsNodeInnerFocused();
   const path = useNodeIndex();
+  const currentFocus = usePageFocus();
 
   useEffect(() => {
     if (!isOuterFocused || !slotRef.current) return;

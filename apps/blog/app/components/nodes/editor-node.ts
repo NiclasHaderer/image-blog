@@ -8,11 +8,7 @@ export interface NodeCapabilities {
 }
 
 export abstract class EditorNode<T extends NodeProps> {
-  protected constructor(
-    public readonly id: string,
-    public readonly capabilities: Readonly<NodeCapabilities>,
-    public readonly searchTherms: string[]
-  ) {}
+  protected constructor(public readonly id: string, public readonly searchTherms: string[]) {}
 
   abstract Render(props: T): JSX.Element | null;
 

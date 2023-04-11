@@ -2,23 +2,15 @@ import c from './control-node.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap, useTabModifier } from '../../hooks/tap-focus';
 import { EditorNode } from './editor-node';
-import { NodeProps, useIsFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
-import { useNodeQuery } from './nodes';
+import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
+import { useNodeHandlersQuery } from './nodes';
 import { useGlobalEvent } from '../../hooks/global-events';
 
 export type ControlNodeProps = NodeProps;
 
 export class ControlNode extends EditorNode<ControlNodeProps> {
   constructor() {
-    super(
-      'control-node',
-      {
-        canBeDeleted: true,
-        canBeInnerFocused: true,
-        structural: false,
-      },
-      []
-    );
+    super('control-node', []);
   }
 
   Name = () => 'Controls';
@@ -32,7 +24,7 @@ export class ControlNode extends EditorNode<ControlNodeProps> {
     const [isClosed, setIsClosed] = useState(true);
     const dispatch = useUpdateEditor();
     const path = useNodeIndex();
-    const { isFocused, force } = useIsFocused();
+    const { isFocused, force } = useIsNodeInnerFocused();
     useEffect(() => {
       if (isFocused && force) {
         controlInput.current?.focus();
@@ -105,6 +97,11 @@ export class ControlNode extends EditorNode<ControlNodeProps> {
     return {
       id: 'control-node',
       data: undefined,
+      capabilities: {
+        canBeDeleted: true,
+        canBeInnerFocused: true,
+        structural: false,
+      },
     };
   }
 }
@@ -112,7 +109,7 @@ export class ControlNode extends EditorNode<ControlNodeProps> {
 const ControlOutlet: FC<{ search: string }> = ({ search }) => {
   const dispatch = useUpdateEditor();
   const path = useNodeIndex();
-  const nodes = useNodeQuery(search);
+  const nodes = useNodeHandlersQuery(search);
   return (
     <div className={c.controlNodeOutlet}>
       {nodes.map((p) => {

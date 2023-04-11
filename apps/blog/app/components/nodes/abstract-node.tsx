@@ -7,15 +7,7 @@ type ColumnNodeOutletProps = NodeProps;
 
 export class ColumnNodeOutlet extends EditorNode<ColumnNodeOutletProps> {
   constructor() {
-    super(
-      'column-outlet',
-      {
-        canBeDeleted: false,
-        canBeInnerFocused: false,
-        structural: true,
-      },
-      []
-    );
+    super('column-outlet', []);
   }
 
   Render(props: ColumnNodeOutletProps): JSX.Element | null {
@@ -29,11 +21,16 @@ export class ColumnNodeOutlet extends EditorNode<ColumnNodeOutletProps> {
     return ColumnNodeOutlet.empty();
   }
 
-  public static empty() {
+  public static empty(): ColumnNodeOutletProps {
     return {
       id: 'column-outlet',
       children: [ControlNode.empty()],
       data: undefined,
+      capabilities: {
+        canBeDeleted: false,
+        canBeInnerFocused: false,
+        structural: true,
+      },
     };
   }
 }
@@ -47,15 +44,7 @@ interface ColumnNodeProps
 
 export class AbstractNode extends EditorNode<ColumnNodeProps> {
   constructor() {
-    super(
-      'column',
-      {
-        canBeDeleted: true,
-        canBeInnerFocused: true,
-        structural: false,
-      },
-      ['column', 'columns', 'two columns', 'two column node']
-    );
+    super('column', ['column', 'columns', 'two columns', 'two column node']);
   }
 
   Name = () => 'Column';
@@ -81,6 +70,11 @@ export class AbstractNode extends EditorNode<ColumnNodeProps> {
       children: [ColumnNodeOutlet.empty(), ColumnNodeOutlet.empty()],
       data: {
         lWidth: '50%',
+      },
+      capabilities: {
+        canBeDeleted: true,
+        canBeInnerFocused: true,
+        structural: false,
       },
     };
   }

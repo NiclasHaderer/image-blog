@@ -6,15 +6,7 @@ export type DividerNodeProps = NodeProps<undefined>;
 
 export class DividerNode extends EditorNode<DividerNodeProps> {
   constructor() {
-    super(
-      'divider',
-      {
-        canBeDeleted: true,
-        canBeInnerFocused: false,
-        structural: false,
-      },
-      ['divider', 'line', 'hr', 'horizontal rule', 'horizontal divider', 'horizontal line']
-    );
+    super('divider', ['divider', 'line', 'hr', 'horizontal rule', 'horizontal divider', 'horizontal line']);
   }
 
   Name() {
@@ -31,6 +23,11 @@ export class DividerNode extends EditorNode<DividerNodeProps> {
     return {
       id: this.id,
       data: undefined,
+      capabilities: {
+        canBeDeleted: true,
+        canBeInnerFocused: false,
+        structural: false,
+      },
     };
   }
 }
