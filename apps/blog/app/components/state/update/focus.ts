@@ -1,7 +1,7 @@
-import { RootPanelProps } from '../editor-state';
+import { RootNodeProps } from '../editor-state';
 import { getNextNode, getNodeOffsetBy, getPreviousNode } from './utils';
 
-export const outerFocus = (state: RootPanelProps, path: number[]): RootPanelProps => {
+export const outerFocus = (state: RootNodeProps, path: number[]): RootNodeProps => {
   return {
     ...state,
     outerFocusedNode: path,
@@ -11,7 +11,7 @@ export const outerFocus = (state: RootPanelProps, path: number[]): RootPanelProp
   };
 };
 
-export const outerFocusNext = (state: RootPanelProps, mode: 'add' | 'replace'): RootPanelProps => {
+export const outerFocusNext = (state: RootNodeProps, mode: 'add' | 'replace'): RootNodeProps => {
   if (!state.outerFocusedNode) {
     console.warn("No outer focused node, can't focus previous");
     return state;
@@ -38,7 +38,7 @@ export const outerFocusNext = (state: RootPanelProps, mode: 'add' | 'replace'): 
   }
 };
 
-export const outerFocusPrevious = (state: RootPanelProps, mode: 'add' | 'replace'): RootPanelProps => {
+export const outerFocusPrevious = (state: RootNodeProps, mode: 'add' | 'replace'): RootNodeProps => {
   if (!state.outerFocusedNode) {
     console.warn("No outer focused node, can't focus previous");
     return state;
@@ -65,7 +65,7 @@ export const outerFocusPrevious = (state: RootPanelProps, mode: 'add' | 'replace
   }
 };
 
-export const focus = (state: RootPanelProps, path: number[], force: boolean): RootPanelProps => {
+export const focus = (state: RootNodeProps, path: number[], force: boolean): RootNodeProps => {
   return {
     ...state,
     focusedNode: path,
@@ -75,7 +75,7 @@ export const focus = (state: RootPanelProps, path: number[], force: boolean): Ro
   };
 };
 
-export const focusPrevious = (state: RootPanelProps, force: boolean): RootPanelProps => {
+export const focusPrevious = (state: RootNodeProps, force: boolean): RootNodeProps => {
   const reference = state.focusedNode || state.outerFocusedNode;
   const previousNode = getPreviousNode(state, reference);
   if (!previousNode) return state;
@@ -88,7 +88,7 @@ export const focusPrevious = (state: RootPanelProps, force: boolean): RootPanelP
   };
 };
 
-export const focusNext = (state: RootPanelProps, force: boolean): RootPanelProps => {
+export const focusNext = (state: RootNodeProps, force: boolean): RootNodeProps => {
   const reference = state.focusedNode || state.outerFocusedNode;
   const nextNode = getNextNode(state, reference);
   if (!nextNode) return state;

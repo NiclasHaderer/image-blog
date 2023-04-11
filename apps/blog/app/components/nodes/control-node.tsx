@@ -1,31 +1,37 @@
-import c from './control-panel.module.scss';
+import c from './control-node.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap, useTabModifier } from '../../hooks/tap-focus';
-import { EditorPanel } from '../state/editor-panel';
-import { PanelProps, useIsFocused, usePanelIndex, useUpdateEditor } from '../state/editor-state';
-import { usePanelQuery } from '../state/panels';
+import { EditorNode } from './editor-node';
+import { NodeProps, useIsFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
+import { useNodeQuery } from './nodes';
 import { useGlobalEvent } from '../../hooks/global-events';
 
-export type ControlPanelProps = PanelProps;
+export type ControlNodeProps = NodeProps;
 
-export const ControlPanel: EditorPanel<ControlPanelProps> = {
-  id: 'control-panel',
-  capabilities: {
-    canBeDeleted: true,
-    canBeInnerFocused: true,
-    canBeMoved: true,
-    noControls: false,
-    standalone: true,
-  },
-  Name: () => 'Control Panel',
-  Icon: () => null,
-  Render: () => {
+export class ControlNode extends EditorNode<ControlNodeProps> {
+  constructor() {
+    super(
+      'control-node',
+      {
+        canBeDeleted: true,
+        canBeInnerFocused: true,
+        structural: false,
+      },
+      []
+    );
+  }
+
+  Name = () => 'Controls';
+
+  Icon = () => null;
+
+  Render = () => {
     const controlInput = useRef<HTMLInputElement>(null);
     const outerDiv = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState<string>();
     const [isClosed, setIsClosed] = useState(true);
     const dispatch = useUpdateEditor();
-    const path = usePanelIndex();
+    const path = useNodeIndex();
     const { isFocused, force } = useIsFocused();
     useEffect(() => {
       if (isFocused && force) {
@@ -51,7 +57,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
     const { focusPrevious, focusNext } = useTabModifier();
     return (
       <div
-        className={c.controlPanelWrapper}
+        className={c.controlNodeWrapper}
         ref={outerDiv}
         onKeyDown={(event) => {
           if (shouldShow()) {
@@ -62,7 +68,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
               event.preventDefault();
               focusNext();
             } else if (event.key === 'Escape') {
-              // Do not propagate, as we only want to close the panel
+              // Do not propagate, as we only want to close the node
               if (shouldShow()) event.stopPropagation();
               setIsClosed(true);
             }
@@ -77,7 +83,7 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
             if (e.key === 'Backspace' && !search) {
               dispatch('delete', { at: path });
             } else if (e.key === 'Enter') {
-              dispatch('add', { at: path, panel: ControlPanel.empty() });
+              dispatch('add', { at: path, node: ControlNode.empty() });
               dispatch('focus-next', { force: true });
             }
           }}
@@ -86,29 +92,30 @@ export const ControlPanel: EditorPanel<ControlPanelProps> = {
           onInput={(e) => setSearch(e.currentTarget.value)}
           className="w-full p-1 bg-transparent"
         ></input>
-        {shouldShow() && <PanelOutlet search={search ?? ''} />}
+        {shouldShow() && <ControlOutlet search={search ?? ''} />}
       </div>
     );
-  },
-  distance: () => -Infinity,
-  canHandle(type: PanelProps) {
-    return type.id === this.id;
-  },
-  empty(): ControlPanelProps {
+  };
+
+  empty(): ControlNodeProps {
+    return ControlNode.empty();
+  }
+
+  static empty(): ControlNodeProps {
     return {
-      id: this.id,
+      id: 'control-node',
       data: undefined,
     };
-  },
-};
+  }
+}
 
-const PanelOutlet: FC<{ search: string }> = ({ search }) => {
+const ControlOutlet: FC<{ search: string }> = ({ search }) => {
   const dispatch = useUpdateEditor();
-  const path = usePanelIndex();
-  const panels = usePanelQuery(search);
+  const path = useNodeIndex();
+  const nodes = useNodeQuery(search);
   return (
-    <div className={c.controlPanelOutlet}>
-      {panels.map((p) => {
+    <div className={c.controlNodeOutlet}>
+      {nodes.map((p) => {
         return (
           <button
             key={p.id}
@@ -125,7 +132,7 @@ const PanelOutlet: FC<{ search: string }> = ({ search }) => {
         );
       })}
 
-      {panels.length === 0 && <div className="p-s">No blocks found</div>}
+      {nodes.length === 0 && <div className="p-s">No blocks found</div>}
     </div>
   );
 };

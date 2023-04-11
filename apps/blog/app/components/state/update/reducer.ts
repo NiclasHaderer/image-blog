@@ -1,16 +1,16 @@
-import { PanelProps, RootPanelProps } from '../editor-state';
-import { ControlPanel } from '../../panels/control-panel';
+import { NodeProps, RootNodeProps } from '../editor-state';
+import { ControlNode } from '../../nodes/control-node';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
-import { addPanel, deletePanel, replacePanel } from './state';
+import { addNode, deleteNode, replaceNode } from './state';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
-import { deleteRange, getNode, getNodesInRange } from './utils';
+import { deleteRange } from './utils';
 
 type ReplaceAction = {
   type: 'replace';
   origin: number[];
   payload: {
     at: number[];
-    with: PanelProps;
+    with: NodeProps;
   };
 };
 
@@ -19,7 +19,7 @@ type CreateAction = {
   origin: number[];
   payload: {
     at: number[];
-    panel: PanelProps;
+    node: NodeProps;
   };
 };
 
@@ -100,15 +100,15 @@ export type EditorActions =
   | MoveOuterFocusedDownAction
   | MoveOuterFocusedUpAction;
 
-export const editorReducer = (state: RootPanelProps, { payload, type }: EditorActions): RootPanelProps => {
-  let newState: RootPanelProps | null = null;
+export const editorReducer = (state: RootNodeProps, { payload, type }: EditorActions): RootNodeProps => {
+  let newState: RootNodeProps | null = null;
   switch (type) {
     case 'replace': {
-      newState = replacePanel(state, payload.at, payload.with);
+      newState = replaceNode(state, payload.at, payload.with);
       break;
     }
     case 'add': {
-      newState = addPanel(state, payload.at, 'after', payload.panel);
+      newState = addNode(state, payload.at, 'after', payload.node);
       break;
     }
     case 'delete': {
@@ -120,7 +120,7 @@ export const editorReducer = (state: RootPanelProps, { payload, type }: EditorAc
         if (payload.at.join('') === state.focusedNode?.join('')) {
           newState = focusPrevious(state, true);
         }
-        newState = deletePanel(newState ?? state, payload.at);
+        newState = deleteNode(newState ?? state, payload.at);
       }
 
       break;
@@ -158,24 +158,11 @@ export const editorReducer = (state: RootPanelProps, { payload, type }: EditorAc
       break;
     }
   }
-  // If there are no children add a ControlPanel to the root
-  // noinspection JSObjectNullOrUndefined
+
+  // If there are no children add a ControlNode to the root
   if (newState.children?.length === 0) {
-    newState.children = [ControlPanel.empty()];
+    newState.children = [ControlNode.empty()];
     newState = focus(newState, [0], true);
   }
   return newState;
-};
-
-export const getReferencedInSelection = (state: RootPanelProps): PanelProps[] => {
-  if (state.outerFocusedNode !== null && state.outerFocusedRange !== null) {
-    getNodesInRange(state, state.outerFocusedNode, state.outerFocusedRange);
-  } else if (state.focusedNode !== null) {
-    const node = getNode(state, state.focusedNode);
-    if (node !== null) {
-      return [node];
-    }
-    return [];
-  }
-  return [];
 };

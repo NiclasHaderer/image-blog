@@ -1,19 +1,19 @@
-import { PanelProps, RootPanelProps } from '../editor-state';
+import { NodeProps, RootNodeProps } from '../editor-state';
 import { updateChildren } from './utils';
 
-export const replacePanel = (state: RootPanelProps, path: number[], payload: PanelProps): RootPanelProps => {
+export const replaceNode = (state: RootNodeProps, path: number[], payload: NodeProps): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
   return updateChildren(state, parentPath, (children) => {
     children[path.at(-1)!] = payload;
   });
 };
 
-export const addPanel = (
-  state: RootPanelProps,
+export const addNode = (
+  state: RootNodeProps,
   path: number[],
   insertMode: 'before' | 'after',
-  ...payload: PanelProps[]
-): RootPanelProps => {
+  ...payload: NodeProps[]
+): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
   return updateChildren(state, parentPath, (children) => {
     if (insertMode === 'before') {
@@ -24,7 +24,7 @@ export const addPanel = (
   });
 };
 
-export const deletePanel = (state: RootPanelProps, path: number[]): RootPanelProps => {
+export const deleteNode = (state: RootNodeProps, path: number[]): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
   return updateChildren(state, parentPath, (children) => {
     children.splice(path.at(-1)!, 1);

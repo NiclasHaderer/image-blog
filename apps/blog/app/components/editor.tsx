@@ -1,12 +1,12 @@
-import { PanelProvider } from './state/panels';
+import { NodeProvider } from './nodes/nodes';
 import { RootEditorContextProvider, RootEditorOutlet } from './state/editor-state';
 
 export const Editor = () => {
   return (
-    <PanelProvider>
+    <NodeProvider>
       <RootEditorContextProvider>
         <RootEditorOutlet />
       </RootEditorContextProvider>
-    </PanelProvider>
+    </NodeProvider>
   );
 };

@@ -3,23 +3,23 @@ import { FC, ReactNode, useEffect, useRef } from 'react';
 import {
   useIsFocused,
   useIsOuterFocused,
-  usePanelCapabilities,
-  usePanelIndex,
+  useNodeCapabilities,
+  useNodeIndex,
   useUpdateEditor,
 } from '../state/editor-state';
-import { ControlPanel } from '../panels/control-panel';
 import c from './slot.module.scss';
 import { usePageFocus } from '../../hooks/page-focus';
+import { ControlNode } from '../nodes/control-node';
 
 export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
   const slotRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useUpdateEditor();
-  const capabilities = usePanelCapabilities();
+  const capabilities = useNodeCapabilities();
   const isOuterFocused = useIsOuterFocused();
-  const panelFocus = useIsFocused();
+  const nodeFocus = useIsFocused();
   const currentFocus = usePageFocus();
-  const path = usePanelIndex();
+  const path = useNodeIndex();
 
   useEffect(() => {
     if (!isOuterFocused || !slotRef.current) return;
@@ -29,10 +29,10 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const isFocusInside = !!slotRef.current?.contains(document.activeElement!) && slotRef.current !== currentFocus;
 
-    // ONLY if the focus is inside the slot and the panel is not focused, focus the panel.
-    // ONLY focus if the closest panel to the focus is the current panel
-    const isClosestPanel = currentFocus?.closest(`[data-is-slot="true"]`) === slotRef.current;
-    if (isFocusInside && !panelFocus.isFocused && isClosestPanel) {
+    // ONLY if the focus is inside the slot and the node is not focused, focus the node.
+    // ONLY focus if the closest node to the focus is the current node
+    const isClosestNode = currentFocus?.closest(`[data-is-slot="true"]`) === slotRef.current;
+    if (isFocusInside && !nodeFocus.isFocused && isClosestNode) {
       dispatch('focus', { force: false, at: path });
     }
     // DO NOT ADD ANYTHING ELSE, AS THIS WILL OTHERWISE CAUSE AN INFINITE LOOP
@@ -45,11 +45,6 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
       data-is-slot={true}
       data-path={path.join('.')}
       tabIndex={0}
-      onClick={() => {
-        if (!capabilities.canBeInnerFocused) {
-          dispatch('outer-focus', { at: path });
-        }
-      }}
       className={`${c.slot} ${isOuterFocused ? 'bg-secondary' : ''}`}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
@@ -60,7 +55,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
         // Check if the origin of the evnet is the slot, otherwise discard because another slot will handle it
         if (e.target !== slotRef.current) return;
 
-        if (e.key === 'Enter' && capabilities.canBeInnerFocused) {
+        if (e.key === 'Enter') {
           dispatch('focus', { force: true, at: path });
         } else if (e.key === 'ArrowUp') {
           if (e.shiftKey && e.altKey) {
@@ -83,12 +78,12 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }}
     >
-      {capabilities.noControls ? null : (
+      {capabilities.structural ? null : (
         <button
           onClick={() => {
             dispatch('add', {
               at: path,
-              panel: ControlPanel.empty(),
+              node: ControlNode.empty(),
             });
             dispatch('focus-next', { force: true });
           }}

@@ -1,6 +1,6 @@
-import { PanelProps, RootPanelProps } from '../editor-state';
+import { NodeProps, RootNodeProps } from '../editor-state';
 
-export const getPreviousNode = (root: RootPanelProps, path: number[] | null | undefined): number[] | null => {
+export const getPreviousNode = (root: RootNodeProps, path: number[] | null | undefined): number[] | null => {
   if (!path) return null;
   const parentPath = path.slice(0, path.length - 1);
   const parent = getNode(root, parentPath);
@@ -20,11 +20,11 @@ export const getPreviousNode = (root: RootPanelProps, path: number[] | null | un
   }
 };
 
-export const getNode = (root: RootPanelProps, path: number[] | null | undefined): PanelProps | null => {
+export const getNode = (root: RootNodeProps, path: number[] | null | undefined): NodeProps | null => {
   if (!path) {
     return null;
   }
-  let stateIterator: PanelProps = root;
+  let stateIterator: NodeProps = root;
   for (const key of path) {
     if (!stateIterator.children) {
       console.warn('No children found for path', path);
@@ -35,7 +35,7 @@ export const getNode = (root: RootPanelProps, path: number[] | null | undefined)
   return stateIterator;
 };
 
-export const getNextNode = (root: RootPanelProps, path: number[] | null | undefined): number[] | null => {
+export const getNextNode = (root: RootNodeProps, path: number[] | null | undefined): number[] | null => {
   if (!path) return null;
   const parentPath = path.slice(0, path.length - 1);
   const parent = getNode(root, parentPath);
@@ -58,12 +58,12 @@ export const getNextNode = (root: RootPanelProps, path: number[] | null | undefi
 };
 
 export const updateChildren = (
-  editorState: RootPanelProps,
+  editorState: RootNodeProps,
   path: number[],
-  action: (children: PanelProps[]) => void
-): RootPanelProps => {
+  action: (children: NodeProps[]) => void
+): RootNodeProps => {
   const newState = { ...editorState };
-  let stateIterator: PanelProps | RootPanelProps = newState;
+  let stateIterator: NodeProps | RootNodeProps = newState;
 
   for (let key of path) {
     // Create children if they do not already exist
@@ -113,7 +113,7 @@ export const getFirstPath = (paths: number[][] | null | undefined): number[] | n
   return sorted.at(0)! ?? null;
 };
 
-export const getNodesInRange = (root: RootPanelProps, origin: number[], range: number): number[][] => {
+export const getNodesInRange = (root: RootNodeProps, origin: number[], range: number): number[][] => {
   const nodes: number[][] = [origin];
   let currentPath: number[] | null = origin;
   while (currentPath && range !== 0) {
@@ -129,7 +129,7 @@ export const getNodesInRange = (root: RootPanelProps, origin: number[], range: n
   return nodes;
 };
 
-export const getNodeOffsetBy = (root: RootPanelProps, path: number[], offset: number): number[] | null => {
+export const getNodeOffsetBy = (root: RootNodeProps, path: number[], offset: number): number[] | null => {
   if (offset === 0) return path;
   while (offset !== 0) {
     if (offset < 0) {
@@ -143,7 +143,7 @@ export const getNodeOffsetBy = (root: RootPanelProps, path: number[], offset: nu
   return path;
 };
 
-export const getPanelRange = (root: RootPanelProps, origin: number[], range: number): [number[], PanelProps][] => {
+export const getNodeRange = (root: RootNodeProps, origin: number[], range: number): [number[], NodeProps][] => {
   const nodes = getNodesInRange(root, origin, range);
 
   // Get the node which is the furthest up in the tree
@@ -157,9 +157,9 @@ export const getPanelRange = (root: RootPanelProps, origin: number[], range: num
   return sameLevelNodes.map((node) => [node, getNode(root, node)!]);
 };
 
-export const deleteRange = (root: RootPanelProps, origin: number[], range: number): RootPanelProps => {
+export const deleteRange = (root: RootNodeProps, origin: number[], range: number): RootNodeProps => {
   // Get the nodes which should be removed
-  const nodes = getPanelRange(root, origin, range).map(([path]) => path);
+  const nodes = getNodeRange(root, origin, range).map(([path]) => path);
   if (nodes.length === 0) return root;
   const parentPath = nodes[0].slice(0, -1);
 

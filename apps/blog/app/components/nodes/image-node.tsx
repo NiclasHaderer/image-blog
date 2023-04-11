@@ -1,29 +1,34 @@
-import { EditorPanel } from '../state/editor-panel';
+import { EditorNode } from './editor-node';
 import { ImageIcon } from '../common/icons';
-import { PanelProps } from '../state/editor-state';
-import fuzzysort from 'fuzzysort';
+import { NodeProps, useNodeIndex } from '../state/editor-state';
 
-export type ImagePanelProps = PanelProps<{
+export type ImageNodeProps = NodeProps<{
   src: string;
   caption?: string;
   width?: string;
 }>;
 
-export const ImagePanel: EditorPanel<ImagePanelProps> = {
-  id: 'image',
-  capabilities: {
-    canBeDeleted: true,
-    canBeMoved: true,
-    canBeInnerFocused: true,
-    noControls: false,
-    standalone: true,
-  },
-  Name: () => 'Image',
-  Icon: ({ size }) => <ImageIcon style={{ width: size, height: size }} />,
-  Render: ({ data: { src, width, caption } }) => {
+export class ImageNode extends EditorNode<ImageNodeProps> {
+  constructor() {
+    super(
+      'image',
+      {
+        canBeDeleted: true,
+        canBeInnerFocused: true,
+        structural: false,
+      },
+      ['image', 'img', 'photo', 'picture']
+    );
+  }
+
+  Name = () => 'Image';
+  Icon = ({ size }: { size: string }) => <ImageIcon style={{ width: size, height: size }} />;
+  Render = <V extends ImageNodeProps>({ data: { src, width, caption } }: V) => {
+    const index = useNodeIndex();
     return (
       <div className="flex items-center flex-row justify-center">
         <img
+          data-index-something={index}
           style={{
             width: width || '100%',
           }}
@@ -36,14 +41,8 @@ export const ImagePanel: EditorPanel<ImagePanelProps> = {
         )}
       </div>
     );
-  },
-  canHandle(type: PanelProps): type is ImagePanelProps {
-    return type.id === this.id;
-  },
-  distance(query: string): number {
-    return fuzzysort.go(query, ['image', 'img', 'photo', 'picture'])[0]?.score ?? -Infinity;
-  },
-  empty(): ImagePanelProps {
+  };
+  empty(): ImageNodeProps {
     return {
       id: this.id,
       data: {
@@ -52,5 +51,5 @@ export const ImagePanel: EditorPanel<ImagePanelProps> = {
         width: '50%',
       },
     };
-  },
-};
+  }
+}

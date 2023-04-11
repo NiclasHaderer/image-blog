@@ -1,17 +1,17 @@
 import { createContext, FC, ReactNode, useContext, useReducer } from 'react';
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
-import { usePanels } from './panels';
-import { ControlPanel } from '../panels/control-panel';
+import { useNodes } from '../nodes/nodes';
 import { Slot } from '../common/slot';
 import { getNode, getNodesInRange } from './update/utils';
+import { ControlNode } from '../nodes/control-node';
 
-export interface PanelProps<T = unknown> {
+export interface NodeProps<T = any> {
   id: string;
-  children?: PanelProps[];
+  children?: NodeProps[];
   data: T;
 }
 
-export interface RootPanelProps extends PanelProps {
+export interface RootNodeProps extends NodeProps {
   focusedNode: number[] | null;
   forceFocus: boolean;
   outerFocusedNode: number[] | null;
@@ -22,24 +22,24 @@ const _RootEditorContext = createContext({
   update: (_: EditorActions): void => {
     throw new Error('Do not use the update function of the RootEditorContext outside of the RootEditorContextProvider');
   },
-  data: {} as RootPanelProps,
+  data: {} as RootNodeProps,
 });
 
 export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [editorState, setEditorState] = useReducer(editorReducer, {
-    children: [ControlPanel.empty()],
+    children: [ControlNode.empty()],
     id: 'root',
     data: {},
     focusedNode: [0],
     outerFocusedNode: null,
     outerFocusedRange: null,
     forceFocus: false,
-  } satisfies RootPanelProps);
+  } satisfies RootNodeProps);
 
   return (
     <_RootEditorContext.Provider
       value={{
-        data: editorState as RootPanelProps,
+        data: editorState as RootNodeProps,
         update: (newData) => setEditorState(newData),
       }}
     >
@@ -58,17 +58,17 @@ const _ChildContext = createContext({
   index: UnsetChildContext as unknown as number[],
 });
 
-const PanelRenderer: FC<{ panel: PanelProps }> = ({ panel }) => {
-  const panels = usePanels();
-  const Panel = panels.find((p) => p.canHandle(panel));
-  if (!Panel) {
-    return <>Unknown component {panel.id}</>;
+const NodeRenderer: FC<{ node: NodeProps }> = ({ node }) => {
+  const nodes = useNodes();
+  const Node = nodes.find((n) => n.canHandle(node));
+  if (!Node) {
+    return <>Unknown component {node.id}</>;
   }
 
-  return <Panel.Render {...panel} />;
+  return <Node.Render {...node} />;
 };
 
-export const EditorChildren: FC<{ children: PanelProps }> = ({ children }) => {
+export const EditorChildren: FC<{ children: NodeProps }> = ({ children }) => {
   const childContext = useContext(_ChildContext);
   const contextToUse = (childContext.index as unknown) === UnsetChildContext ? { index: [] } : childContext;
 
@@ -85,7 +85,7 @@ export const EditorChildren: FC<{ children: PanelProps }> = ({ children }) => {
   );
 };
 
-export const EditorChild: FC<{ index: number[]; children: PanelProps }> = ({ index, children }) => {
+export const EditorChild: FC<{ index: number[]; children: NodeProps }> = ({ index, children }) => {
   return (
     <_ChildContext.Provider
       value={{
@@ -93,7 +93,7 @@ export const EditorChild: FC<{ index: number[]; children: PanelProps }> = ({ ind
       }}
     >
       <Slot>
-        <PanelRenderer panel={children} />
+        <NodeRenderer node={children} />
       </Slot>
     </_ChildContext.Provider>
   );
@@ -115,7 +115,7 @@ export const useUpdateEditor = () => {
   };
 };
 
-export const usePanelProps = () => {
+export const useNodeProps = () => {
   const rootContext = useContext(_RootEditorContext).data;
   const { index } = useContext(_ChildContext);
   const node = getNode(rootContext, index);
@@ -127,19 +127,19 @@ export const usePanelProps = () => {
   return node;
 };
 
-export const usePanel = () => {
-  const panelProps = usePanelProps();
-  const panels = usePanels();
-  const panel = panels.find((p) => p.canHandle(panelProps));
-  if (!panel) {
-    throw new Error('No panel found for panelProps');
+export const useNode = () => {
+  const nodeProps = useNodeProps();
+  const nodes = useNodes();
+  const node = nodes.find((p) => p.canHandle(nodeProps));
+  if (!node) {
+    throw new Error(`No node for nodeProps with id ${nodeProps.id}`);
   }
-  return panel;
+  return node;
 };
 
-export const usePanelCapabilities = () => {
-  const panel = usePanel();
-  return panel.capabilities;
+export const useNodeCapabilities = () => {
+  const node = useNode();
+  return node.capabilities;
 };
 
 export const useIsFocused = () => {
@@ -163,7 +163,7 @@ export const useIsOuterFocused = () => {
   return focusedNodes.some((node) => node.join('.') === index.join('.'));
 };
 
-export const usePanelIndex = () => {
+export const useNodeIndex = () => {
   const { index } = useContext(_ChildContext);
   return index;
 };
