@@ -23,7 +23,7 @@ export const outerFocusNext = (state: RootNodeProps, mode: 'add' | 'replace'): R
       outerFocusedRange: nodeFocusRange,
     };
   } else {
-    const nextNode = getNodeOffsetBy(state, state.outerFocusedNode, nodeFocusRange);
+    const nextNode = getNodeOffsetBy(state, state.outerFocusedNode, nodeFocusRange, true);
     if (!nextNode) return state;
     return {
       ...state,
@@ -47,7 +47,7 @@ export const outerFocusPrevious = (state: RootNodeProps, mode: 'add' | 'replace'
       outerFocusedRange: nodeFocusRange,
     };
   } else {
-    const previousNode = getNodeOffsetBy(state, state.outerFocusedNode, nodeFocusRange);
+    const previousNode = getNodeOffsetBy(state, state.outerFocusedNode, nodeFocusRange, true);
     if (!previousNode) return state;
     return {
       ...state,

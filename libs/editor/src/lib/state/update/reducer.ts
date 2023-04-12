@@ -3,7 +3,7 @@ import { ControlNode } from '../../nodes/control-node';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
 import { addNode, deleteNode, replaceNode } from './state';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
-import { deleteRange } from './utils';
+import { deleteRange, getNodeProps } from './utils';
 
 type ReplaceAction = {
   type: 'replace';
@@ -157,6 +157,10 @@ export const editorReducer = (state: RootNodeProps, { payload, type }: EditorAct
       newState = moveOuterFocusedUp(state);
       break;
     }
+  }
+
+  if (type.includes('focus')) {
+    console.log(getNodeProps(newState, newState!.outerFocusedNode!));
   }
 
   // If there are no children add a ControlNode to the root

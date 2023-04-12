@@ -30,7 +30,8 @@ export const getPreviousNode = (
   const index = path.at(-1)!;
   // If it is not the last node in the parent, we can just go to the previous node
   if (index > 0) {
-    return returnIfStructuralOrElse(root, [...parentPath, index - 1], scipStructural, getPreviousNode);
+    const lastNode = getLastNode(root, [...parentPath, index - 1]);
+    return returnIfStructuralOrElse(root, lastNode, scipStructural, getPreviousNode);
   } else {
     // We are at the very top and there are no parents further up and no previous nodes
     if (parentPath.length === 0) {
@@ -41,6 +42,14 @@ export const getPreviousNode = (
     return returnIfStructuralOrElse(root, parentPath, scipStructural, getPreviousNode);
   }
 };
+
+const getLastNode = (root: RootNodeProps, path: number[] | null | undefined): number[] | null => {
+  if (!path) return null;
+  const node = getNodeProps(root, path);
+  if (!node || !node.children || node.children.length === 0) return path;
+  return getLastNode(root, [...path, node.children.length - 1]);
+};
+
 export const getNextNode = (
   root: RootNodeProps,
   path: number[] | null | undefined,
@@ -53,28 +62,56 @@ export const getNextNode = (
   if (!parent || !parent.children) return null;
 
   const index = path.at(-1)!;
-  // If it is not the last node in the parent, we can just go to the next node
-  if (index < parent.children.length - 1) {
+  const node = parent.children[index];
+  if (!node) return null;
+
+  // If the node has children, we need to go to the first child
+  if (node.children && node.children!.length > 0) {
+    return returnIfStructuralOrElse(root, [...path, 0], scipStructural, getNextNode);
+  } else if (index < parent.children.length - 1) {
+    // If it is not the last node in the parent, we can just go to the next node
     return returnIfStructuralOrElse(root, [...parentPath, index + 1], scipStructural, getNextNode);
   } else {
     // We are at the very top and there are no parents further up and no next nodes
     if (parentPath.length === 0) {
       return null;
     }
-    // We are in the last node of this parent, so we need to go to the next node in the parent
-    return getNextNode(root, parentPath, scipStructural);
+
+    // We go up until we find a parent that has a next node. Then we go to that node and return it as the next node
+    let pathToInvestigate = parentPath;
+    // The next path is the parent path with the last index increased by one
+    let nextPathOfPathToInvestigate: number[] | null = [
+      ...parentPath.slice(0, parentPath.length - 1),
+      parentPath.at(-1)! + 1,
+    ];
+    // Check if the next node exists
+    let nextNodeOfPathToInvestigate = getNodeProps(root, nextPathOfPathToInvestigate);
+    // If the next node does not exist, we go up one level and check again until we find a node, or we are at the top
+    while (nextNodeOfPathToInvestigate === null && pathToInvestigate.length > 0) {
+      // Remove the last index of the path, thereby getting the parent path
+      pathToInvestigate = pathToInvestigate.slice(0, pathToInvestigate.length - 1);
+      // The next path is the parent path with the last index increased by one
+      nextPathOfPathToInvestigate = [
+        ...pathToInvestigate.slice(0, pathToInvestigate.length - 1),
+        pathToInvestigate.at(-1)! + 1,
+      ];
+      // Check if the next node exists
+      nextNodeOfPathToInvestigate = getNodeProps(root, nextPathOfPathToInvestigate);
+    }
+    return returnIfStructuralOrElse(root, nextPathOfPathToInvestigate, scipStructural, getNextNode);
   }
 };
+
 export const getNodeProps = (root: RootNodeProps, path: number[] | null | undefined): NodeProps | null => {
   if (!path) {
     return null;
   }
   let stateIterator: NodeProps = root;
   for (const key of path) {
-    if (!stateIterator.children) return null;
+    if (!stateIterator || !stateIterator.children) return null;
     stateIterator = stateIterator.children[key];
   }
-  return stateIterator;
+  return stateIterator ?? null;
 };
 
 export const updateChildren = (
@@ -149,14 +186,19 @@ export const getNodesInRange = (root: RootNodeProps, origin: number[], range: nu
   return nodes;
 };
 
-export const getNodeOffsetBy = (root: RootNodeProps, path: number[], offset: number): number[] | null => {
+export const getNodeOffsetBy = (
+  root: RootNodeProps,
+  path: number[],
+  offset: number,
+  scipStructural: boolean
+): number[] | null => {
   if (offset === 0) return path;
   while (offset !== 0) {
     if (offset < 0) {
-      path = getPreviousNode(root, path, false) ?? path;
+      path = getPreviousNode(root, path, scipStructural) ?? path;
       offset++;
     } else {
-      path = getNextNode(root, path, false) ?? path;
+      path = getNextNode(root, path, scipStructural) ?? path;
       offset--;
     }
   }
