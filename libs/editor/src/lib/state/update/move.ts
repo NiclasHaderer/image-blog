@@ -13,6 +13,8 @@ import { addNode } from './state';
 
 export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps => {
   // TODO if we try to move it down and we are in a deeply nested node we should move the node one out of the nested node
+  // TODO moving down multiple leads to focus issues
+  // TODO check if there is a difference between selection order
   // Check if we have an outer focused node
   const outerFocused = editorState.outerFocusedNode;
   if (!outerFocused) return editorState;
@@ -76,6 +78,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
 };
 
 export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps => {
+  // TODO Moving up with multiple nodes has an issue if you first select the lower node and then the upper one and then move
   // Check if we have an outer focused node
   const outerFocused = editorState.outerFocusedNode;
   if (!outerFocused) return editorState;
