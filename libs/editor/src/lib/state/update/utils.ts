@@ -47,7 +47,14 @@ const getLastNode = (root: RootNodeProps, path: number[] | null | undefined): nu
   if (!path) return null;
   const node = getNodeProps(root, path);
   if (!node || !node.children || node.children.length === 0) return path;
-  return getLastNode(root, [...path, node.children.length - 1]);
+
+  const childPath = [...path, node.children.length - 1];
+  let childNode = node.children[node.children.length - 1];
+  while (childNode.children && childNode.children.length > 0) {
+    childPath.push(childNode.children.length - 1);
+    childNode = childNode.children[childNode.children.length - 1];
+  }
+  return childPath;
 };
 
 export const getNextNode = (
@@ -158,16 +165,26 @@ const sortPaths = (paths: number[][]): number[][] => {
   });
 };
 
+/**
+ * Takes an array of paths and determines the last path
+ * @param paths The paths to sort
+ * @returns The last path or null if the array is empty
+ */
 export const getLastPath = (paths: number[][] | null | undefined): number[] | null => {
   if (!paths) return null;
   const sorted = sortPaths(paths);
-  return sorted.at(-1)! ?? null;
+  return sorted.at(-1) ?? null;
 };
 
+/**
+ * Takes an array of paths and determines the first path
+ * @param paths The paths to sort
+ * @returns The first path or null if the array is empty
+ */
 export const getFirstPath = (paths: number[][] | null | undefined): number[] | null => {
   if (!paths) return null;
   const sorted = sortPaths(paths);
-  return sorted.at(0)! ?? null;
+  return sorted.at(0) ?? null;
 };
 
 export const getNodesInRange = (root: RootNodeProps, origin: number[], range: number): number[][] => {
@@ -230,4 +247,12 @@ export const deleteRange = (root: RootNodeProps, origin: number[], range: number
     const deleteIndex = nodes[0].at(-1)!;
     children.splice(deleteIndex, deleteCount);
   });
+};
+
+export const equalPaths = (a: number[], b: number[]): boolean => {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
 };
