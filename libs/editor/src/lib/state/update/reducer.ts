@@ -160,7 +160,6 @@ export const editorReducer = (state: RootNodeProps, { payload, type }: EditorAct
   }
 
   if (type.includes('outer-focus')) {
-    console.log(payload, type);
   }
 
   // If there are no children add a ControlNode to the root

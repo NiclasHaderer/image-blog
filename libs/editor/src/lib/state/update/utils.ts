@@ -109,6 +109,20 @@ export const getNextNode = (
   }
 };
 
+export const getNextLeafNode = (
+  root: RootNodeProps,
+  path: number[] | null | undefined,
+  scipStructural: boolean
+): number[] | null => {
+  let nextNode = getNextNode(root, path, scipStructural);
+  let nodeProps = getNodeProps(root, nextNode);
+  while (nodeProps && nodeProps.children && nodeProps.children.length > 0) {
+    nextNode = getNextNode(root, nextNode, scipStructural);
+    nodeProps = getNodeProps(root, nextNode);
+  }
+  return nextNode;
+};
+
 export const getNodeProps = (root: RootNodeProps, path: number[] | null | undefined): NodeProps | null => {
   if (!path) {
     return null;
