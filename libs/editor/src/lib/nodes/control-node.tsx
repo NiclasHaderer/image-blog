@@ -1,14 +1,14 @@
 import c from './control-node.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap, useTabModifier } from '../hooks/tap-focus';
-import { EditorNode } from './editor-node';
+import { AbstractNode } from './abstract-node';
 import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
 import { useNodeHandlersQuery } from './nodes';
 import { useGlobalEvent } from '../hooks/global-events';
 
 export type ControlNodeProps = NodeProps;
 
-export class ControlNode extends EditorNode<ControlNodeProps> {
+export class ControlNode extends AbstractNode<ControlNodeProps> {
   constructor() {
     super('control-node', []);
   }
@@ -100,6 +100,7 @@ export class ControlNode extends EditorNode<ControlNodeProps> {
       capabilities: {
         canBeDeleted: true,
         canBeInnerFocused: true,
+        canHaveChildren: false,
         structural: false,
       },
     };

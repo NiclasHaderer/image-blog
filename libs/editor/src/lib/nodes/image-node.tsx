@@ -1,4 +1,4 @@
-import { EditorNode } from './editor-node';
+import { AbstractNode } from './abstract-node';
 import { ImageIcon } from '../common/icons';
 import { NodeProps, useNodeIndex } from '../state/editor-state';
 
@@ -8,7 +8,7 @@ export type ImageNodeProps = NodeProps<{
   width?: string;
 }>;
 
-export class ImageNode extends EditorNode<ImageNodeProps> {
+export class ImageNode extends AbstractNode<ImageNodeProps> {
   constructor() {
     super('image', ['image', 'img', 'photo', 'picture']);
   }
@@ -44,6 +44,7 @@ export class ImageNode extends EditorNode<ImageNodeProps> {
       },
       capabilities: {
         canBeDeleted: true,
+        canHaveChildren: false,
         canBeInnerFocused: true,
         structural: false,
       },

@@ -3,7 +3,7 @@ import { FC, ReactNode, useEffect, useRef } from 'react';
 import {
   useIsNodeInnerFocused,
   useIsNodeOuterFocused,
-  useNodeCapabilities,
+  useNode,
   useNodeIndex,
   useUpdateEditor,
 } from '../state/editor-state';
@@ -15,7 +15,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
   const slotRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useUpdateEditor();
-  const capabilities = useNodeCapabilities();
+  const { id: nodeId, capabilities } = useNode();
   const isOuterFocused = useIsNodeOuterFocused();
   const nodeFocus = useIsNodeInnerFocused();
   const path = useNodeIndex();
@@ -43,6 +43,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
     <div
       ref={slotRef}
       data-is-slot={true}
+      data-slot-name={nodeId}
       data-path={path.join('.')}
       tabIndex={0}
       className={`${c.slot} ${isOuterFocused ? 'bg-secondary' : ''}`}

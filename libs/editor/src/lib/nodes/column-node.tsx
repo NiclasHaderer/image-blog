@@ -1,11 +1,11 @@
-import { EditorNode } from './editor-node';
+import { AbstractNode } from './abstract-node';
 import { EditorChild, EditorChildren, NodeProps, useNodeIndex } from '../state/editor-state';
 import { ColumnIcon } from '../common/icons';
 import { ControlNode } from './control-node';
 
 type ColumnNodeOutletProps = NodeProps;
 
-export class ColumnNodeOutlet extends EditorNode<ColumnNodeOutletProps> {
+export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
   constructor() {
     super('column-outlet', []);
   }
@@ -29,6 +29,10 @@ export class ColumnNodeOutlet extends EditorNode<ColumnNodeOutletProps> {
       capabilities: {
         canBeDeleted: false,
         canBeInnerFocused: false,
+        immutableChildren: false,
+        canHaveChildren: true,
+        minChildren: 1,
+        maxChildren: Infinity,
         structural: true,
       },
     };
@@ -42,7 +46,7 @@ interface ColumnNodeProps
   children: [NodeProps, NodeProps];
 }
 
-export class AbstractNode extends EditorNode<ColumnNodeProps> {
+export class ColumnNode extends AbstractNode<ColumnNodeProps> {
   constructor() {
     super('column', ['column', 'columns', 'two columns', 'two column node']);
   }
@@ -73,6 +77,8 @@ export class AbstractNode extends EditorNode<ColumnNodeProps> {
       },
       capabilities: {
         canBeDeleted: true,
+        canHaveChildren: true,
+        immutableChildren: true,
         canBeInnerFocused: true,
         structural: false,
       },

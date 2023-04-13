@@ -1,13 +1,13 @@
 import { RootNodeProps } from '../editor-state';
 import {
   deleteRange,
-  equalPaths,
   getFirstPath,
   getLastPath,
-  getNextLeafNode,
   getNextNode,
+  getNextNodeToInsert,
   getNodeRange,
   getPreviousNode,
+  sameParent,
 } from './utils';
 import { addNode } from './state';
 
@@ -33,7 +33,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
 
   // Find the next node of the last selected node. This will be the destination of the move operation.
   const lastPath = getLastPath(nodePositions)!;
-  const destination = getNextLeafNode(editorState, lastPath, true);
+  const destination = getNextNodeToInsert(editorState, lastPath, true);
   if (!destination) return editorState;
 
   // There are different cases for the insertion mode
@@ -47,7 +47,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
   } else if (isLessDeepToDeeper) {
     // 2. We go from a less deeply nested node to a deeper nested node -> insert before
     insertionMode = 'before';
-  } else if (!equalPaths(destination.slice(0, -1), outerFocused.slice(0, -1))) {
+  } else if (!sameParent(destination, outerFocused)) {
     // 3. We go to a node of the same depth of a different parent -> insert before
     insertionMode = 'before';
   } else {
@@ -61,18 +61,19 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
 
   // Update the outer focused node to the new position
   const newOuterFocused = [...destination];
-  // Because we are removing a node from above we have to subtract 1 from the index of the parent
+  // Because we are removing nodes from above we have to subtract the length of the nodes from the parent
   if (isLessDeepToDeeper) {
-    newOuterFocused[outerFocused.length - 1] -= 1;
+    newOuterFocused[outerFocused.length - 1] -= nodesToMove.length;
   }
 
-  // The new outer focused node is not necessarily the destination node. If we move multiple nodes and the original focus
-  // node is the first node in the list we have to move the focus to it instead of the destination.
-  // So we move the focus however many nodes down as our nodesToMove list is long.
-  // Because it is guaranteed that the nodes we move are in a flat list we can just add the length of the list to the
-  // index of the destination node.
-  if (focusRange > 0) {
+  // If we focused from top down and then move up we have to subtract the length of the nodes from the parent
+  if (focusRange > 0 && sameParent(destination, outerFocused)) {
     newOuterFocused[newOuterFocused.length - 1] -= nodesToMove.length - 1;
+  }
+
+  // If we focused from bottom up and then move down we have to add the length of the nodes to the parent
+  if (focusRange < 0 && isLessDeepToDeeper) {
+    newOuterFocused[newOuterFocused.length - 1] += nodesToMove.length - 1;
   }
 
   // Set the focus to the new position
@@ -117,7 +118,7 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
   } else if (isLessDeepToDeeper) {
     // 2. We go from a less deeply nested node to a deeper nested node -> insert after
     insertionMode = 'after';
-  } else if (!equalPaths(destination.slice(0, -1), outerFocused.slice(0, -1))) {
+  } else if (!sameParent(destination, outerFocused)) {
     // 3. We go to a node of the same depth of a different parent -> insert after
     insertionMode = 'after';
   } else {

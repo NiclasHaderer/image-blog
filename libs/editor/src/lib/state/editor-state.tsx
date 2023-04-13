@@ -4,7 +4,7 @@ import { useNodeHandlers } from '../nodes/nodes';
 import { Slot } from '../common/slot';
 import { getNodeProps, getNodesInRange } from './update/utils';
 import { ControlNode } from '../nodes/control-node';
-import { NodeCapabilities } from '../nodes/editor-node';
+import { NodeCapabilities } from '../nodes/abstract-node';
 
 export interface NodeProps<T = any> {
   id: string;
@@ -39,6 +39,10 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
     capabilities: {
       canBeDeleted: false,
       structural: true,
+      immutableChildren: false,
+      canHaveChildren: true,
+      maxChildren: Infinity,
+      minChildren: 1,
       canBeInnerFocused: false,
     },
   } satisfies RootNodeProps);

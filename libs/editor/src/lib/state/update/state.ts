@@ -5,7 +5,10 @@ export const replaceNode = (state: RootNodeProps, path: number[], payload: NodeP
   const parentPath = path.slice(0, path.length - 1);
   return updateChildren(state, parentPath, (children) => {
     const position = path.at(-1)!;
+    // Child cannot be deleted
     if (!children[position].capabilities.canBeDeleted) return;
+    // Parent has immutable children
+    if (children[position].capabilities.immutableChildren) return;
     children[position] = payload;
   });
 };
@@ -17,7 +20,18 @@ export const addNode = (
   ...payload: NodeProps[]
 ): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
-  return updateChildren(state, parentPath, (children) => {
+  return updateChildren(state, parentPath, (children, parent) => {
+    // Parent has immutable children
+    if (parent.capabilities.immutableChildren) {
+      console.warn('Cannot add node', path, "Parent is marked as 'immutableChildren: true'");
+      return;
+    }
+    // Parent has a max number of children
+    if (parent.capabilities.maxChildren && children.length >= parent.capabilities.maxChildren) {
+      console.warn('Cannot add node', path, 'Parent already has max number of children');
+      return;
+    }
+
     if (insertMode === 'before') {
       children.splice(path.at(-1)!, 0, ...payload);
     } else {
@@ -28,9 +42,18 @@ export const addNode = (
 
 export const deleteNode = (state: RootNodeProps, path: number[]): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
-  return updateChildren(state, parentPath, (children) => {
+  return updateChildren(state, parentPath, (children, parent) => {
     const position = path.at(-1)!;
-    if (!children[position].capabilities.canBeDeleted) return;
+    // Child cannot be deleted
+    if (!children[position].capabilities.canBeDeleted) {
+      console.warn('Cannot delete node', path, "Child is marked as 'canBeDeleted: false'");
+      return;
+    }
+    // Parent has immutable children
+    if (parent.capabilities.immutableChildren) {
+      console.warn('Cannot delete node', path, "Parent is marked as 'immutableChildren: true'");
+      return;
+    }
     children.splice(position, 1);
   });
 };

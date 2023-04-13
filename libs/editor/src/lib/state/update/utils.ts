@@ -109,7 +109,7 @@ export const getNextNode = (
   }
 };
 
-export const getNextLeafNode = (
+export const getNextNodeToInsert = (
   root: RootNodeProps,
   path: number[] | null | undefined,
   scipStructural: boolean
@@ -117,8 +117,9 @@ export const getNextLeafNode = (
   let nextNode = getNextNode(root, path, scipStructural);
   let nodeProps = getNodeProps(root, nextNode);
   while (nodeProps && nodeProps.children && nodeProps.children.length > 0) {
-    nextNode = getNextNode(root, nextNode, scipStructural);
+    if (nodeProps.capabilities.canHaveChildren && !nodeProps.capabilities.immutableChildren) break;
     nodeProps = getNodeProps(root, nextNode);
+    nextNode = getNextNode(root, nextNode, false);
   }
   return nextNode;
 };
@@ -138,7 +139,7 @@ export const getNodeProps = (root: RootNodeProps, path: number[] | null | undefi
 export const updateChildren = (
   editorState: RootNodeProps,
   path: number[],
-  action: (children: NodeProps[]) => void
+  action: (children: NodeProps[], parent: NodeProps) => void
 ): RootNodeProps => {
   const newState = { ...editorState };
   let stateIterator: NodeProps | RootNodeProps = newState;
@@ -162,7 +163,7 @@ export const updateChildren = (
   }
   if (!stateIterator.children) stateIterator.children = [];
   else stateIterator.children = [...stateIterator.children];
-  action(stateIterator.children);
+  action(stateIterator.children, stateIterator);
 
   return newState;
 };
@@ -269,4 +270,12 @@ export const equalPaths = (a: number[], b: number[]): boolean => {
     if (a[i] !== b[i]) return false;
   }
   return true;
+};
+
+export const sameParent = (a: number[], b: number[]): boolean => {
+  if (a.length !== b.length) return false;
+  if (a.length === 0) return true;
+  const parentA = a.slice(0, -1);
+  const parentB = b.slice(0, -1);
+  return equalPaths(parentA, parentB);
 };

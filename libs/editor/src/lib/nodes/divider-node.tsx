@@ -1,10 +1,10 @@
-import { EditorNode } from './editor-node';
+import { AbstractNode } from './abstract-node';
 import { DividerIcon } from '../common/icons';
 import { NodeProps } from '../state/editor-state';
 
 export type DividerNodeProps = NodeProps<undefined>;
 
-export class DividerNode extends EditorNode<DividerNodeProps> {
+export class DividerNode extends AbstractNode<DividerNodeProps> {
   constructor() {
     super('divider', ['divider', 'line', 'hr', 'horizontal rule', 'horizontal divider', 'horizontal line']);
   }
@@ -25,6 +25,7 @@ export class DividerNode extends EditorNode<DividerNodeProps> {
       data: undefined,
       capabilities: {
         canBeDeleted: true,
+        canHaveChildren: false,
         canBeInnerFocused: false,
         structural: false,
       },
