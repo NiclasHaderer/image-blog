@@ -65,7 +65,15 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
   if (isLessDeepToDeeper) {
     newOuterFocused[outerFocused.length - 1] -= 1;
   }
-  console.log('newOuterFocused', newOuterFocused);
+
+  // The new outer focused node is not necessarily the destination node. If we move multiple nodes and the original focus
+  // node is the first node in the list we have to move the focus to it instead of the destination.
+  // So we move the focus however many nodes down as our nodesToMove list is long.
+  // Because it is guaranteed that the nodes we move are in a flat list we can just add the length of the list to the
+  // index of the destination node.
+  if (focusRange > 0) {
+    newOuterFocused[newOuterFocused.length - 1] -= nodesToMove.length - 1;
+  }
 
   // Set the focus to the new position
   editorState = {
@@ -78,7 +86,6 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
 };
 
 export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps => {
-  // TODO Moving up with multiple nodes has an issue if you first select the lower node and then the upper one and then move
   // Check if we have an outer focused node
   const outerFocused = editorState.outerFocusedNode;
   if (!outerFocused) return editorState;
@@ -126,6 +133,15 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
   let newOuterFocused = [...destination];
   if (insertionMode === 'after') {
     newOuterFocused = getNextNode(editorState, destination, true)!;
+  }
+
+  // The new outer focused node is not necessarily the destination node. If we move multiple nodes and the original focus
+  // node is the last node in the list we have to move the focus to it instead of the destination.
+  // So we move the focus however many nodes down as our nodesToMove list is long.
+  // Because it is guaranteed that the nodes we move are in a flat list we can just add the length of the list to the
+  // index of the destination node.
+  if (focusRange < 0) {
+    newOuterFocused[outerFocused.length - 1] += nodesToMove.length - 1;
   }
 
   // Set the focus to the new position
