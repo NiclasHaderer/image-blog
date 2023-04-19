@@ -3,12 +3,12 @@ import { updateChildren } from './utils';
 
 export const replaceNode = (state: RootNodeProps, path: number[], payload: NodeProps): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
-  return updateChildren(state, parentPath, (children) => {
+  return updateChildren(state, parentPath, (children, parent) => {
     const position = path.at(-1)!;
     // Child cannot be deleted
     if (!children[position].capabilities.canBeDeleted) return;
     // Parent has immutable children
-    if (children[position].capabilities.immutableChildren) return;
+    if (parent.capabilities.immutableChildren) return;
     children[position] = payload;
   });
 };

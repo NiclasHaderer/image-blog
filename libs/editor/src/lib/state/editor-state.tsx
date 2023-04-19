@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useContext, useReducer } from 'react';
+import { createContext, FC, forwardRef, HTMLProps, ReactNode, useContext, useReducer } from 'react';
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { useNodeHandlers } from '../nodes/nodes';
 import { Slot } from '../common/slot';
@@ -59,10 +59,15 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
   );
 };
 
-export const RootEditorOutlet: FC = () => {
+export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
   const rootContext = useContext(_RootEditorContext);
-  return <EditorChildren>{rootContext.data}</EditorChildren>;
-};
+
+  return (
+    <div ref={ref} {...props}>
+      <EditorChildren>{rootContext.data}</EditorChildren>
+    </div>
+  );
+});
 
 const UnsetChildContext = Symbol('unset-child-context');
 const _ChildContext = createContext({

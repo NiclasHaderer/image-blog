@@ -20,47 +20,31 @@ export const useFocusTrap = (
   element: HTMLElement | null,
   escapeTrap: (event: KeyboardEvent) => boolean = () => false
 ) => {
+  const modifyTab = (direction: 'next' | 'previous') => {
+    const tabElements = getTabbableElements(element!);
+
+    const currentTabIndex = getFocusedIndexElement(tabElements);
+
+    // Invalid
+    if (currentTabIndex === -1 || currentTabIndex >= tabElements.length) tabElements[0]?.focus();
+
+    if (direction === 'previous') {
+      toPreviousTab(tabElements, currentTabIndex);
+    } else {
+      toNextTab(tabElements, currentTabIndex);
+    }
+  };
+
   useGlobalEvent(
     'keydown',
     (e) => {
       if (!element) return;
-
-      e.preventDefault();
-      const tabElements = getTabbableElements(element);
-
-      const currentTabIndex = getFocusedIndexElement(tabElements);
-
-      // Invalid
-      if (currentTabIndex === -1 || currentTabIndex >= tabElements.length) tabElements[0]?.focus();
-
-      const goBack = e.shiftKey;
-      if (goBack) {
-        toPreviousTab(tabElements, currentTabIndex);
-      } else {
-        toNextTab(tabElements, currentTabIndex);
-      }
+      modifyTab(e.shiftKey ? 'previous' : 'next');
     },
     (e) => e.key.toLowerCase() === 'tab' && !escapeTrap(e)
   );
-};
-
-export const useTabModifier = () => {
-  if (typeof window === 'undefined') {
-    return {
-      focusPrevious: () => void 0,
-      focusNext: () => void 0,
-    };
-  }
-  const nextEvent = new KeyboardEvent('keydown', {
-    key: 'Tab',
-  });
-  const previousEvent = new KeyboardEvent('keydown', {
-    key: 'Tab',
-    shiftKey: true,
-  });
-
   return {
-    focusPrevious: () => window.dispatchEvent(previousEvent),
-    focusNext: () => window.dispatchEvent(nextEvent),
+    focusPrevious: () => modifyTab('previous'),
+    focusNext: () => modifyTab('next'),
   };
 };

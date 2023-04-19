@@ -1,6 +1,6 @@
 import c from './control-node.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
-import { useFocusTrap, useTabModifier } from '../hooks/tap-focus';
+import { useFocusTrap } from '../hooks/tap-focus';
 import { AbstractNode } from './abstract-node';
 import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
 import { useNodeHandlersQuery } from './nodes';
@@ -45,8 +45,7 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
       return !isClosed && search !== undefined && search.length > 0;
     };
 
-    useFocusTrap(outerDiv.current);
-    const { focusPrevious, focusNext } = useTabModifier();
+    const { focusPrevious, focusNext } = useFocusTrap(outerDiv.current);
     return (
       <div
         className={c.controlNodeWrapper}
@@ -54,10 +53,8 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
         onKeyDown={(event) => {
           if (shouldShow()) {
             if (event.key === 'ArrowUp') {
-              event.preventDefault();
               focusPrevious();
             } else if (event.key === 'ArrowDown') {
-              event.preventDefault();
               focusNext();
             } else if (event.key === 'Escape') {
               // Do not propagate, as we only want to close the node
@@ -73,8 +70,11 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
           placeholder={'Search for blocks'}
           onKeyDown={(e) => {
             if (e.key === 'Backspace' && !search) {
+              e.stopPropagation();
               dispatch('delete', { at: path });
             } else if (e.key === 'Enter') {
+              e.stopPropagation();
+              setIsClosed(true);
               dispatch('add', { at: path, node: ControlNode.empty() });
               dispatch('focus-next', { force: true });
             }

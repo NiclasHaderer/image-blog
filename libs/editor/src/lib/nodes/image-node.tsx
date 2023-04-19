@@ -26,11 +26,7 @@ export class ImageNode extends AbstractNode<ImageNodeProps> {
           }}
           src={src}
         />
-        {caption && (
-          <>
-            <p className="inline-block">{caption}</p>
-          </>
-        )}
+        {caption && <p className="inline-block">{caption}</p>}
       </div>
     );
   };
