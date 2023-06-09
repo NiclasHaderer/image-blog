@@ -1,5 +1,5 @@
 import c from './control-node.module.scss';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/tap-focus';
 import { AbstractNode } from './abstract-node';
 import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
@@ -51,18 +51,14 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
         className={c.controlNodeWrapper}
         ref={outerDiv}
         onKeyDown={(event) => {
-          if (shouldShow()) {
-            if (event.key === 'ArrowUp') {
-              focusPrevious();
-            } else if (event.key === 'ArrowDown') {
-              focusNext();
-            } else if (event.key === 'Escape') {
-              // Do not propagate, as we only want to close the node
-              if (shouldShow()) event.stopPropagation();
-              setIsClosed(true);
-            }
+          if (event.key === 'ArrowUp' && shouldShow()) {
+            focusPrevious();
+          } else if (event.key === 'ArrowDown' && shouldShow()) {
+            focusNext();
+          } else if (event.key === 'Escape' && shouldShow()) {
+            event.stopPropagation();
+            setIsClosed(true);
           }
-          setIsClosed(false);
         }}
       >
         <input
@@ -77,6 +73,14 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
               setIsClosed(true);
               dispatch('add', { at: path, node: ControlNode.empty() });
               dispatch('focus-next', { force: true });
+            } else if (e.key === 'ArrowUp' && !shouldShow()) {
+              e.stopPropagation();
+              dispatch('focus-previous', { force: true });
+            } else if (e.key === 'ArrowDown' && !shouldShow()) {
+              e.stopPropagation();
+              dispatch('focus-next', { force: true });
+            } else if (e.key.length === 1) {
+              setIsClosed(false);
             }
           }}
           contentEditable={true}
@@ -84,7 +88,7 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
           onInput={(e) => setSearch(e.currentTarget.value)}
           className="w-full p-1 bg-transparent"
         ></input>
-        {shouldShow() && <ControlOutlet search={search ?? ''} />}
+        {shouldShow() && <ControlOutlet search={search ?? ''} onKeyDown={(e) => {}} />}
       </div>
     );
   };
@@ -107,12 +111,15 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
   }
 }
 
-const ControlOutlet: FC<{ search: string }> = ({ search }) => {
+const ControlOutlet: FC<{ search: string; onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void }> = ({
+  search,
+  onKeyDown,
+}) => {
   const dispatch = useUpdateEditor();
   const path = useNodeIndex();
   const nodes = useNodeHandlersQuery(search);
   return (
-    <div className={c.controlNodeOutlet}>
+    <div className={c.controlNodeOutlet} onKeyDown={onKeyDown}>
       {nodes.map((p) => {
         return (
           <button
