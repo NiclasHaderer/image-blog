@@ -1,4 +1,14 @@
-import { createContext, FC, forwardRef, HTMLProps, ReactNode, useContext, useReducer } from 'react';
+import {
+  createContext,
+  FC,
+  forwardRef,
+  HTMLProps,
+  ReactNode,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react';
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { useNodeHandlers } from '../nodes/nodes';
 import { Slot } from '../common/slot';
@@ -23,7 +33,7 @@ export interface RootNodeProps extends NodeProps {
   outerFocusedRange: number | null;
 }
 
-const _RootEditorContext = createContext({
+const RootEditorContext = createContext({
   update: (_: EditorActions): void => {
     throw new Error('Do not use the update function of the RootEditorContext outside of the RootEditorContextProvider');
   },
@@ -51,29 +61,71 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
   } satisfies RootNodeProps);
 
   return (
-    <_RootEditorContext.Provider
+    <RootEditorContext.Provider
       value={{
         data: editorState as RootNodeProps,
         update: (newData) => setEditorState(newData),
       }}
     >
       {children}
-    </_RootEditorContext.Provider>
+    </RootEditorContext.Provider>
   );
 };
 
 export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
-  const rootContext = useContext(_RootEditorContext);
+  const rootContext = useContext(RootEditorContext);
+  const editorState = rootContext.data;
+
+  const [history, setHistory] = useState<{
+    index: number;
+    history: RootNodeProps[];
+  }>({
+    index: 0,
+    history: [editorState],
+  });
+
+  useEffect(() => {
+    setHistory((history) => {
+      const newHistory = { ...history };
+      const historyLength = newHistory.history.length;
+      if (historyLength > 100) {
+        newHistory.history = newHistory.history.slice(historyLength - 100);
+      }
+      newHistory.history = [...newHistory.history, editorState];
+      newHistory.index = newHistory.history.length - 1;
+      return newHistory;
+    });
+  }, [editorState]);
 
   return (
-    <div ref={ref} {...props}>
-      <EditorChildren>{rootContext.data}</EditorChildren>
+    <div
+      ref={ref}
+      {...props}
+      onKeyDown={(e) => {
+        // TODO history currently only toggles between the last two states
+        if (e.key === 'z' && e.ctrlKey) {
+          rootContext.update({
+            type: 'replace-root',
+            payload: history.history[history.index - 1],
+            origin: [],
+          });
+        }
+        if (e.key === 'y' && e.ctrlKey) {
+          rootContext.update({
+            type: 'replace-root',
+            payload: history.history[history.index + 1],
+            origin: [],
+          });
+        }
+      }}
+    >
+      <EditorChildren>{editorState}</EditorChildren>
     </div>
   );
 });
 
 const UnsetChildContext = Symbol('unset-child-context');
-const _ChildContext = createContext({
+const ChildContext = createContext({
   index: UnsetChildContext as unknown as number[],
 });
 
@@ -88,7 +140,7 @@ const NodeRenderer: FC<{ node: NodeProps }> = ({ node }) => {
 };
 
 export const EditorChildren: FC<{ children: NodeProps }> = ({ children }) => {
-  const childContext = useContext(_ChildContext);
+  const childContext = useContext(ChildContext);
   const contextToUse = (childContext.index as unknown) === UnsetChildContext ? { index: [] } : childContext;
 
   return (
@@ -106,7 +158,7 @@ export const EditorChildren: FC<{ children: NodeProps }> = ({ children }) => {
 
 export const EditorChild: FC<{ index: number[]; children: NodeProps }> = ({ index, children }) => {
   return (
-    <_ChildContext.Provider
+    <ChildContext.Provider
       value={{
         index,
       }}
@@ -114,13 +166,13 @@ export const EditorChild: FC<{ index: number[]; children: NodeProps }> = ({ inde
       <Slot>
         <NodeRenderer node={children} />
       </Slot>
-    </_ChildContext.Provider>
+    </ChildContext.Provider>
   );
 };
 
 export const useUpdateEditor = () => {
-  const rootContext = useContext(_RootEditorContext);
-  const { index } = useContext(_ChildContext);
+  const rootContext = useContext(RootEditorContext);
+  const { index } = useContext(ChildContext);
 
   return <T extends EditorActions['type'], V extends EditorActions & { type: T }>(
     action: T,
@@ -135,8 +187,8 @@ export const useUpdateEditor = () => {
 };
 
 export const useNode = () => {
-  const rootContext = useContext(_RootEditorContext).data;
-  const { index } = useContext(_ChildContext);
+  const rootContext = useContext(RootEditorContext).data;
+  const { index } = useContext(ChildContext);
   const node = getNodeProps(rootContext, index);
   if (!node) {
     log.error('No node found for index', index, rootContext);
@@ -167,8 +219,8 @@ export const useNodeCapabilities = () => {
 };
 
 export const useIsNodeInnerFocused = () => {
-  const rootContext = useContext(_RootEditorContext).data;
-  const { index } = useContext(_ChildContext);
+  const rootContext = useContext(RootEditorContext).data;
+  const { index } = useContext(ChildContext);
   const isFocused = rootContext.focusedNode?.join('.') === index.join('.');
   return {
     isFocused,
@@ -177,8 +229,8 @@ export const useIsNodeInnerFocused = () => {
 };
 
 export const useIsNodeOuterFocused = () => {
-  const rootContext = useContext(_RootEditorContext).data;
-  const { index } = useContext(_ChildContext);
+  const rootContext = useContext(RootEditorContext).data;
+  const { index } = useContext(ChildContext);
 
   const outerFocusNode = rootContext.outerFocusedNode;
   const range = rootContext.outerFocusedRange ?? 0;
@@ -188,6 +240,6 @@ export const useIsNodeOuterFocused = () => {
 };
 
 export const useNodeIndex = () => {
-  const { index } = useContext(_ChildContext);
+  const { index } = useContext(ChildContext);
   return index;
 };

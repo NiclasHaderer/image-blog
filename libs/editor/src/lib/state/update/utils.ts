@@ -304,3 +304,19 @@ export const isChildOf = (a: number[], b: number[], direct = false): boolean => 
   // Check if the parent of "a" is a child of "b"
   return isChildOf(parentA, b, false);
 };
+
+export const deepFreeze = <T>(obj: T): T => {
+  // Retrieve the property names defined on obj
+  const propNames = Object.getOwnPropertyNames(obj);
+
+  // Freeze properties before freezing self
+  for (const name of propNames) {
+    const value = (obj as any)[name];
+
+    if (value && typeof value === 'object') {
+      deepFreeze(value);
+    }
+  }
+
+  return Object.freeze(obj);
+};

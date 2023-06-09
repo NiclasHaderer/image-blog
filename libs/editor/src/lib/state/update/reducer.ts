@@ -3,7 +3,7 @@ import { ControlNode } from '../../nodes/control-node';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
 import { addNode, deleteNode, replaceNode } from './nodes';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
-import { deleteRange } from './utils';
+import { deepFreeze, deleteRange } from './utils';
 import { logger } from '../../logger';
 
 const log = logger('reducer');
@@ -15,6 +15,12 @@ type ReplaceAction = {
     at: number[];
     with: NodeProps;
   };
+};
+
+type ReplaceRootAction = {
+  type: 'replace-root';
+  origin: number[];
+  payload: RootNodeProps;
 };
 
 type CreateAction = {
@@ -92,6 +98,7 @@ type MoveOuterFocusedUpAction = {
 export type EditorAction<T> = { type: string; origin: number[]; payload: T };
 export type EditorActions =
   | ReplaceAction
+  | ReplaceRootAction
   | CreateAction
   | DeleteAction
   | FocusNextAction
@@ -104,12 +111,21 @@ export type EditorActions =
   | MoveOuterFocusedUpAction;
 
 export const editorReducer = (state: RootNodeProps, { payload, type, origin }: EditorActions): RootNodeProps => {
+  // Check if we are in dev mode
+  if (process.env.NODE_ENV === 'development') {
+    // Deep Freeze the state to prevent mutations
+    deepFreeze(state);
+  }
   let newState: RootNodeProps | null = null;
   // eslint-disable-next-line no-console
   log.group({ type, payload, origin });
   switch (type) {
     case 'replace': {
       newState = replaceNode(state, payload.at, payload.with);
+      break;
+    }
+    case 'replace-root': {
+      newState = { ...payload };
       break;
     }
     case 'add': {
