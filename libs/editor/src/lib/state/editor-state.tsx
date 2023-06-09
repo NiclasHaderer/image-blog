@@ -5,6 +5,9 @@ import { Slot } from '../common/slot';
 import { getNodeProps, getNodesInRange } from './update/utils';
 import { ControlNode } from '../nodes/control-node';
 import { NodeCapabilities } from '../nodes/abstract-node';
+import { logger } from '../logger';
+
+const log = logger('editor-state');
 
 export interface NodeProps<T = any> {
   id: string;
@@ -136,7 +139,7 @@ export const useNode = () => {
   const { index } = useContext(_ChildContext);
   const node = getNodeProps(rootContext, index);
   if (!node) {
-    console.log('No node found for index', index, rootContext);
+    log.error('No node found for index', index, rootContext);
     throw new Error('No node found for index');
   }
 

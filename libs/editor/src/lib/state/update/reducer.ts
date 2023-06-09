@@ -1,9 +1,12 @@
 import { NodeProps, RootNodeProps } from '../editor-state';
 import { ControlNode } from '../../nodes/control-node';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
-import { addNode, deleteNode, replaceNode } from './state';
+import { addNode, deleteNode, replaceNode } from './nodes';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
-import { deleteRange, getNodeProps } from './utils';
+import { deleteRange } from './utils';
+import { logger } from '../../logger';
+
+const log = logger('reducer');
 
 type ReplaceAction = {
   type: 'replace';
@@ -100,8 +103,10 @@ export type EditorActions =
   | MoveOuterFocusedDownAction
   | MoveOuterFocusedUpAction;
 
-export const editorReducer = (state: RootNodeProps, { payload, type }: EditorActions): RootNodeProps => {
+export const editorReducer = (state: RootNodeProps, { payload, type, origin }: EditorActions): RootNodeProps => {
   let newState: RootNodeProps | null = null;
+  // eslint-disable-next-line no-console
+  log.group({ type, payload, origin });
   switch (type) {
     case 'replace': {
       newState = replaceNode(state, payload.at, payload.with);
@@ -113,7 +118,10 @@ export const editorReducer = (state: RootNodeProps, { payload, type }: EditorAct
     }
     case 'delete': {
       if ('selection' in payload) {
-        if (state.outerFocusedNode === null || state.outerFocusedRange === null) return state;
+        if (state.outerFocusedNode === null || state.outerFocusedRange === null) {
+          newState = state;
+          break;
+        }
         newState = outerFocusPrevious(state, 'replace');
         newState = deleteRange(newState, state.outerFocusedNode, state.outerFocusedRange);
       } else {
@@ -122,7 +130,6 @@ export const editorReducer = (state: RootNodeProps, { payload, type }: EditorAct
         }
         newState = deleteNode(newState ?? state, payload.at);
       }
-
       break;
     }
     case 'focus-next': {
@@ -160,9 +167,11 @@ export const editorReducer = (state: RootNodeProps, { payload, type }: EditorAct
   }
 
   // If there are no children add a ControlNode to the root
+  // noinspection JSObjectNullOrUndefined
   if (newState.children?.length === 0) {
     newState.children = [ControlNode.empty()];
     newState = focus(newState, [0], true);
   }
+  log.groupEnd();
   return newState;
 };

@@ -64,7 +64,6 @@ export class ColumnNode extends AbstractNode<ColumnNodeProps> {
   Icon = ({ size }: { size: string | number }) => <ColumnIcon width={size} height={size} />;
 
   Render = <V extends ColumnNodeProps>({ children, data: { lWidth }, capabilities }: V) => {
-    console.log(lWidth);
     const index = useNodeIndex();
     const dispatch = useUpdateEditor();
     const { force, isFocused } = useIsNodeInnerFocused();
@@ -121,7 +120,7 @@ export class ColumnNode extends AbstractNode<ColumnNodeProps> {
         canBeDeleted: true,
         canHaveChildren: true,
         immutableChildren: true,
-        canBeInnerFocused: true,
+        canBeInnerFocused: false,
         structural: false,
       },
     };

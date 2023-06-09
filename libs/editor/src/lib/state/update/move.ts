@@ -9,7 +9,7 @@ import {
   getPreviousNode,
   sameParent,
 } from './utils';
-import { addNode } from './state';
+import { addNode } from './nodes';
 
 export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps => {
   // TODO if we try to move it down and we are in a deeply nested node we should move the node one out of the nested node
@@ -33,7 +33,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
 
   // Find the next node of the last selected node. This will be the destination of the move operation.
   const lastPath = getLastPath(nodePositions)!;
-  const destination = getNextNodeToInsert(editorState, lastPath, true);
+  const destination = getNextNodeToInsert(editorState, lastPath, (props) => !props.capabilities.structural);
   if (!destination) return editorState;
 
   // There are different cases for the insertion mode
@@ -104,7 +104,7 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
 
   // Find the previous node of the first selected node. This will be the destination of the move operation.
   const lastPath = getFirstPath(nodePositions)!;
-  const destination = getPreviousNode(editorState, lastPath, true);
+  const destination = getPreviousNode(editorState, lastPath, (props) => !props.capabilities.structural);
   if (!destination) return editorState;
 
   // There are different cases for the insertion mode
@@ -133,7 +133,7 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
   // Update the outer focused node to the new position
   let newOuterFocused = [...destination];
   if (insertionMode === 'after') {
-    newOuterFocused = getNextNode(editorState, destination, true)!;
+    newOuterFocused = getNextNode(editorState, destination, (props) => !props.capabilities.structural)!;
   }
 
   // The new outer focused node is not necessarily the destination node. If we move multiple nodes and the original focus

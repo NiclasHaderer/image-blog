@@ -1,5 +1,5 @@
 import c from './control-node.module.scss';
-import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/tap-focus';
 import { AbstractNode } from './abstract-node';
 import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
@@ -88,7 +88,7 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
           onInput={(e) => setSearch(e.currentTarget.value)}
           className="w-full p-1 bg-transparent"
         ></input>
-        {shouldShow() && <ControlOutlet search={search ?? ''} onKeyDown={(e) => {}} />}
+        {shouldShow() && <ControlOutlet search={search ?? ''} />}
       </div>
     );
   };
@@ -111,15 +111,12 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
   }
 }
 
-const ControlOutlet: FC<{ search: string; onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void }> = ({
-  search,
-  onKeyDown,
-}) => {
+const ControlOutlet: FC<{ search: string }> = ({ search }) => {
   const dispatch = useUpdateEditor();
   const path = useNodeIndex();
   const nodes = useNodeHandlersQuery(search);
   return (
-    <div className={c.controlNodeOutlet} onKeyDown={onKeyDown}>
+    <div className={c.controlNodeOutlet}>
       {nodes.map((p) => {
         return (
           <button

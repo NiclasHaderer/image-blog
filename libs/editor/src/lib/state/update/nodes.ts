@@ -1,5 +1,8 @@
 import { NodeProps, RootNodeProps } from '../editor-state';
 import { updateChildren } from './utils';
+import { logger } from '../../logger';
+
+const log = logger('nodes');
 
 export const replaceNode = (state: RootNodeProps, path: number[], payload: NodeProps): RootNodeProps => {
   const parentPath = path.slice(0, path.length - 1);
@@ -23,12 +26,12 @@ export const addNode = (
   return updateChildren(state, parentPath, (children, parent) => {
     // Parent has immutable children
     if (parent.capabilities.immutableChildren) {
-      console.warn('Cannot add node', path, "Parent is marked as 'immutableChildren: true'");
+      log.warn('Cannot add node', path, "Parent is marked as 'immutableChildren: true'");
       return;
     }
     // Parent has a max number of children
     if (parent.capabilities.maxChildren && children.length >= parent.capabilities.maxChildren) {
-      console.warn('Cannot add node', path, 'Parent already has max number of children');
+      log.warn('Cannot add node', path, 'Parent already has max number of children');
       return;
     }
 
@@ -46,12 +49,12 @@ export const deleteNode = (state: RootNodeProps, path: number[]): RootNodeProps 
     const position = path.at(-1)!;
     // Child cannot be deleted
     if (!children[position].capabilities.canBeDeleted) {
-      console.warn('Cannot delete node', path, "Child is marked as 'canBeDeleted: false'");
+      log.warn('Cannot delete node', path, "Child is marked as 'canBeDeleted: false'");
       return;
     }
     // Parent has immutable children
     if (parent.capabilities.immutableChildren) {
-      console.warn('Cannot delete node', path, "Parent is marked as 'immutableChildren: true'");
+      log.warn('Cannot delete node', path, "Parent is marked as 'immutableChildren: true'");
       return;
     }
     children.splice(position, 1);
