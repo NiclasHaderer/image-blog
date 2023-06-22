@@ -20,7 +20,10 @@ type ReplaceAction = {
 type ReplaceRootAction = {
   type: 'replace-root';
   origin: number[];
-  payload: RootNodeProps;
+  payload: {
+    with: RootNodeProps;
+    skipHistory: boolean;
+  };
 };
 
 type CreateAction = {
@@ -125,7 +128,7 @@ export const editorReducer = (state: RootNodeProps, { payload, type, origin }: E
       break;
     }
     case 'replace-root': {
-      newState = { ...payload };
+      newState = { ...payload.with };
       break;
     }
     case 'add': {

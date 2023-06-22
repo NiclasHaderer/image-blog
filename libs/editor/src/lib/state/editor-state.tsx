@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   FC,
   forwardRef,
@@ -7,7 +7,7 @@ import {
   useContext,
   useEffect,
   useReducer,
-  useState,
+  useRef,
 } from 'react';
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { useNodeHandlers } from '../nodes/nodes';
@@ -16,6 +16,7 @@ import { getNodeProps, getNodesInRange } from './update/utils';
 import { ControlNode } from '../nodes/control-node';
 import { NodeCapabilities } from '../nodes/abstract-node';
 import { logger } from '../logger';
+import { useEditorHistory } from '@image-blog/editor';
 
 const log = logger('editor-state');
 
@@ -33,10 +34,13 @@ export interface RootNodeProps extends NodeProps {
   outerFocusedRange: number | null;
 }
 
-const RootEditorContext = createContext({
+export const RootEditorContext = createContext({
   update: (_: EditorActions): void => {
     throw new Error('Do not use the update function of the RootEditorContext outside of the RootEditorContextProvider');
   },
+  editorUpdateCbs: { current: [] } as React.MutableRefObject<
+    ((oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void)[]
+  >,
   data: {} as RootNodeProps,
 });
 
@@ -60,11 +64,21 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
     },
   } satisfies RootNodeProps);
 
+  const editorUpdateCbs = useRef<((oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void)[]>(
+    []
+  );
+
   return (
     <RootEditorContext.Provider
       value={{
         data: editorState as RootNodeProps,
-        update: (newData) => setEditorState(newData),
+        update: (action) => {
+          const oldData = editorState;
+          setEditorState(action);
+          const newData = editorState;
+          editorUpdateCbs.current.forEach((cb) => cb(oldData, newData, action));
+        },
+        editorUpdateCbs,
       }}
     >
       {children}
@@ -75,50 +89,10 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
 export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
   const rootContext = useContext(RootEditorContext);
   const editorState = rootContext.data;
-
-  const [history, setHistory] = useState<{
-    index: number;
-    history: RootNodeProps[];
-  }>({
-    index: 0,
-    history: [editorState],
-  });
-
-  useEffect(() => {
-    setHistory((history) => {
-      const newHistory = { ...history };
-      const historyLength = newHistory.history.length;
-      if (historyLength > 100) {
-        newHistory.history = newHistory.history.slice(historyLength - 100);
-      }
-      newHistory.history = [...newHistory.history, editorState];
-      newHistory.index = newHistory.history.length - 1;
-      return newHistory;
-    });
-  }, [editorState]);
+  useEditorHistory();
 
   return (
-    <div
-      ref={ref}
-      {...props}
-      onKeyDown={(e) => {
-        // TODO history currently only toggles between the last two states
-        if (e.key === 'z' && e.ctrlKey) {
-          rootContext.update({
-            type: 'replace-root',
-            payload: history.history[history.index - 1],
-            origin: [],
-          });
-        }
-        if (e.key === 'y' && e.ctrlKey) {
-          rootContext.update({
-            type: 'replace-root',
-            payload: history.history[history.index + 1],
-            origin: [],
-          });
-        }
-      }}
-    >
+    <div ref={ref} {...props}>
       <EditorChildren>{editorState}</EditorChildren>
     </div>
   );
@@ -196,6 +170,18 @@ export const useNode = () => {
   }
 
   return node;
+};
+
+export const useOnEditorUpdate = (
+  callback: (oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void
+) => {
+  const editorContext = useContext(RootEditorContext);
+  useEffect(() => {
+    editorContext.editorUpdateCbs.current.push(callback);
+    return () => {
+      editorContext.editorUpdateCbs.current = editorContext.editorUpdateCbs.current.filter((cb) => cb !== callback);
+    };
+  });
 };
 
 export const useNodeData = () => {

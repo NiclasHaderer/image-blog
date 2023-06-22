@@ -1,6 +1,6 @@
 'use client';
 
-import { Editor } from '@image-blog/editor';
+import { Editor, useEditorHistory } from '@image-blog/editor';
 
 export default function Page() {
   return <Editor />;
