@@ -1,16 +1,10 @@
 import { AbstractNode } from './abstract-node';
-import {
-  EditorChild,
-  EditorChildren,
-  NodeProps,
-  useIsNodeInnerFocused,
-  useNodeIndex,
-  useUpdateEditor,
-} from '../state/editor-state';
+import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
 import { ColumnIcon, DragIcon } from '../common/icons';
 import { ControlNode } from './control-node';
 import { useEffect, useRef } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';
+import { EditorChild, EditorChildren } from '../editor-building-blocks';
 
 type ColumnNodeOutletProps = NodeProps;
 

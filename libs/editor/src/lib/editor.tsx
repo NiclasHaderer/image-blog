@@ -1,6 +1,6 @@
 import { NodeProvider } from './nodes/nodes';
-import { RootEditorContextProvider, RootEditorOutlet } from './state/editor-state';
 import { forwardRef, HTMLProps } from 'react';
+import { RootEditorContextProvider, RootEditorOutlet } from './editor-building-blocks';
 
 export const Editor = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
   return (

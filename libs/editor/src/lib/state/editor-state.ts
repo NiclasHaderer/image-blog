@@ -1,22 +1,10 @@
-import React, {
-  createContext,
-  FC,
-  forwardRef,
-  HTMLProps,
-  ReactNode,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-} from 'react';
+import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { useNodeHandlers } from '../nodes/nodes';
-import { Slot } from '../common/slot';
 import { getNodeProps, getNodesInRange } from './update/utils';
 import { ControlNode } from '../nodes/control-node';
 import { NodeCapabilities } from '../nodes/abstract-node';
 import { logger } from '../logger';
-import { useEditorHistory } from '@image-blog/editor';
 
 const log = logger('editor-state');
 
@@ -44,7 +32,7 @@ export const RootEditorContext = createContext({
   data: {} as RootNodeProps,
 });
 
-export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const useEditorState = () => {
   const [editorState, setEditorState] = useReducer(editorReducer, {
     children: [ControlNode.empty()],
     id: 'root',
@@ -68,81 +56,22 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
     []
   );
 
-  return (
-    <RootEditorContext.Provider
-      value={{
-        data: editorState as RootNodeProps,
-        update: (action) => {
-          const oldData = editorState;
-          setEditorState(action);
-          const newData = editorState;
-          editorUpdateCbs.current.forEach((cb) => cb(oldData, newData, action));
-        },
-        editorUpdateCbs,
-      }}
-    >
-      {children}
-    </RootEditorContext.Provider>
-  );
+  return {
+    editorState,
+    update: (action: EditorActions) => {
+      const oldData = editorState;
+      setEditorState(action);
+      const newData = editorState;
+      editorUpdateCbs.current.forEach((cb) => cb(oldData, newData, action));
+    },
+    editorUpdateCbs,
+  };
 };
 
-export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
-  const rootContext = useContext(RootEditorContext);
-  const editorState = rootContext.data;
-  useEditorHistory();
-
-  return (
-    <div ref={ref} {...props}>
-      <EditorChildren>{editorState}</EditorChildren>
-    </div>
-  );
-});
-
-const UnsetChildContext = Symbol('unset-child-context');
-const ChildContext = createContext({
+export const UnsetChildContext = Symbol('unset-child-context');
+export const ChildContext = createContext({
   index: UnsetChildContext as unknown as number[],
 });
-
-const NodeRenderer: FC<{ node: NodeProps }> = ({ node }) => {
-  const nodes = useNodeHandlers();
-  const Node = nodes.find((n) => n.canHandle(node));
-  if (!Node) {
-    return <>Unknown component {node.id}</>;
-  }
-
-  return <Node.Render {...node} />;
-};
-
-export const EditorChildren: FC<{ children: NodeProps }> = ({ children }) => {
-  const childContext = useContext(ChildContext);
-  const contextToUse = (childContext.index as unknown) === UnsetChildContext ? { index: [] } : childContext;
-
-  return (
-    <>
-      {children.children?.map((child, index) => {
-        return (
-          <EditorChild key={index} index={[...contextToUse.index, index]}>
-            {child}
-          </EditorChild>
-        );
-      })}
-    </>
-  );
-};
-
-export const EditorChild: FC<{ index: number[]; children: NodeProps }> = ({ index, children }) => {
-  return (
-    <ChildContext.Provider
-      value={{
-        index,
-      }}
-    >
-      <Slot>
-        <NodeRenderer node={children} />
-      </Slot>
-    </ChildContext.Provider>
-  );
-};
 
 export const useUpdateEditor = () => {
   const rootContext = useContext(RootEditorContext);
