@@ -1,10 +1,6 @@
 import { createContext, FC, ReactElement, useContext } from 'react';
 import { AbstractNode } from './abstract-node';
-import { ControlNode } from './control-node';
-import { ImageNode } from './image-node';
-import { DividerNode } from './divider-node';
 import { NodeProps } from '../state/editor-state';
-import { ColumnNode, ColumnNodeOutlet } from './column-node';
 
 const NodeHandlerContext = createContext({
   nodes: [],

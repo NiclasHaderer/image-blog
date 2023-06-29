@@ -1,5 +1,4 @@
 import { NodeProps, RootNodeProps } from '../editor-state';
-import { ControlNode } from '../../nodes/control-node';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
 import { addNode, deleteNode, replaceNode } from './nodes';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';

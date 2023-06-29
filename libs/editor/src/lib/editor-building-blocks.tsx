@@ -27,6 +27,7 @@ export const EditorChildren: FC<{ children: NodeProps }> = ({ children }) => {
   const contextToUse = (childContext.index as unknown) === UnsetChildContext ? { index: [] } : childContext;
 
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {children.children?.map((child, index) => {
         return (
@@ -71,5 +72,6 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
 
 export const EditorHistory: FC<{ children?: ReactNode; maxHistory?: number }> = ({ children, maxHistory = 20 }) => {
   useEditorHistory(maxHistory);
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
 };

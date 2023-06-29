@@ -1,21 +1,7 @@
 {
   "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "@typescript-eslint/no-non-null-assertion": "off",
-        "no-console": "error"
-      }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    }
-  ]
+  "parserOptions": {
+    "project": ["libs/editor/tsconfig.lib.json", "libs/editor/tsconfig.spec.json"]
+  }
 }
