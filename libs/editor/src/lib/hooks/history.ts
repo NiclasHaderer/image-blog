@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
-import { useGlobalEvent } from "./global-events";
-import { RootEditorContext, RootNodeProps, useOnEditorUpdate } from "../state/editor-state";
+import { useContext, useState } from 'react';
+import { useGlobalEvent } from './global-events';
+import { RootEditorContext, RootNodeProps, useOnEditorUpdate } from '../state/editor-state';
 
-export const useEditorHistory = () => {
+export const useEditorHistory = (maxHistory: number) => {
   const rootContext = useContext(RootEditorContext);
   const editorState = rootContext.data;
 
@@ -18,8 +18,13 @@ export const useEditorHistory = () => {
     // We do not want to skip history when we replace the root node
     if (action.type === 'replace-root' && action.payload.skipHistory) return;
 
+    const newPast = [...history.past, editorState];
+    if (newPast.length > maxHistory) {
+      newPast.shift();
+    }
+
     setHistory({
-      past: [...history.past, editorState],
+      past: newPast,
       future: [],
     });
   });

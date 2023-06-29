@@ -1,12 +1,10 @@
 import React, { FC, forwardRef, HTMLProps, ReactNode, useContext } from 'react';
-import { useEditorHistory } from './hooks/history';
 import { ChildContext, NodeProps, RootEditorContext, UnsetChildContext, useEditorState } from './state/editor-state';
 import { useNodeHandlers } from './nodes/nodes';
 import { Slot } from './common/slot';
+import { useEditorHistory } from './hooks/history';
 
 export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
-  useEditorHistory();
-
   return (
     <div ref={ref} {...props}>
       <EditorChildren>{useContext(RootEditorContext).data}</EditorChildren>
@@ -69,4 +67,9 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
       {children}
     </RootEditorContext.Provider>
   );
+};
+
+export const EditorHistory: FC<{ children?: ReactNode; maxHistory?: number }> = ({ children, maxHistory = 20 }) => {
+  useEditorHistory(maxHistory);
+  return <>{children}</>;
 };

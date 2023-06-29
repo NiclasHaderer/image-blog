@@ -1,2 +1,2 @@
 export { Editor } from './lib/editor';
-export { useEditorHistory } from './lib/hooks/history';
+export * from './lib/editor-building-blocks';

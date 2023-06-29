@@ -1,7 +1,11 @@
 'use client';
 
-import { Editor, useEditorHistory } from '@image-blog/editor';
+import { Editor, EditorHistory } from '@image-blog/editor';
 
 export default function Page() {
-  return <Editor />;
+  return (
+    <Editor>
+      <EditorHistory maxHistory={20} />
+    </Editor>
+  );
 }
