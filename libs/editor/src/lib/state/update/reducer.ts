@@ -5,6 +5,7 @@ import { addNode, deleteNode, replaceNode } from './nodes';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
 import { deepFreeze, deleteRange } from './utils';
 import { logger } from '../../logger';
+import { EMPTY_CONTROL_NODE } from '../../nodes/empty-control-node';
 
 const log = logger('reducer');
 
@@ -188,7 +189,7 @@ export const editorReducer = (state: RootNodeProps, { payload, type, origin }: E
   // If there are no children add a ControlNode to the root
   // noinspection JSObjectNullOrUndefined
   if (newState.children?.length === 0) {
-    newState.children = [ControlNode.empty()];
+    newState.children = [EMPTY_CONTROL_NODE];
     newState = focus(newState, [0], true);
   }
   log.groupEnd();

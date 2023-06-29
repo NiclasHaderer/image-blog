@@ -5,6 +5,7 @@ import { AbstractNode } from './abstract-node';
 import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
 import { useNodeHandlersQuery } from './nodes';
 import { useGlobalEvent } from '../hooks/global-events';
+import { EMPTY_CONTROL_NODE } from './empty-control-node';
 
 export type ControlNodeProps = NodeProps;
 
@@ -98,16 +99,7 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
   }
 
   static empty(): ControlNodeProps {
-    return {
-      id: 'control-node',
-      data: undefined,
-      capabilities: {
-        canBeDeleted: true,
-        canBeInnerFocused: true,
-        canHaveChildren: false,
-        structural: false,
-      },
-    };
+    return EMPTY_CONTROL_NODE;
   }
 }
 

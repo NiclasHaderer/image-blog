@@ -2,9 +2,9 @@ import React, { createContext, useContext, useEffect, useReducer, useRef } from 
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { useNodeHandlers } from '../nodes/nodes';
 import { getNodeProps, getNodesInRange } from './update/utils';
-import { ControlNode } from '../nodes/control-node';
 import { NodeCapabilities } from '../nodes/abstract-node';
 import { logger } from '../logger';
+import { EMPTY_CONTROL_NODE } from '../nodes/empty-control-node';
 
 const log = logger('editor-state');
 
@@ -34,7 +34,7 @@ export const RootEditorContext = createContext({
 
 export const useEditorState = () => {
   const [editorState, setEditorState] = useReducer(editorReducer, {
-    children: [ControlNode.empty()],
+    children: [EMPTY_CONTROL_NODE],
     id: 'root',
     data: {},
     focusedNode: [0],

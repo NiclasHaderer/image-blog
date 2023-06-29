@@ -24,11 +24,14 @@ export const useNodeHandlersQuery = (query: string) => {
     .map(([p]) => p);
 };
 
-export const NodeProvider: FC<{ children: ReactElement }> = ({ children }) => {
+export const NodeProvider: FC<{ children: ReactElement; editorNodes: AbstractNode<any>[] }> = ({
+  children,
+  editorNodes,
+}) => {
   return (
     <NodeHandlerContext.Provider
       value={{
-        nodes: [new ControlNode(), new ImageNode(), new DividerNode(), new ColumnNode(), new ColumnNodeOutlet()],
+        nodes: editorNodes,
       }}
     >
       {children}
