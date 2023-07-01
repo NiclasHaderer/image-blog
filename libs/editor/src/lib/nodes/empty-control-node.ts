@@ -1,7 +1,7 @@
-import type { ControlNodeProps } from './control-node';
+import { ControlNodeProps } from '@image-blog/common';
 
 export const EMPTY_CONTROL_NODE: ControlNodeProps = {
-  id: 'control-node',
+  id: 'control',
   data: undefined,
   capabilities: {
     canBeDeleted: true,

@@ -2,9 +2,9 @@ import React, { createContext, useContext, useEffect, useReducer, useRef } from 
 import { EditorAction, EditorActions, editorReducer } from './update/reducer';
 import { useNodeHandlers } from '../nodes/nodes';
 import { getNodeProps, getNodesInRange } from './update/utils';
-import { NodeCapabilities } from '../nodes/abstract-node';
 import { logger } from '../logger';
 import { EMPTY_CONTROL_NODE } from '../nodes/empty-control-node';
+import { NodeCapabilities } from '@image-blog/common';
 
 const log = logger('editor-state');
 

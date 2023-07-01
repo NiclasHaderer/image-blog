@@ -2,16 +2,15 @@ import c from './control-node.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/tap-focus';
 import { AbstractNode } from './abstract-node';
-import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
+import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
 import { useNodeHandlersQuery } from './nodes';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EMPTY_CONTROL_NODE } from './empty-control-node';
-
-export type ControlNodeProps = NodeProps;
+import { CONTROL_NODE_ID, ControlNodeProps } from '@image-blog/common';
 
 export class ControlNode extends AbstractNode<ControlNodeProps> {
   constructor() {
-    super('control-node', []);
+    super(CONTROL_NODE_ID, []);
   }
 
   Name = () => 'Controls';

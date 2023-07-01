@@ -1,6 +1,7 @@
 import { AbstractNode } from './abstract-node';
 import { ImageIcon } from '../common/icons';
 import { NodeProps, useNodeIndex } from '../state/editor-state';
+import { IMAGE_NODE_ID } from '@image-blog/common';
 
 export type ImageNodeProps = NodeProps<{
   src: string;
@@ -10,7 +11,7 @@ export type ImageNodeProps = NodeProps<{
 
 export class ImageNode extends AbstractNode<ImageNodeProps> {
   constructor() {
-    super('image', ['image', 'img', 'photo', 'picture']);
+    super(IMAGE_NODE_ID, ['image', 'img', 'photo', 'picture']);
   }
 
   Name = () => 'Image';

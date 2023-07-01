@@ -2,7 +2,7 @@ import React, { FC, forwardRef, HTMLProps, ReactNode, useContext } from 'react';
 import { ChildContext, NodeProps, RootEditorContext, UnsetChildContext, useEditorState } from './state/editor-state';
 import { useNodeHandlers } from './nodes/nodes';
 import { Slot } from './common/slot';
-import { useEditorHistory } from './hooks/history';
+import { useEditorHistory } from './lib-hooks/history';
 
 export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
   return (
@@ -16,7 +16,12 @@ const NodeRenderer: FC<{ node: NodeProps }> = ({ node }) => {
   const nodes = useNodeHandlers();
   const Node = nodes.find((n) => n.canHandle(node));
   if (!Node) {
-    return <>Unknown component {node.id}</>;
+    return (
+      <div>
+        Unknown component {node.id}
+        <code>{JSON.stringify(node)}</code>
+      </div>
+    );
   }
 
   return <Node.Render {...node} />;

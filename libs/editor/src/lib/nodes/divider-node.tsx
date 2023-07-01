@@ -1,12 +1,13 @@
 import { AbstractNode } from './abstract-node';
 import { DividerIcon } from '../common/icons';
 import { NodeProps } from '../state/editor-state';
+import { DIVIDER_NODE_ID } from '@image-blog/common';
 
 export type DividerNodeProps = NodeProps<undefined>;
 
 export class DividerNode extends AbstractNode<DividerNodeProps> {
   constructor() {
-    super('divider', ['divider', 'line', 'hr', 'horizontal rule', 'horizontal divider', 'horizontal line']);
+    super(DIVIDER_NODE_ID, ['divider', 'line', 'hr', 'horizontal rule', 'horizontal divider', 'horizontal line']);
   }
 
   Name() {

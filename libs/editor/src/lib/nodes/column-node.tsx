@@ -1,16 +1,15 @@
 import { AbstractNode } from './abstract-node';
-import { NodeProps, useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
+import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
 import { ColumnIcon, DragIcon } from '../common/icons';
 import { ControlNode } from './control-node';
 import { useEffect, useRef } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EditorChild, EditorChildren } from '../editor-building-blocks';
-
-type ColumnNodeOutletProps = NodeProps;
+import { COLUMN_NODE_ID, COLUMN_OUTLET_ID, ColumnNodeOutletProps, ColumnNodeProps } from '@image-blog/common';
 
 export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
   constructor() {
-    super('column-outlet', []);
+    super(COLUMN_OUTLET_ID, []);
   }
 
   Render(props: ColumnNodeOutletProps): JSX.Element | null {
@@ -26,7 +25,7 @@ export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
 
   public static empty(): ColumnNodeOutletProps {
     return {
-      id: 'column-outlet',
+      id: COLUMN_NODE_ID,
       children: [ControlNode.empty()],
       data: undefined,
       capabilities: {
@@ -42,16 +41,9 @@ export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
   }
 }
 
-interface ColumnNodeProps
-  extends NodeProps<{
-    lWidth: string;
-  }> {
-  children: [NodeProps, NodeProps];
-}
-
 export class ColumnNode extends AbstractNode<ColumnNodeProps> {
   constructor() {
-    super('column', ['column', 'columns', 'two columns', 'two column node']);
+    super(COLUMN_NODE_ID, ['column', 'columns', 'two columns', 'two column node']);
   }
 
   Name = () => 'Column';

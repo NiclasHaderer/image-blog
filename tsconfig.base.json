@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@image-blog/editor": ["libs/editor/src/index.ts"]
+      "@image-blog/common": ["libs/common/src/index.ts"],
+      "@image-blog/editor": ["libs/editor/src/index.ts"],
+      "@image-blog/view": ["libs/view/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

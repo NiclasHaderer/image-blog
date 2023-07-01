@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useGlobalEvent } from './global-events';
+import { useGlobalEvent } from '../hooks/global-events';
 import { RootEditorContext, RootNodeProps, useOnEditorUpdate } from '../state/editor-state';
 
 export const useEditorHistory = (maxHistory: number) => {

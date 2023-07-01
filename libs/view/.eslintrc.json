@@ -1,0 +1,7 @@
+{
+  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "parserOptions": {
+    "project": ["libs/view/tsconfig.lib.json", "libs/view/tsconfig.spec.json"]
+  }
+}
