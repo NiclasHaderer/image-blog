@@ -1,8 +1,12 @@
 {
   "name": "@image-blog/editor",
   "version": "0.0.1",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./view": "./src/view/index.ts"
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
   }
 }
