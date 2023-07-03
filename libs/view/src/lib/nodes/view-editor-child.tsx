@@ -1,15 +1,17 @@
 import React, { FC } from 'react';
 import { NodeProps } from '@image-blog/common';
-import { useNodeViewHandlers } from '../lib-hooks/view-nodes';
+import { useNodeViewHandler } from '../context/node-view-provider';
 
-export const ViewEditorChild: FC<{ node: NodeProps }> = ({ node }) => {
-  const nodes = useNodeViewHandlers();
-  const Node = nodes.find((n) => n.canHandle(node));
+export const ViewEditorChild: FC<{ node: NodeProps; skipUnknownNodes: boolean }> = ({ node, skipUnknownNodes }) => {
+  const Node = useNodeViewHandler(node);
   if (!Node) {
+    if (skipUnknownNodes) return null;
     return (
-      <div>
+      <div className="border-solid border-b-2 border-text">
         Unknown component {node.id}
-        <code>{JSON.stringify(node)}</code>
+        <div className="bg-surface-1 overflow-auto">
+          <code>{JSON.stringify(node)}</code>
+        </div>
       </div>
     );
   }

@@ -1,7 +1,9 @@
 import { NodeProvider } from './nodes/nodes';
-import { forwardRef, HTMLProps } from 'react';
+import { FC, forwardRef, HTMLProps, ReactNode } from 'react';
 import { RootEditorContextProvider, RootEditorOutlet } from './editor-building-blocks';
 import { AbstractNode } from './nodes/abstract-node';
+import { RootNodeProps } from '@image-blog/common';
+import { useOnEditorUpdate } from './state/editor-state';
 
 export const Editor = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement> & { editorNodes: AbstractNode<any>[] }>(
   ({ children, editorNodes, ...props }, ref) => {
@@ -15,3 +17,14 @@ export const Editor = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement> & { e
     );
   }
 );
+
+export const EditorEvents: FC<{ onChange?: (state: RootNodeProps) => void; children?: ReactNode }> = ({
+  onChange,
+  children,
+}) => {
+  useOnEditorUpdate((oldState, newState, action) => {
+    if (action.type === 'replace-root' && action.payload.skipHistory) return;
+    onChange?.(newState);
+  });
+  return children;
+};

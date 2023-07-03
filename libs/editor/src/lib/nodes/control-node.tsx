@@ -3,7 +3,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/tap-focus';
 import { AbstractNode } from './abstract-node';
 import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
-import { useNodeHandlersQuery } from './nodes';
+import { useQueryNodeHandlers } from './nodes';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EMPTY_CONTROL_NODE } from './empty-control-node';
 import { CONTROL_NODE_ID, ControlNodeProps } from '@image-blog/common';
@@ -105,7 +105,7 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
 const ControlOutlet: FC<{ search: string }> = ({ search }) => {
   const dispatch = useUpdateEditor();
   const path = useNodeIndex();
-  const nodes = useNodeHandlersQuery(search);
+  const nodes = useQueryNodeHandlers(search);
   return (
     <div className={c.controlNodeOutlet}>
       {nodes.map((p) => {

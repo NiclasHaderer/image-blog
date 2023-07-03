@@ -1,12 +1,24 @@
 'use client';
 
-import { Editor, EditorHistory } from '@image-blog/editor';
-import { DEFAULT_NODES } from '@image-blog/editor';
+import {
+  ColumnNode,
+  ColumnNodeOutlet,
+  ControlNode,
+  DividerNode,
+  EditorHistory,
+  ImageNode,
+  SideBySideEditor,
+} from '@image-blog/editor';
+import { ColumnViewNode, ColumnOutletViewNode, DividerViewNode, ImageViewNode } from '@image-blog/view';
+
+const EDITOR_NODES = [new ControlNode(), new ImageNode(), new DividerNode(), new ColumnNode(), new ColumnNodeOutlet()];
+
+const VIEW_NODES = [ImageViewNode, DividerViewNode, ColumnViewNode, ColumnOutletViewNode];
 
 export default function Page() {
   return (
-    <Editor editorNodes={DEFAULT_NODES}>
+    <SideBySideEditor editorNodes={EDITOR_NODES} viewNodes={VIEW_NODES}>
       <EditorHistory maxHistory={20} />
-    </Editor>
+    </SideBySideEditor>
   );
 }

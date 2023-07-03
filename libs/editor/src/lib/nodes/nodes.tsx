@@ -12,7 +12,7 @@ export const useNodeHandlers = () => {
   return useContext(NodeHandlerContext).nodes;
 };
 
-export const useNodeHandlersQuery = (query: string) => {
+export const useQueryNodeHandlers = (query: string) => {
   return useNodeHandlers()
     .map((p) => [p, p.distance(query)] as [AbstractNode<NodeProps>, number])
     .filter(([, distance]) => distance > -Infinity)

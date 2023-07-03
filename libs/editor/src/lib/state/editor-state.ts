@@ -62,7 +62,9 @@ export const useEditorState = () => {
       const oldData = editorState;
       setEditorState(action);
       const newData = editorState;
-      editorUpdateCbs.current.forEach((cb) => cb(oldData, newData, action));
+      setTimeout(() => {
+        editorUpdateCbs.current.forEach((cb) => cb(oldData, newData, action));
+      }, 1);
     },
     editorUpdateCbs,
   };

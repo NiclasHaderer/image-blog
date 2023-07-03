@@ -2,10 +2,11 @@ import { IMAGE_NODE_ID, ImageNodeProps, NodeProps } from '@image-blog/common';
 import { ViewNode } from './view-node';
 
 export const ImageViewNode: ViewNode<ImageNodeProps> = {
+  id: IMAGE_NODE_ID,
   canHandle(type: NodeProps): boolean {
-    return type.id === IMAGE_NODE_ID;
+    return type.id === this.id;
   },
-  Render({ data: { src, width, caption } }) {
+  Render({ data: { src, width, caption } }, skipUnknownNodes = true) {
     return (
       <div className="flex items-center flex-row justify-center">
         <img
