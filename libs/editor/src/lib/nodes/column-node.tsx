@@ -8,18 +8,18 @@ import { EditorChild, EditorChildren } from '../editor-building-blocks';
 import { COLUMN_NODE_ID, COLUMN_OUTLET_ID, ColumnNodeOutletProps, ColumnNodeProps } from '@image-blog/shared';
 
 export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
-  constructor() {
+  public constructor() {
     super(COLUMN_OUTLET_ID, []);
   }
 
-  Render(props: ColumnNodeOutletProps): JSX.Element | null {
+  public Render(props: ColumnNodeOutletProps): JSX.Element | null {
     return <EditorChildren>{props}</EditorChildren>;
   }
 
-  Name = () => null;
-  Icon = () => null;
+  public Name = () => null;
+  public Icon = () => null;
 
-  empty(): ColumnNodeOutletProps {
+  public empty(): ColumnNodeOutletProps {
     return ColumnNodeOutlet.empty();
   }
 
@@ -42,14 +42,14 @@ export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
 }
 
 export class ColumnNode extends AbstractNode<ColumnNodeProps> {
-  constructor() {
+  public constructor() {
     super(COLUMN_NODE_ID, ['column', 'columns', 'two columns', 'two column node']);
   }
 
-  Name = () => 'Column';
-  Icon = ({ size }: { size: string | number }) => <ColumnIcon width={size} height={size} />;
+  public Name = () => 'Column';
+  public Icon = ({ size }: { size: string | number }) => <ColumnIcon width={size} height={size} />;
 
-  Render = <V extends ColumnNodeProps>({ children, data: { lWidth }, capabilities }: V) => {
+  public Render = <V extends ColumnNodeProps>({ children, data: { lWidth }, capabilities }: V) => {
     const index = useNodeIndex();
     const dispatch = useUpdateEditor();
     const { force, isFocused } = useIsNodeInnerFocused();
@@ -95,7 +95,7 @@ export class ColumnNode extends AbstractNode<ColumnNodeProps> {
     );
   };
 
-  empty(): ColumnNodeProps {
+  public empty(): ColumnNodeProps {
     return {
       id: this.id,
       children: [ColumnNodeOutlet.empty(), ColumnNodeOutlet.empty()],
