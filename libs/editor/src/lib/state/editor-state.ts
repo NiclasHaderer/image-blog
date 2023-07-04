@@ -67,7 +67,13 @@ export const useEditorState = () => {
 
   return {
     editorState,
-    update: (action: EditorActions) => setEditorState(action),
+    update: (action: EditorActions) => {
+      oldValueAndAction.current = {
+        oldData: editorState,
+        action,
+      };
+      setEditorState(action);
+    },
     editorUpdateCbs,
   };
 };

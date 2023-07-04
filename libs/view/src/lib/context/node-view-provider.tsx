@@ -1,4 +1,4 @@
-import { createContext, FC, ReactElement, ReactNode, useContext } from 'react';
+import { createContext, FC, ReactNode, useContext } from 'react';
 import { NodeProps } from '@image-blog/common';
 import { ViewNode } from '../nodes/view-node';
 
@@ -13,7 +13,6 @@ export const useNodeViewHandlers = () => {
 };
 
 export const useNodeViewHandler = (node: NodeProps) => {
-  console.log(useNodeViewHandlers());
   return useNodeViewHandlers().find((p) => p.canHandle(node));
 };
 

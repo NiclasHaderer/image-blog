@@ -9,7 +9,7 @@ import {
   ImageNode,
   SideBySideEditor,
 } from '@image-blog/editor';
-import { ColumnViewNode, ColumnOutletViewNode, DividerViewNode, ImageViewNode } from '@image-blog/view';
+import { ColumnOutletViewNode, ColumnViewNode, DividerViewNode, ImageViewNode } from '@image-blog/view';
 
 const EDITOR_NODES = [new ControlNode(), new ImageNode(), new DividerNode(), new ColumnNode(), new ColumnNodeOutlet()];
 

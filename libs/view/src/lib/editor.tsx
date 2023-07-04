@@ -12,7 +12,7 @@ export const EditorViewer = forwardRef<
     <div {...props}>
       <NodeViewProvider editorNodes={editorNodes}>
         {rootNode.children?.map((child, index) => (
-          <ViewEditorChild node={child} key={index} skipUnknownNodes={false} />
+          <ViewEditorChild node={child} key={index} skipUnknownNodes={skipUnknownNodes} />
         ))}
       </NodeViewProvider>
     </div>

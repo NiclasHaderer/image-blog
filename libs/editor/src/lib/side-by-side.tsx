@@ -8,13 +8,14 @@ export const SideBySideEditor: FC<{
   editorNodes: AbstractNode<any>[];
   viewNodes: ViewNode<any>[];
   children: ReactNode;
-}> = ({ children, editorNodes, viewNodes, ...props }, ref) => {
+}> = ({ children, editorNodes, viewNodes }) => {
   const [viewOnlyRootNode, setViewOnlyRootNode] = useState<RootNodeProps>();
   return (
     <div className="flex">
       <div className="inline-block w-1/2">
         <Editor editorNodes={editorNodes}>
-          <EditorEvents onChange={setViewOnlyRootNode} />
+          {children}
+          <EditorEvents onChange={setViewOnlyRootNode}></EditorEvents>
         </Editor>
       </div>
       <div className="inline-block w-1/2 overflow-auto">

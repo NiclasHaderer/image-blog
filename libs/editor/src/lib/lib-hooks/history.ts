@@ -18,6 +18,7 @@ export const useEditorHistory = (maxHistory: number) => {
     // We do not want to skip history when we replace the root node
     if (action.type === 'replace-root' && action.payload.skipHistory) return;
 
+    console.log('PUSHING TO HISTORY', action);
     const newPast = [...history.past, editorState];
     if (newPast.length > maxHistory) {
       newPast.shift();
@@ -35,6 +36,9 @@ export const useEditorHistory = (maxHistory: number) => {
         const newPast = [...history.past];
         const newFuture = [editorState, ...history.future];
         const newState = newPast.pop();
+
+        console.log(history.past.length);
+
         if (newState) {
           setHistory({
             past: newPast,
