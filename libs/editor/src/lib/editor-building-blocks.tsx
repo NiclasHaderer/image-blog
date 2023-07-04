@@ -1,5 +1,5 @@
 import React, { FC, forwardRef, HTMLProps, ReactNode, useContext } from 'react';
-import { ChildContext, NodeProps, RootEditorContext, UnsetChildContext, useEditorState } from './state/editor-state';
+import { ChildContext, NodeProps, RootEditorContext, UnsetChildContext, useEditorState } from './state-holder';
 import { useNodeHandlers } from './nodes/nodes';
 import { Slot } from './common/slot';
 import { useEditorHistory } from './lib-hooks/history';

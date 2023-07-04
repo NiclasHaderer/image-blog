@@ -2,7 +2,7 @@ import c from './control-node.module.scss';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/tap-focus';
 import { AbstractNode } from './abstract-node';
-import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
+import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state-holder';
 import { useQueryNodeHandlers } from './nodes';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EMPTY_CONTROL_NODE } from './empty-control-node';

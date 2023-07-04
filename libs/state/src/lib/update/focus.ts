@@ -1,6 +1,5 @@
-import { RootNodeProps } from '../editor-state';
 import { getNextNode, getNodeOffsetBy, getNodeProps, getPreviousNode, isChildOf } from './utils';
-import { logger } from '../../logger';
+import { logger, RootNodeProps } from '@image-blog/common';
 
 const log = logger('focus');
 

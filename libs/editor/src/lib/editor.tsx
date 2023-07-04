@@ -3,7 +3,7 @@ import { FC, forwardRef, HTMLProps, ReactNode } from 'react';
 import { RootEditorContextProvider, RootEditorOutlet } from './editor-building-blocks';
 import { AbstractNode } from './nodes/abstract-node';
 import { RootNodeProps } from '@image-blog/common';
-import { useOnEditorUpdate } from './state/editor-state';
+import { useOnEditorUpdate } from './state-holder';
 
 export const Editor = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement> & { editorNodes: AbstractNode<any>[] }>(
   ({ children, editorNodes, ...props }, ref) => {

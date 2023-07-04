@@ -1,4 +1,4 @@
-import { NodeProps } from '../state/editor-state';
+import { NodeProps } from '../state-holder';
 import fuzzysort from 'fuzzysort';
 import { JSX } from 'react';
 

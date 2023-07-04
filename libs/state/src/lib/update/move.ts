@@ -1,4 +1,4 @@
-import { RootNodeProps } from '../editor-state';
+import { RootNodeProps } from '@image-blog/common';
 import {
   deleteRange,
   getFirstPath,

@@ -1,26 +1,10 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
-import { EditorAction, EditorActions, editorReducer } from './update/reducer';
-import { useNodeHandlers } from '../nodes/nodes';
-import { getNodeProps, getNodesInRange } from './update/utils';
-import { logger } from '../logger';
-import { EMPTY_CONTROL_NODE } from '../nodes/empty-control-node';
-import { NodeCapabilities } from '@image-blog/common';
+import { useNodeHandlers } from './nodes/nodes';
+import { logger, RootNodeProps } from '@image-blog/common';
+import { EMPTY_CONTROL_NODE } from './nodes/empty-control-node';
+import { EditorAction, EditorActions, editorReducer, getNodeProps, getNodesInRange } from '@image-blog/state';
 
 const log = logger('editor-state');
-
-export interface NodeProps<T = any> {
-  id: string;
-  children?: NodeProps[];
-  data: T;
-  capabilities: NodeCapabilities;
-}
-
-export interface RootNodeProps extends NodeProps {
-  focusedNode: number[] | null;
-  forceFocus: boolean;
-  outerFocusedNode: number[] | null;
-  outerFocusedRange: number | null;
-}
 
 export const RootEditorContext = createContext({
   update: (_: EditorActions): void => {

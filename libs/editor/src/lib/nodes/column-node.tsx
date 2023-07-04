@@ -1,5 +1,5 @@
 import { AbstractNode } from './abstract-node';
-import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state/editor-state';
+import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state-holder';
 import { ColumnIcon, DragIcon } from '../common/icons';
 import { ControlNode } from './control-node';
 import { useEffect, useRef } from 'react';

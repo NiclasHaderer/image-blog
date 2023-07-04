@@ -1,6 +1,6 @@
-import { NodeProps, RootNodeProps } from '../editor-state';
+import { NodeProps, RootNodeProps } from '@image-blog/common';
 import { updateChildren } from './utils';
-import { logger } from '../../logger';
+import { logger } from '@image-blog/common';
 
 const log = logger('nodes');
 

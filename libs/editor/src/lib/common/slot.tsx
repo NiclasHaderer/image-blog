@@ -1,12 +1,6 @@
 import { AddIcon } from './icons';
 import { FC, ReactNode, useEffect, useRef } from 'react';
-import {
-  useIsNodeInnerFocused,
-  useIsNodeOuterFocused,
-  useNode,
-  useNodeIndex,
-  useUpdateEditor,
-} from '../state/editor-state';
+import { useIsNodeInnerFocused, useIsNodeOuterFocused, useNode, useNodeIndex, useUpdateEditor } from '../state-holder';
 import c from './slot.module.scss';
 import { usePageFocus } from '../hooks/page-focus';
 import { ControlNode } from '../nodes/control-node';

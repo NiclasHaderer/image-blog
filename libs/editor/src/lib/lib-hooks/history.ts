@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';
-import { RootEditorContext, RootNodeProps, useOnEditorUpdate } from '../state/editor-state';
+import { RootEditorContext, useOnEditorUpdate } from '../state-holder';
+import { RootNodeProps } from '@image-blog/common';
 
 export const useEditorHistory = (maxHistory: number) => {
   const rootContext = useContext(RootEditorContext);

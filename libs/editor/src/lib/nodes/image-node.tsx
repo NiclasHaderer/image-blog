@@ -1,6 +1,6 @@
 import { AbstractNode } from './abstract-node';
 import { ImageIcon } from '../common/icons';
-import { NodeProps, useNodeIndex } from '../state/editor-state';
+import { NodeProps, useNodeIndex } from '../state-holder';
 import { IMAGE_NODE_ID } from '@image-blog/common';
 
 export type ImageNodeProps = NodeProps<{

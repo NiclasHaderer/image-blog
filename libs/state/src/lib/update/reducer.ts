@@ -1,128 +1,15 @@
-import { NodeProps, RootNodeProps } from '../editor-state';
 import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
 import { addNode, deleteNode, replaceNode } from './nodes';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
 import { deepFreeze, deleteRange } from './utils';
-import { logger } from '../../logger';
-import { EMPTY_CONTROL_NODE } from '../../nodes/empty-control-node';
+import { logger, RootNodeProps } from '@image-blog/common';
+import { EditorActions } from '../actions';
 
 const log = logger('reducer');
 
-type InitAction = {
-  type: 'init';
-  origin: [];
-  payload: undefined;
-};
-
-type ReplaceAction = {
-  type: 'replace';
-  origin: number[];
-  payload: {
-    at: number[];
-    with: NodeProps;
-  };
-};
-
-type ReplaceRootAction = {
-  type: 'replace-root';
-  origin: number[];
-  payload: {
-    with: RootNodeProps;
-    skipHistory: boolean;
-  };
-};
-
-type CreateAction = {
-  type: 'add';
-  origin: number[];
-  payload: {
-    at: number[];
-    node: NodeProps;
-  };
-};
-
-type DeleteAction = {
-  type: 'delete';
-  origin: number[];
-  payload:
-    | {
-        at: number[];
-      }
-    | { selection: true };
-};
-
-type FocusNextAction = {
-  type: 'focus-next';
-  origin: number[];
-  payload: { force: boolean };
-};
-
-type FocusPreviousAction = {
-  type: 'focus-previous';
-  origin: number[];
-  payload: { force: boolean };
-};
-
-type FocusAction = {
-  type: 'focus';
-  origin: number[];
-  payload: {
-    at: number[];
-    force: boolean;
-  };
-};
-
-type OuterFocusAction = {
-  type: 'outer-focus';
-  origin: number[];
-  payload: {
-    at: number[];
-  };
-};
-
-type OuterFocusNextAction = {
-  type: 'outer-focus-next';
-  origin: number[];
-  payload: { mode: 'add' | 'replace' };
-};
-
-type OuterFocusPreviousAction = {
-  type: 'outer-focus-previous';
-  origin: number[];
-  payload: { mode: 'add' | 'replace' };
-};
-
-type MoveOuterFocusedDownAction = {
-  type: 'move-outer-focused-down';
-  origin: number[];
-  payload: null;
-};
-
-type MoveOuterFocusedUpAction = {
-  type: 'move-outer-focused-up';
-  origin: number[];
-  payload: null;
-};
-
-export type EditorAction<T> = { type: string; origin: number[]; payload: T };
-export type EditorActions =
-  | InitAction
-  | ReplaceAction
-  | ReplaceRootAction
-  | CreateAction
-  | DeleteAction
-  | FocusNextAction
-  | FocusPreviousAction
-  | FocusAction
-  | OuterFocusAction
-  | OuterFocusNextAction
-  | OuterFocusPreviousAction
-  | MoveOuterFocusedDownAction
-  | MoveOuterFocusedUpAction;
-
 export const editorReducer = (state: RootNodeProps, { payload, type, origin }: EditorActions): RootNodeProps => {
   // Check if we are in dev mode
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     // Deep Freeze the state to prevent mutations
     deepFreeze(state);
   }
@@ -192,14 +79,15 @@ export const editorReducer = (state: RootNodeProps, { payload, type, origin }: E
     }
     case 'init': {
       newState = state;
+      break;
     }
   }
 
   // If there are no children add a ControlNode to the root
   // noinspection JSObjectNullOrUndefined
   if (newState.children?.length === 0) {
-    newState.children = [EMPTY_CONTROL_NODE];
-    newState = focus(newState, [0], true);
+    log.error('Action would result in an empty root node. Discarding action.', { type, payload, origin });
+    newState = state;
   }
   log.groupEnd();
   return newState;
