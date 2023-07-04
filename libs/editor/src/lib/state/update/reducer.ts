@@ -8,6 +8,12 @@ import { EMPTY_CONTROL_NODE } from '../../nodes/empty-control-node';
 
 const log = logger('reducer');
 
+type InitAction = {
+  type: 'init';
+  origin: [];
+  payload: undefined;
+};
+
 type ReplaceAction = {
   type: 'replace';
   origin: number[];
@@ -100,6 +106,7 @@ type MoveOuterFocusedUpAction = {
 
 export type EditorAction<T> = { type: string; origin: number[]; payload: T };
 export type EditorActions =
+  | InitAction
   | ReplaceAction
   | ReplaceRootAction
   | CreateAction
@@ -182,6 +189,9 @@ export const editorReducer = (state: RootNodeProps, { payload, type, origin }: E
     case 'move-outer-focused-up': {
       newState = moveOuterFocusedUp(state);
       break;
+    }
+    case 'init': {
+      newState = state;
     }
   }
 

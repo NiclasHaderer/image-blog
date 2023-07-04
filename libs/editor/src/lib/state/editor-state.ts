@@ -51,21 +51,23 @@ export const useEditorState = () => {
       canBeInnerFocused: false,
     },
   } satisfies RootNodeProps);
+  const oldValueAndAction = useRef<{ oldData: RootNodeProps; action: EditorActions }>({
+    oldData: editorState,
+    action: { type: 'init', payload: undefined, origin: [] },
+  });
 
   const editorUpdateCbs = useRef<((oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void)[]>(
     []
   );
 
+  useEffect(() => {
+    const { oldData, action } = oldValueAndAction.current ?? {};
+    editorUpdateCbs.current.forEach((cb) => cb(oldData, editorState, action));
+  }, [editorState]);
+
   return {
     editorState,
-    update: (action: EditorActions) => {
-      const oldData = editorState;
-      setEditorState(action);
-      const newData = editorState;
-      setTimeout(() => {
-        editorUpdateCbs.current.forEach((cb) => cb(oldData, newData, action));
-      }, 1);
-    },
+    update: (action: EditorActions) => setEditorState(action),
     editorUpdateCbs,
   };
 };
@@ -85,7 +87,7 @@ export const useUpdateEditor = () => {
   ) => {
     rootContext.update({
       type: action,
-      origin: index,
+      origin: index as any,
       payload: payload as any,
     });
   };
