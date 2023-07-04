@@ -1,7 +1,7 @@
 import { AbstractNode } from './abstract-node';
-import { ImageIcon } from '../common/icons';
-import { NodeProps, useNodeIndex } from '../state-holder';
-import { IMAGE_NODE_ID } from '@image-blog/shared';
+import { IMAGE_NODE_ID, NodeProps } from '@image-blog/shared';
+import { useNodeIndex } from '../state-holder';
+import { ImageIcon } from '@image-blog/shared-ui';
 
 export type ImageNodeProps = NodeProps<{
   src: string;
@@ -10,13 +10,13 @@ export type ImageNodeProps = NodeProps<{
 }>;
 
 export class ImageNode extends AbstractNode<ImageNodeProps> {
-  constructor() {
+  public constructor() {
     super(IMAGE_NODE_ID, ['image', 'img', 'photo', 'picture']);
   }
 
-  Name = () => 'Image';
-  Icon = ({ size }: { size: string }) => <ImageIcon style={{ width: size, height: size }} />;
-  Render = <V extends ImageNodeProps>({ data: { src, width, caption } }: V) => {
+  public Name = () => 'Image';
+  public Icon = ({ size }: { size: string }) => <ImageIcon style={{ width: size, height: size }} />;
+  public Render = <V extends ImageNodeProps>({ data: { src, width, caption } }: V) => {
     const index = useNodeIndex();
     return (
       <div className="flex items-center flex-row justify-center">
@@ -31,7 +31,8 @@ export class ImageNode extends AbstractNode<ImageNodeProps> {
       </div>
     );
   };
-  empty(): ImageNodeProps {
+
+  public empty(): ImageNodeProps {
     return {
       id: this.id,
       data: {

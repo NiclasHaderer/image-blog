@@ -9,15 +9,15 @@ import { EMPTY_CONTROL_NODE } from './empty-control-node';
 import { CONTROL_NODE_ID, ControlNodeProps } from '@image-blog/shared';
 
 export class ControlNode extends AbstractNode<ControlNodeProps> {
-  constructor() {
+  public constructor() {
     super(CONTROL_NODE_ID, []);
   }
 
-  Name = () => 'Controls';
+  public Name = () => 'Controls';
 
-  Icon = () => null;
+  public Icon = () => null;
 
-  Render = () => {
+  public Render = () => {
     const controlInput = useRef<HTMLInputElement>(null);
     const outerDiv = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState<string>();
@@ -93,11 +93,11 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
     );
   };
 
-  empty(): ControlNodeProps {
+  public empty(): ControlNodeProps {
     return ControlNode.empty();
   }
 
-  static empty(): ControlNodeProps {
+  public static empty(): ControlNodeProps {
     return EMPTY_CONTROL_NODE;
   }
 }

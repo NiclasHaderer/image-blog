@@ -1,17 +1,17 @@
-import { NodeProps } from '../state-holder';
 import fuzzysort from 'fuzzysort';
 import { JSX } from 'react';
+import { NodeProps } from '@image-blog/shared';
 
 export abstract class AbstractNode<T extends NodeProps> {
   protected constructor(public readonly id: string, public readonly searchTherms: string[]) {}
 
-  abstract Render(props: T): JSX.Element | null;
+  public abstract Render(props: T): JSX.Element | null;
 
-  abstract Icon(props: { size: number | string }): JSX.Element | null;
+  public abstract Icon(props: { size: number | string }): JSX.Element | null;
 
-  abstract Name(): JSX.Element | string | null;
+  public abstract Name(): JSX.Element | string | null;
 
-  abstract empty(): T;
+  public abstract empty(): T;
 
   public canHandle(type: T) {
     return this.id === type.id;

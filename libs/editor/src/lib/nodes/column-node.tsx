@@ -1,6 +1,6 @@
 import { AbstractNode } from './abstract-node';
 import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state-holder';
-import { ColumnIcon, DragIcon } from '../common/icons';
+import { ColumnIcon, DragIcon } from '@image-blog/shared-ui';
 import { ControlNode } from './control-node';
 import { useEffect, useRef } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';

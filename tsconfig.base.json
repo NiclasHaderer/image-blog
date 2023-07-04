@@ -17,6 +17,7 @@
     "paths": {
       "@image-blog/editor": ["libs/editor/src/index.ts"],
       "@image-blog/shared": ["libs/shared/src/index.ts"],
+      "@image-blog/shared-ui": ["libs/shared-ui/src/index.ts"],
       "@image-blog/state": ["libs/state/src/index.ts"],
       "@image-blog/view": ["libs/view/src/index.ts"]
     }

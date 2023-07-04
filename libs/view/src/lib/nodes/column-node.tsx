@@ -4,27 +4,31 @@ import {
   COLUMN_OUTLET_ID,
   ColumnNodeOutletProps,
   ColumnNodeProps,
-  DragIcon,
   NodeProps,
 } from '@image-blog/shared';
 import { ViewEditorChild } from './view-editor-child';
+import { DragIcon } from '@image-blog/shared-ui';
 
-export const ColumnOutletViewNode: ViewNode<ColumnNodeOutletProps> = {
-  id: COLUMN_OUTLET_ID,
-  canHandle(type: NodeProps): boolean {
+export class ColumnOutletViewNode implements ViewNode<ColumnNodeOutletProps> {
+  public readonly id = COLUMN_OUTLET_ID;
+
+  public canHandle(type: NodeProps): boolean {
     return type.id === this.id;
-  },
-  Render(type: ColumnNodeOutletProps, skipUnknownNodes = true): React.JSX.Element | string | null {
+  }
+
+  public Render(type: ColumnNodeOutletProps, skipUnknownNodes = true): React.JSX.Element | string | null {
     return <ViewEditorChild node={type.children![0]} skipUnknownNodes={skipUnknownNodes} />;
-  },
-};
+  }
+}
 
-export const ColumnViewNode: ViewNode<ColumnNodeProps> = {
-  id: COLUMN_NODE_ID,
-  canHandle(type: NodeProps): boolean {
+export class ColumnViewNode implements ViewNode<ColumnNodeProps> {
+  public id = COLUMN_NODE_ID;
+
+  public canHandle(type: NodeProps): boolean {
     return type.id === this.id;
-  },
-  Render({ children, ...type }: ColumnNodeProps, skipUnknownNodes = true): React.JSX.Element | string | null {
+  }
+
+  public Render({ children, ...type }: ColumnNodeProps, skipUnknownNodes = true): React.JSX.Element | string | null {
     const lWidth = type.data.lWidth;
     return (
       <div className="flex relative">
@@ -42,5 +46,5 @@ export const ColumnViewNode: ViewNode<ColumnNodeProps> = {
         </div>
       </div>
     );
-  },
-};
+  }
+}

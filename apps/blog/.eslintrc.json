@@ -1,15 +1,7 @@
 {
-  "extends": [
-    "plugin:@nx/react",
-    "../../.eslintrc.json"
-  ],
-  "ignorePatterns": [
-    "!**/*"
-  ],
+  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
   "parserOptions": {
-    "project": [
-      "apps/blog/tsconfig.json",
-      "apps/blog/tsconfig.spec.json"
-    ]
+    "project": ["apps/blog/tsconfig.json", "apps/blog/tsconfig.spec.json"]
   }
 }

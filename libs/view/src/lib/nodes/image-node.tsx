@@ -1,12 +1,14 @@
 import { IMAGE_NODE_ID, ImageNodeProps, NodeProps } from '@image-blog/shared';
 import { ViewNode } from './view-node';
 
-export const ImageViewNode: ViewNode<ImageNodeProps> = {
-  id: IMAGE_NODE_ID,
-  canHandle(type: NodeProps): boolean {
+export class ImageViewNode implements ViewNode<ImageNodeProps> {
+  public id = IMAGE_NODE_ID;
+
+  public canHandle(type: NodeProps): boolean {
     return type.id === this.id;
-  },
-  Render({ data: { src, width, caption } }, skipUnknownNodes = true) {
+  }
+
+  public Render({ data: { src, width, caption } }: ImageNodeProps, skipUnknownNodes = true) {
     return (
       <div className="flex items-center flex-row justify-center">
         <img
@@ -18,5 +20,5 @@ export const ImageViewNode: ViewNode<ImageNodeProps> = {
         {caption && <p className="inline-block">{caption}</p>}
       </div>
     );
-  },
-};
+  }
+}

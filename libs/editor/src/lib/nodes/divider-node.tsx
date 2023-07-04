@@ -1,26 +1,25 @@
 import { AbstractNode } from './abstract-node';
-import { DividerIcon } from '../common/icons';
-import { NodeProps } from '../state-holder';
-import { DIVIDER_NODE_ID } from '@image-blog/shared';
+import { DIVIDER_NODE_ID, NodeProps } from '@image-blog/shared';
+import { DividerIcon } from '@image-blog/shared-ui';
 
 export type DividerNodeProps = NodeProps<undefined>;
 
 export class DividerNode extends AbstractNode<DividerNodeProps> {
-  constructor() {
+  public constructor() {
     super(DIVIDER_NODE_ID, ['divider', 'line', 'hr', 'horizontal rule', 'horizontal divider', 'horizontal line']);
   }
 
-  Name() {
+  public Name() {
     return 'Divider';
   }
 
-  override Icon({ size }: { size: number | string }) {
+  public override Icon({ size }: { size: number | string }) {
     return <DividerIcon style={{ width: size, height: size }} />;
   }
 
-  Render = () => <hr />;
+  public Render = () => <hr />;
 
-  empty(): DividerNodeProps {
+  public empty(): DividerNodeProps {
     return {
       id: this.id,
       data: undefined,

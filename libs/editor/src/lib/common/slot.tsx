@@ -1,4 +1,4 @@
-import { AddIcon } from './icons';
+import { AddIcon } from '@image-blog/shared-ui';
 import { FC, ReactNode, useEffect, useRef } from 'react';
 import { useIsNodeInnerFocused, useIsNodeOuterFocused, useNode, useNodeIndex, useUpdateEditor } from '../state-holder';
 import c from './slot.module.scss';

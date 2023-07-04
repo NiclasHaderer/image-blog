@@ -2,6 +2,6 @@
   "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
   "parserOptions": {
-    "project": ["libs/shared/tsconfig.lib.json", "libs/shared/tsconfig.spec.json"]
+    "project": ["libs/shared-ui/tsconfig.lib.json", "libs/shared-ui/tsconfig.spec.json"]
   }
 }

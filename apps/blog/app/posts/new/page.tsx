@@ -13,7 +13,7 @@ import { ColumnOutletViewNode, ColumnViewNode, DividerViewNode, ImageViewNode } 
 
 const EDITOR_NODES = [new ControlNode(), new ImageNode(), new DividerNode(), new ColumnNode(), new ColumnNodeOutlet()];
 
-const VIEW_NODES = [ImageViewNode, DividerViewNode, ColumnViewNode, ColumnOutletViewNode];
+const VIEW_NODES = [new ImageViewNode(), new DividerViewNode(), new ColumnViewNode(), new ColumnOutletViewNode()];
 
 export default function Page() {
   return (
