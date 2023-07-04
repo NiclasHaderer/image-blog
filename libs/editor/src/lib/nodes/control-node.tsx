@@ -6,7 +6,7 @@ import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state-h
 import { useQueryNodeHandlers } from './nodes';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EMPTY_CONTROL_NODE } from './empty-control-node';
-import { CONTROL_NODE_ID, ControlNodeProps } from '@image-blog/common';
+import { CONTROL_NODE_ID, ControlNodeProps } from '@image-blog/shared';
 
 export class ControlNode extends AbstractNode<ControlNodeProps> {
   constructor() {

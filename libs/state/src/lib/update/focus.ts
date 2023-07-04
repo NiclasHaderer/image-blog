@@ -1,5 +1,5 @@
 import { getNextNode, getNodeOffsetBy, getNodeProps, getPreviousNode, isChildOf } from './utils';
-import { logger, RootNodeProps } from '@image-blog/common';
+import { logger, RootNodeProps } from '@image-blog/shared';
 
 const log = logger('focus');
 

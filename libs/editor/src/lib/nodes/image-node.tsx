@@ -1,7 +1,7 @@
 import { AbstractNode } from './abstract-node';
 import { ImageIcon } from '../common/icons';
 import { NodeProps, useNodeIndex } from '../state-holder';
-import { IMAGE_NODE_ID } from '@image-blog/common';
+import { IMAGE_NODE_ID } from '@image-blog/shared';
 
 export type ImageNodeProps = NodeProps<{
   src: string;

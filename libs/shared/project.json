@@ -1,7 +1,7 @@
 {
-  "name": "common",
+  "name": "shared",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/common/src",
+  "sourceRoot": "libs/shared/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/common/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/shared/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "build": {
@@ -17,7 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/common"
+        "outputPath": "dist/libs/shared"
       },
       "configurations": {
         "development": {
@@ -32,7 +32,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/common/jest.config.ts",
+        "jestConfig": "libs/shared/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

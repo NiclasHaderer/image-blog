@@ -1,5 +1,5 @@
 import { createContext, FC, ReactNode, useContext } from 'react';
-import { NodeProps } from '@image-blog/common';
+import { NodeProps } from '@image-blog/shared';
 import { ViewNode } from '../nodes/view-node';
 
 const _NodeViewProvider = createContext({

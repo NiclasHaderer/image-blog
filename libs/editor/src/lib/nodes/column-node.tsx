@@ -5,7 +5,7 @@ import { ControlNode } from './control-node';
 import { useEffect, useRef } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EditorChild, EditorChildren } from '../editor-building-blocks';
-import { COLUMN_NODE_ID, COLUMN_OUTLET_ID, ColumnNodeOutletProps, ColumnNodeProps } from '@image-blog/common';
+import { COLUMN_NODE_ID, COLUMN_OUTLET_ID, ColumnNodeOutletProps, ColumnNodeProps } from '@image-blog/shared';
 
 export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
   constructor() {

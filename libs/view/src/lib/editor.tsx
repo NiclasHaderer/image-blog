@@ -2,7 +2,7 @@ import { forwardRef, HTMLProps } from 'react';
 import { NodeViewProvider } from './context/node-view-provider';
 import { ViewEditorChild } from './nodes/view-editor-child';
 import { ViewNode } from './nodes/view-node';
-import { RootNodeProps } from '@image-blog/common';
+import { RootNodeProps } from '@image-blog/shared';
 
 export const EditorViewer = forwardRef<
   HTMLDivElement,

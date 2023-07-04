@@ -1,5 +1,5 @@
 import { ViewNode } from './view-node';
-import { DIVIDER_NODE_ID, DividerNodeProps, NodeProps } from '@image-blog/common';
+import { DIVIDER_NODE_ID, DividerNodeProps, NodeProps } from '@image-blog/shared';
 
 export const DividerViewNode: ViewNode<DividerNodeProps> = {
   id: DIVIDER_NODE_ID,

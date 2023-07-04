@@ -1,4 +1,4 @@
-import { NodeProps, RootNodeProps } from '@image-blog/common';
+import { NodeProps, RootNodeProps } from '@image-blog/shared';
 
 export type InitAction = {
   type: 'init';

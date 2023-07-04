@@ -2,7 +2,7 @@ import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocus
 import { addNode, deleteNode, replaceNode } from './nodes';
 import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
 import { deepFreeze, deleteRange } from './utils';
-import { logger, RootNodeProps } from '@image-blog/common';
+import { logger, RootNodeProps } from '@image-blog/shared';
 import { EditorActions } from '../actions';
 
 const log = logger('reducer');

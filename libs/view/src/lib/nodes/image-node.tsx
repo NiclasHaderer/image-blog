@@ -1,4 +1,4 @@
-import { IMAGE_NODE_ID, ImageNodeProps, NodeProps } from '@image-blog/common';
+import { IMAGE_NODE_ID, ImageNodeProps, NodeProps } from '@image-blog/shared';
 import { ViewNode } from './view-node';
 
 export const ImageViewNode: ViewNode<ImageNodeProps> = {

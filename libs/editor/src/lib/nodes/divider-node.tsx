@@ -1,7 +1,7 @@
 import { AbstractNode } from './abstract-node';
 import { DividerIcon } from '../common/icons';
 import { NodeProps } from '../state-holder';
-import { DIVIDER_NODE_ID } from '@image-blog/common';
+import { DIVIDER_NODE_ID } from '@image-blog/shared';
 
 export type DividerNodeProps = NodeProps<undefined>;
 

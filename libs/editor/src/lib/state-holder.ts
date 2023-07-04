@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import { useNodeHandlers } from './nodes/nodes';
-import { logger, RootNodeProps } from '@image-blog/common';
+import { logger, RootNodeProps } from '@image-blog/shared';
 import { EMPTY_CONTROL_NODE } from './nodes/empty-control-node';
 import { EditorAction, EditorActions, editorReducer, getNodeProps, getNodesInRange } from '@image-blog/state';
 

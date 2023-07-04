@@ -6,7 +6,7 @@ import {
   ColumnNodeProps,
   DragIcon,
   NodeProps,
-} from '@image-blog/common';
+} from '@image-blog/shared';
 import { ViewEditorChild } from './view-editor-child';
 
 export const ColumnOutletViewNode: ViewNode<ColumnNodeOutletProps> = {

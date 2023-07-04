@@ -1,4 +1,4 @@
-import { ControlNodeProps } from '@image-blog/common';
+import { ControlNodeProps } from '@image-blog/shared';
 
 export const EMPTY_CONTROL_NODE: ControlNodeProps = {
   id: 'control',

@@ -1,6 +1,6 @@
 import { createContext, FC, ReactElement, useContext } from 'react';
 import { AbstractNode } from './abstract-node';
-import { NodeProps } from '@image-blog/common';
+import { NodeProps } from '@image-blog/shared';
 
 const NodeHandlerContext = createContext({
   nodes: [],

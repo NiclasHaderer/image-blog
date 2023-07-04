@@ -1,4 +1,4 @@
-import { NodeProps } from '@image-blog/common';
+import { NodeProps } from '@image-blog/shared';
 import { JSX } from 'react';
 
 export interface ViewNode<T extends NodeProps> {

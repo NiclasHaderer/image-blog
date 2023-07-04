@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { NodeProps } from '@image-blog/common';
+import { NodeProps } from '@image-blog/shared';
 import { useNodeViewHandler } from '../context/node-view-provider';
 
 export const ViewEditorChild: FC<{ node: NodeProps; skipUnknownNodes: boolean }> = ({ node, skipUnknownNodes }) => {

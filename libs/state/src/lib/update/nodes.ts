@@ -1,6 +1,6 @@
-import { NodeProps, RootNodeProps } from '@image-blog/common';
+import { NodeProps, RootNodeProps } from '@image-blog/shared';
 import { updateChildren } from './utils';
-import { logger } from '@image-blog/common';
+import { logger } from '@image-blog/shared';
 
 const log = logger('nodes');
 

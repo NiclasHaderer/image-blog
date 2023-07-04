@@ -1,4 +1,4 @@
-import { logger, RootNodeProps, NodeProps } from '@image-blog/common';
+import { logger, RootNodeProps, NodeProps } from '@image-blog/shared';
 
 const log = logger('utils');
 

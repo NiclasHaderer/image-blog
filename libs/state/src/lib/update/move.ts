@@ -1,4 +1,4 @@
-import { RootNodeProps } from '@image-blog/common';
+import { RootNodeProps } from '@image-blog/shared';
 import {
   deleteRange,
   getFirstPath,
