@@ -8,15 +8,19 @@ import { useEditorState } from './state-holder';
 export const Editor: FC<{ editorNodes: AbstractNode<any>[]; state?: RootNodeProps; children: ReactNode }> = ({
   editorNodes,
   state,
+  children,
 }) => {
   const descriptions = editorNodes.map((n) => n.nodeDescription);
   const editorState = useEditorState(descriptions, state);
 
   return (
-    <NodeProvider editorNodes={editorNodes}>
-      <RootEditorContextProvider editorState={editorState}>
-        <EditorChild index={[]}>{editorState.editorState}</EditorChild>
-      </RootEditorContextProvider>
-    </NodeProvider>
+    <RootEditorContextProvider editorState={editorState}>
+      <NodeProvider editorNodes={editorNodes}>
+        <>
+          <EditorChild index={[]}>{editorState.editorState}</EditorChild>
+          {children}
+        </>
+      </NodeProvider>
+    </RootEditorContextProvider>
   );
 };

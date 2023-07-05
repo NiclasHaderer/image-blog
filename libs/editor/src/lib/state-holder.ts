@@ -12,14 +12,13 @@ import {
 
 const log = logger('editor-state');
 
+const unsetRootContext = Symbol('unset-root-context');
 export const RootEditorContext = createContext({
-  update: (_: EditorActions): void => {
-    throw new Error('Do not use the update function of the RootEditorContext outside of the RootEditorContextProvider');
-  },
-  editorUpdateCbs: { current: [] } as React.MutableRefObject<
+  update: unsetRootContext as unknown as (_: EditorActions) => void,
+  editorUpdateCbs: unsetRootContext as unknown as React.MutableRefObject<
     ((oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void)[]
   >,
-  data: {} as RootNodeProps,
+  data: unsetRootContext as unknown as RootNodeProps,
 });
 
 export const useEditorState = (descriptions: NodeDescriptions, state: RootNodeProps | undefined) => {
