@@ -5,12 +5,11 @@ import { AbstractNode } from './abstract-node';
 import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state-holder';
 import { useQueryNodeHandlers } from './nodes';
 import { useGlobalEvent } from '../hooks/global-events';
-import { EMPTY_CONTROL_NODE } from './empty-control-node';
-import { CONTROL_NODE_ID, ControlNodeProps } from '@image-blog/shared';
+import { ControlNodeDescription, ControlNodeProps } from '@image-blog/shared';
 
 export class ControlNode extends AbstractNode<ControlNodeProps> {
   public constructor() {
-    super(CONTROL_NODE_ID, []);
+    super(ControlNodeDescription, []);
   }
 
   public Name = () => 'Controls';
@@ -71,7 +70,7 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
             } else if (e.key === 'Enter') {
               e.stopPropagation();
               setIsClosed(true);
-              dispatch('add', { at: path, node: ControlNode.empty() });
+              dispatch('add', { at: path, node: this.empty() });
               dispatch('focus-next', { force: true });
             } else if (e.key === 'ArrowUp' && !shouldShow()) {
               e.stopPropagation();
@@ -92,14 +91,6 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
       </div>
     );
   };
-
-  public empty(): ControlNodeProps {
-    return ControlNode.empty();
-  }
-
-  public static empty(): ControlNodeProps {
-    return EMPTY_CONTROL_NODE;
-  }
 }
 
 const ControlOutlet: FC<{ search: string }> = ({ search }) => {

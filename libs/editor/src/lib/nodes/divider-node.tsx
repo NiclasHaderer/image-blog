@@ -1,12 +1,19 @@
 import { AbstractNode } from './abstract-node';
-import { DIVIDER_NODE_ID, NodeProps } from '@image-blog/shared';
+import { DividerNodeDescription, NodeProps } from '@image-blog/shared';
 import { DividerIcon } from '@image-blog/shared-ui';
 
 export type DividerNodeProps = NodeProps<undefined>;
 
 export class DividerNode extends AbstractNode<DividerNodeProps> {
   public constructor() {
-    super(DIVIDER_NODE_ID, ['divider', 'line', 'hr', 'horizontal rule', 'horizontal divider', 'horizontal line']);
+    super(DividerNodeDescription, [
+      'divider',
+      'line',
+      'hr',
+      'horizontal rule',
+      'horizontal divider',
+      'horizontal line',
+    ]);
   }
 
   public Name() {
@@ -18,17 +25,4 @@ export class DividerNode extends AbstractNode<DividerNodeProps> {
   }
 
   public Render = () => <hr />;
-
-  public empty(): DividerNodeProps {
-    return {
-      id: this.id,
-      data: undefined,
-      capabilities: {
-        canBeDeleted: true,
-        canHaveChildren: false,
-        canBeInnerFocused: false,
-        structural: false,
-      },
-    };
-  }
 }

@@ -1,9 +1,17 @@
 import fuzzysort from 'fuzzysort';
 import { JSX } from 'react';
-import { NodeProps } from '@image-blog/shared';
+import { NodeDescription, NodeProps } from '@image-blog/shared';
 
 export abstract class AbstractNode<T extends NodeProps> {
-  protected constructor(public readonly id: string, public readonly searchTherms: string[]) {}
+  protected constructor(public readonly nodeDescription: NodeDescription<T>, public readonly searchTherms: string[]) {}
+
+  public get id() {
+    return this.nodeDescription.id;
+  }
+
+  public empty() {
+    return this.nodeDescription.empty();
+  }
 
   public abstract Render(props: T): JSX.Element | null;
 
@@ -11,10 +19,8 @@ export abstract class AbstractNode<T extends NodeProps> {
 
   public abstract Name(): JSX.Element | string | null;
 
-  public abstract empty(): T;
-
   public canHandle(type: T) {
-    return this.id === type.id;
+    return this.nodeDescription.id === type.id;
   }
 
   public distance(query: string): number {

@@ -1,11 +1,9 @@
-import { IMAGE_NODE_ID, ImageNodeProps, NodeProps } from '@image-blog/shared';
+import { ImageNodeDescription, ImageNodeProps } from '@image-blog/shared';
 import { ViewNode } from './view-node';
 
-export class ImageViewNode implements ViewNode<ImageNodeProps> {
-  public id = IMAGE_NODE_ID;
-
-  public canHandle(type: NodeProps): boolean {
-    return type.id === this.id;
+export class ImageViewNode extends ViewNode<ImageNodeProps> {
+  public constructor() {
+    super(ImageNodeDescription);
   }
 
   public Render({ data: { src, width, caption } }: ImageNodeProps, skipUnknownNodes = true) {

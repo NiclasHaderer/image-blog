@@ -1,15 +1,19 @@
 import { AbstractNode } from './abstract-node';
 import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state-holder';
 import { ColumnIcon, DragIcon } from '@image-blog/shared-ui';
-import { ControlNode } from './control-node';
 import { useEffect, useRef } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EditorChild, EditorChildren } from '../editor-building-blocks';
-import { COLUMN_NODE_ID, COLUMN_OUTLET_ID, ColumnNodeOutletProps, ColumnNodeProps } from '@image-blog/shared';
+import {
+  ColumnNodeDescription,
+  ColumnNodeOutletDescription,
+  ColumnNodeOutletProps,
+  ColumnNodeProps,
+} from '@image-blog/shared';
 
 export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
   public constructor() {
-    super(COLUMN_OUTLET_ID, []);
+    super(ColumnNodeOutletDescription, []);
   }
 
   public Render(props: ColumnNodeOutletProps): JSX.Element | null {
@@ -18,51 +22,33 @@ export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
 
   public Name = () => null;
   public Icon = () => null;
-
-  public empty(): ColumnNodeOutletProps {
-    return ColumnNodeOutlet.empty();
-  }
-
-  public static empty(): ColumnNodeOutletProps {
-    return {
-      id: COLUMN_OUTLET_ID,
-      children: [ControlNode.empty()],
-      data: undefined,
-      capabilities: {
-        canBeDeleted: false,
-        canBeInnerFocused: false,
-        immutableChildren: false,
-        canHaveChildren: true,
-        minChildren: 1,
-        maxChildren: Infinity,
-        structural: true,
-      },
-    };
-  }
 }
 
 export class ColumnNode extends AbstractNode<ColumnNodeProps> {
   public constructor() {
-    super(COLUMN_NODE_ID, ['column', 'columns', 'two columns', 'two column node']);
+    super(ColumnNodeDescription, ['column', 'columns', 'two columns', 'two column node']);
   }
 
   public Name = () => 'Column';
   public Icon = ({ size }: { size: string | number }) => <ColumnIcon width={size} height={size} />;
 
-  public Render = <V extends ColumnNodeProps>({ children, data: { lWidth }, capabilities }: V) => {
+  public Render = <V extends ColumnNodeProps>({ children, data: { lWidth } }: V) => {
     const index = useNodeIndex();
     const dispatch = useUpdateEditor();
     const { force, isFocused } = useIsNodeInnerFocused();
     const resize = useRef(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+
+    // Focus on mount, or when force is true
     useEffect(() => {
       isFocused && force && dispatch('focus', { at: [...index, 0], force: true });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isFocused, force]);
+
+    // Resize column
     useGlobalEvent('mouseup', () => {
       resize.current = false;
     });
-
     useGlobalEvent('mousemove', (e) => {
       if (!resize.current) return;
       const wrapperRect = wrapperRef.current!.getBoundingClientRect();
@@ -72,7 +58,7 @@ export class ColumnNode extends AbstractNode<ColumnNodeProps> {
       const newWidth = `${(newPxWidth / xWidth) * 100}%`;
       dispatch('replace', {
         at: index,
-        with: { id: this.id, children, data: { lWidth: newWidth }, capabilities },
+        with: { id: this.id, children, data: { lWidth: newWidth } },
       });
     });
 
@@ -94,25 +80,4 @@ export class ColumnNode extends AbstractNode<ColumnNodeProps> {
       </div>
     );
   };
-
-  public empty(): ColumnNodeProps {
-    return ColumnNode.empty();
-  }
-
-  public static empty(): ColumnNodeProps {
-    return {
-      id: COLUMN_NODE_ID,
-      children: [ColumnNodeOutlet.empty(), ColumnNodeOutlet.empty()],
-      data: {
-        lWidth: '50%',
-      },
-      capabilities: {
-        canBeDeleted: true,
-        canHaveChildren: true,
-        immutableChildren: true,
-        canBeInnerFocused: false,
-        structural: false,
-      },
-    };
-  }
 }

@@ -1,19 +1,16 @@
 import { ViewNode } from './view-node';
 import {
-  COLUMN_NODE_ID,
-  COLUMN_OUTLET_ID,
+  ColumnNodeDescription,
+  ColumnNodeOutletDescription,
   ColumnNodeOutletProps,
   ColumnNodeProps,
-  NodeProps,
 } from '@image-blog/shared';
 import { ViewEditorChild } from './view-editor-child';
 import { DragIcon } from '@image-blog/shared-ui';
 
-export class ColumnOutletViewNode implements ViewNode<ColumnNodeOutletProps> {
-  public readonly id = COLUMN_OUTLET_ID;
-
-  public canHandle(type: NodeProps): boolean {
-    return type.id === this.id;
+export class ColumnOutletViewNode extends ViewNode<ColumnNodeOutletProps> {
+  public constructor() {
+    super(ColumnNodeOutletDescription);
   }
 
   public Render(type: ColumnNodeOutletProps, skipUnknownNodes = true): React.JSX.Element | string | null {
@@ -21,11 +18,9 @@ export class ColumnOutletViewNode implements ViewNode<ColumnNodeOutletProps> {
   }
 }
 
-export class ColumnViewNode implements ViewNode<ColumnNodeProps> {
-  public id = COLUMN_NODE_ID;
-
-  public canHandle(type: NodeProps): boolean {
-    return type.id === this.id;
+export class ColumnViewNode extends ViewNode<ColumnNodeProps> {
+  public constructor() {
+    super(ColumnNodeDescription);
   }
 
   public Render({ children, ...type }: ColumnNodeProps, skipUnknownNodes = true): React.JSX.Element | string | null {
