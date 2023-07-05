@@ -14,7 +14,7 @@ export const EditorGlobalState: FC<{
     }
   });
 
-  useShortcut(copyHotkey, typeof window === undefined ? null : (window as Window), async () => {
+  useShortcut(copyHotkey, typeof window === 'undefined' ? null : (window as Window), async () => {
     if (!enableCopyHotkey) return;
 
     const state = (window as any)[saveKey];
