@@ -11,7 +11,7 @@ export type ReplaceAction = {
   origin: number[];
   payload: {
     at: number[];
-    with: NodeProps;
+    with: NodeProps<any>;
   };
 };
 
@@ -29,7 +29,7 @@ export type CreateAction = {
   origin: number[];
   payload: {
     at: number[];
-    node: NodeProps;
+    node: NodeProps<any>;
   };
 };
 

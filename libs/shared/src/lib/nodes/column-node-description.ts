@@ -1,5 +1,6 @@
 import { NodeProps } from '../node-props';
 import { NodeDescription } from './node-description';
+import { ControlNodeDescription } from './control-node-description';
 
 export interface ColumnNodeProps
   extends NodeProps<{
@@ -24,13 +25,6 @@ export const ColumnNodeDescription: NodeDescription<ColumnNodeProps> = {
       data: {
         lWidth: '50%',
       },
-      capabilities: {
-        canBeDeleted: true,
-        canHaveChildren: true,
-        immutableChildren: true,
-        canBeInnerFocused: false,
-        structural: false,
-      },
     };
   },
 };
@@ -51,10 +45,7 @@ export const ColumnNodeOutletDescription: NodeDescription<ColumnNodeOutletProps>
   empty() {
     return {
       id: this.id,
-      children: [ColumnNodeDescription.empty(), ColumnNodeDescription.empty()],
-      data: {
-        lWidth: '50%',
-      },
+      children: [ControlNodeDescription.empty()],
     };
   },
 };

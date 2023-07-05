@@ -1,5 +1,5 @@
 import { editorReducerFactory } from '../reducer';
-import { ControlNodeDescription, DividerNodeDescription, RootNodeProps } from '@image-blog/shared';
+import { ControlNodeDescription, DividerNodeDescription, RootNodeDescription, RootNodeProps } from '@image-blog/shared';
 
 describe('Flat list', () => {
   test('Test moving up of multiple blocks', () => {
@@ -7,34 +7,33 @@ describe('Flat list', () => {
       children: [
         {
           id: 'control',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'control',
-          data: undefined,
         },
       ],
       id: 'root',
-      data: {},
+      data: undefined,
       focusedNode: null,
       outerFocusedNode: [2],
       outerFocusedRange: -1,
       forceFocus: false,
     };
 
-    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
-      type: 'move-outer-focused-up',
-      payload: null,
-      origin: [],
-    });
+    const newState = editorReducerFactory([RootNodeDescription, ControlNodeDescription, DividerNodeDescription])(
+      originalState,
+      {
+        type: 'move-outer-focused-up',
+        payload: null,
+        origin: [],
+      }
+    );
 
     expect(newState).toEqual({
       children: [
@@ -65,34 +64,33 @@ describe('Flat list', () => {
       children: [
         {
           id: 'control',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'control',
-          data: undefined,
         },
       ],
       id: 'root',
-      data: {},
+      data: undefined,
       focusedNode: null,
       outerFocusedNode: [1],
       outerFocusedRange: 0,
       forceFocus: false,
     };
 
-    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
-      type: 'move-outer-focused-up',
-      payload: null,
-      origin: [],
-    });
+    const newState = editorReducerFactory([RootNodeDescription, ControlNodeDescription, DividerNodeDescription])(
+      originalState,
+      {
+        type: 'move-outer-focused-up',
+        payload: null,
+        origin: [],
+      }
+    );
 
     expect(newState).toEqual({
       children: [
@@ -123,34 +121,33 @@ describe('Flat list', () => {
       children: [
         {
           id: 'control',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'control',
-          data: undefined,
         },
       ],
       id: 'root',
-      data: {},
+      data: undefined,
       focusedNode: null,
       outerFocusedNode: [2],
       outerFocusedRange: -1,
       forceFocus: false,
     };
 
-    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
-      type: 'move-outer-focused-down',
-      payload: null,
-      origin: [],
-    });
+    const newState = editorReducerFactory([RootNodeDescription, ControlNodeDescription, DividerNodeDescription])(
+      originalState,
+      {
+        type: 'move-outer-focused-down',
+        payload: null,
+        origin: [],
+      }
+    );
 
     expect(newState).toEqual({
       children: [
@@ -181,34 +178,33 @@ describe('Flat list', () => {
       children: [
         {
           id: 'control',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'divider',
-          data: undefined,
         },
         {
           id: 'control',
-          data: undefined,
         },
       ],
       id: 'root',
-      data: {},
+      data: undefined,
       focusedNode: null,
       outerFocusedNode: [2],
       outerFocusedRange: 0,
       forceFocus: false,
     };
 
-    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
-      type: 'move-outer-focused-down',
-      payload: null,
-      origin: [],
-    });
+    const newState = editorReducerFactory([RootNodeDescription, ControlNodeDescription, DividerNodeDescription])(
+      originalState,
+      {
+        type: 'move-outer-focused-down',
+        payload: null,
+        origin: [],
+      }
+    );
 
     expect(newState).toEqual({
       children: [

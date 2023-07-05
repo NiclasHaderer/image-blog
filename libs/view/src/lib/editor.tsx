@@ -8,7 +8,7 @@ export const EditorViewer: FC<{
   editorNodes: ViewNode<any>[];
   rootNode: RootNodeProps;
   skipUnknownNodes?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
 }> = ({ children, editorNodes, rootNode, skipUnknownNodes = true }) => {
   return (
     <div>

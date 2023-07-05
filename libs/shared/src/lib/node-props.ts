@@ -1,5 +1,4 @@
-export interface NodeProps<T = any> {
+export type NodeProps<T = undefined> = {
   id: string;
   children?: NodeProps[];
-  data: T;
-}
+} & (T extends undefined ? { data?: undefined } : { data: T });

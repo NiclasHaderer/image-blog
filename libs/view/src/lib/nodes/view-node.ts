@@ -3,7 +3,7 @@ import { FC } from 'react';
 
 export type SkipUnknownNodes = { skipUnknownNodes: boolean };
 
-export abstract class ViewNode<T extends NodeProps> {
+export abstract class ViewNode<T extends NodeProps<any>> {
   public constructor(public readonly nodeDescription: NodeDescription<T>) {}
 
   public get id() {
