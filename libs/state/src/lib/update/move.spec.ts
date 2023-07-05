@@ -8,22 +8,18 @@ describe('Flat list', () => {
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
       ],
       id: 'root',
@@ -32,15 +28,6 @@ describe('Flat list', () => {
       outerFocusedNode: [2],
       outerFocusedRange: -1,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     };
 
     const newState = editorReducer(originalState, {
@@ -53,19 +40,15 @@ describe('Flat list', () => {
       children: [
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
       ],
       id: 'root',
@@ -74,15 +57,6 @@ describe('Flat list', () => {
       outerFocusedNode: [1],
       outerFocusedRange: -1,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     });
   });
 
@@ -92,22 +66,18 @@ describe('Flat list', () => {
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
       ],
       id: 'root',
@@ -116,15 +86,6 @@ describe('Flat list', () => {
       outerFocusedNode: [1],
       outerFocusedRange: 0,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     };
 
     const newState = editorReducer(originalState, {
@@ -137,19 +98,15 @@ describe('Flat list', () => {
       children: [
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
       ],
       id: 'root',
@@ -158,15 +115,6 @@ describe('Flat list', () => {
       outerFocusedNode: [0],
       outerFocusedRange: 0,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     });
   });
 
@@ -176,22 +124,18 @@ describe('Flat list', () => {
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
       ],
       id: 'root',
@@ -200,15 +144,6 @@ describe('Flat list', () => {
       outerFocusedNode: [2],
       outerFocusedRange: -1,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     };
 
     const newState = editorReducer(originalState, {
@@ -221,19 +156,15 @@ describe('Flat list', () => {
       children: [
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
       ],
       id: 'root',
@@ -242,15 +173,6 @@ describe('Flat list', () => {
       outerFocusedNode: [3],
       outerFocusedRange: -1,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     });
   });
 
@@ -260,22 +182,18 @@ describe('Flat list', () => {
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'divider',
           data: undefined,
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
           data: undefined,
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
       ],
       id: 'root',
@@ -284,15 +202,6 @@ describe('Flat list', () => {
       outerFocusedNode: [2],
       outerFocusedRange: 0,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     };
 
     const newState = editorReducer(originalState, {
@@ -305,19 +214,15 @@ describe('Flat list', () => {
       children: [
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
         {
           id: 'control',
-          capabilities: { canBeDeleted: true, canBeInnerFocused: true, canHaveChildren: false, structural: false },
         },
         {
           id: 'divider',
-          capabilities: { canBeDeleted: true, canHaveChildren: false, canBeInnerFocused: false, structural: false },
         },
       ],
       id: 'root',
@@ -326,15 +231,6 @@ describe('Flat list', () => {
       outerFocusedNode: [3],
       outerFocusedRange: 0,
       forceFocus: false,
-      capabilities: {
-        canBeDeleted: false,
-        structural: true,
-        immutableChildren: false,
-        canHaveChildren: true,
-        maxChildren: Infinity,
-        minChildren: 1,
-        canBeInnerFocused: false,
-      },
     });
   });
 });
