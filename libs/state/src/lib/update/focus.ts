@@ -36,7 +36,7 @@ export const outerFocusNext = (
       state,
       state.outerFocusedNode,
       nodeFocusRange,
-      (props) => getNodeCapabilities(props, descriptions).structural
+      (props) => !getNodeCapabilities(props, descriptions).structural
     );
     if (!nextNode) {
       log.debug('outerFocusNext: no nextNode');
@@ -75,7 +75,7 @@ export const outerFocusPrevious = (
       state,
       state.outerFocusedNode,
       nodeFocusRange,
-      (props) => getNodeCapabilities(props, descriptions).structural
+      (props) => !getNodeCapabilities(props, descriptions).structural
     );
     if (!previousNode) {
       log.debug('outerFocusPrevious: no previousNode');
