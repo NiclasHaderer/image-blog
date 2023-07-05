@@ -6,3 +6,5 @@ export interface NodeDescription<T extends NodeProps> {
   capabilities: NodeCapabilities;
   empty: () => T;
 }
+
+export type NodeDescriptions = NodeDescription<NodeProps>[];

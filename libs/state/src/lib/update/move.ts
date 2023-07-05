@@ -1,4 +1,4 @@
-import { RootNodeProps } from '@image-blog/shared';
+import { NodeDescriptions, RootNodeProps } from '@image-blog/shared';
 import {
   deleteRange,
   getFirstPath,
@@ -7,11 +7,12 @@ import {
   getNextNodeToInsert,
   getNodeRange,
   getPreviousNode,
+  getNodeCapabilities,
   sameParent,
 } from './utils';
 import { addNode } from './nodes';
 
-export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps => {
+export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
   // TODO if we try to move it down and we are in a deeply nested node we should move the node one out of the nested node
   // TODO moving down multiple leads to focus issues
   // TODO check if there is a difference between selection order
@@ -27,13 +28,18 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
   let nodesToMove = getNodeRange(editorState, outerFocused, focusRange);
 
   // Filter out nodes that can't be deleted on their own
-  nodesToMove = nodesToMove.filter(([, props]) => props.capabilities.canBeDeleted);
+  nodesToMove = nodesToMove.filter(([, props]) => getNodeCapabilities(props, descriptions).canBeDeleted);
 
   const nodePositions = nodesToMove.map(([path]) => path);
 
   // Find the next node of the last selected node. This will be the destination of the move operation.
   const lastPath = getLastPath(nodePositions)!;
-  const destination = getNextNodeToInsert(editorState, lastPath, (props) => !props.capabilities.structural);
+  const destination = getNextNodeToInsert(
+    editorState,
+    lastPath,
+    descriptions,
+    (props) => !getNodeCapabilities(props, descriptions).structural
+  );
   if (!destination) return editorState;
 
   // There are different cases for the insertion mode
@@ -56,7 +62,13 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
   }
 
   // Add the nodes to the new position and delete the old ones
-  editorState = addNode(editorState, destination, insertionMode, ...nodesToMove.map(([, node]) => node));
+  editorState = addNode(
+    editorState,
+    destination,
+    insertionMode,
+    nodesToMove.map(([, node]) => node),
+    descriptions
+  );
   editorState = deleteRange(editorState, outerFocused, focusRange);
 
   // Update the outer focused node to the new position
@@ -86,7 +98,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps): RootNodeProps 
   return editorState;
 };
 
-export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps => {
+export const moveOuterFocusedUp = (editorState: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
   // Check if we have an outer focused node
   const outerFocused = editorState.outerFocusedNode;
   if (!outerFocused) return editorState;
@@ -98,13 +110,17 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
   // operation. The children will before be moved with the parent.
   let nodesToMove = getNodeRange(editorState, outerFocused, focusRange);
   // Filter out nodes that can't be deleted on their own
-  nodesToMove = nodesToMove.filter(([, props]) => props.capabilities.canBeDeleted);
+  nodesToMove = nodesToMove.filter(([, props]) => getNodeCapabilities(props, descriptions).canBeDeleted);
 
   const nodePositions = nodesToMove.map(([path]) => path);
 
   // Find the previous node of the first selected node. This will be the destination of the move operation.
   const lastPath = getFirstPath(nodePositions)!;
-  const destination = getPreviousNode(editorState, lastPath, (props) => !props.capabilities.structural);
+  const destination = getPreviousNode(
+    editorState,
+    lastPath,
+    (props) => !getNodeCapabilities(props, descriptions).structural
+  );
   if (!destination) return editorState;
 
   // There are different cases for the insertion mode
@@ -128,12 +144,22 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps): RootNodeProps =>
 
   // Delete the nodes from the old position and then add them to the new position
   editorState = deleteRange(editorState, outerFocused, focusRange);
-  editorState = addNode(editorState, destination, insertionMode, ...nodesToMove.map(([, node]) => node));
+  editorState = addNode(
+    editorState,
+    destination,
+    insertionMode,
+    nodesToMove.map(([, node]) => node),
+    descriptions
+  );
 
   // Update the outer focused node to the new position
   let newOuterFocused = [...destination];
   if (insertionMode === 'after') {
-    newOuterFocused = getNextNode(editorState, destination, (props) => !props.capabilities.structural)!;
+    newOuterFocused = getNextNode(
+      editorState,
+      destination,
+      (props) => getNodeCapabilities(props, descriptions).structural
+    )!;
   }
 
   // The new outer focused node is not necessarily the destination node. If we move multiple nodes and the original focus

@@ -1,4 +1,4 @@
-import { logger, RootNodeProps, NodeProps } from '@image-blog/shared';
+import { logger, NodeCapabilities, NodeDescriptions, NodeProps, RootNodeProps } from '@image-blog/shared';
 
 const log = logger('utils');
 
@@ -124,12 +124,14 @@ export const getNextNode = (
 export const getNextNodeToInsert = (
   root: RootNodeProps,
   path: number[] | null | undefined,
+  descriptions: NodeDescriptions,
   condition?: (props: NodeProps) => boolean
 ): number[] | null => {
   let nextNode = getNextNode(root, path, condition);
   let nodeProps = getNodeProps(root, nextNode);
   while (nodeProps && nodeProps.children && nodeProps.children.length > 0) {
-    if (nodeProps.capabilities.canHaveChildren && !nodeProps.capabilities.immutableChildren) break;
+    const nodeCaps = getNodeCapabilities(nodeProps, descriptions);
+    if (nodeCaps.canHaveChildren && !nodeCaps.immutableChildren) break;
     nodeProps = getNodeProps(root, nextNode);
     nextNode = getNextNode(root, nextNode);
   }
@@ -318,4 +320,13 @@ export const deepFreeze = <T>(obj: T): T => {
   }
 
   return Object.freeze(obj);
+};
+
+export const getNodeCapabilities = (node: NodeProps, descriptions: NodeDescriptions): NodeCapabilities => {
+  const nodeCapabilities = descriptions.find((n) => n.id === node.id)?.capabilities;
+  if (!nodeCapabilities) {
+    log.error(`Node with id ${node.id} does not exist in the node descriptions`, { node, nodes: descriptions });
+    throw new Error(`Node with id ${node.id} does not exist in the node descriptions`);
+  }
+  return nodeCapabilities;
 };

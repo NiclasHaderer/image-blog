@@ -1,16 +1,24 @@
 import { AddIcon } from '@image-blog/shared-ui';
 import { FC, ReactNode, useEffect, useRef } from 'react';
-import { useIsNodeInnerFocused, useIsNodeOuterFocused, useNode, useNodeIndex, useUpdateEditor } from '../state-holder';
+import {
+  useIsNodeInnerFocused,
+  useIsNodeOuterFocused,
+  useNode,
+  useNodeCapabilities,
+  useNodeIndex,
+  useUpdateEditor,
+} from '../state-holder';
 import c from './slot.module.scss';
 import { usePageFocus } from '../hooks/page-focus';
-import { ControlNode } from '../nodes/control-node';
 import { isShortcut } from '../keyboard-event';
+import { ControlNodeDescription } from '@image-blog/shared';
 
 export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
   const slotRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useUpdateEditor();
-  const { id: nodeId, capabilities } = useNode();
+  const { id: nodeId } = useNode();
+  const capabilities = useNodeCapabilities();
   const isOuterFocused = useIsNodeOuterFocused();
   const nodeFocus = useIsNodeInnerFocused();
   const path = useNodeIndex();
@@ -80,7 +88,7 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
           onClick={() => {
             dispatch('add', {
               at: path,
-              node: ControlNode.empty(),
+              node: ControlNodeDescription.empty(),
             });
             dispatch('focus-next', { force: true });
           }}

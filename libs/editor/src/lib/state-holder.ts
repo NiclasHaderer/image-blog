@@ -1,8 +1,14 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import { useNodeHandlers } from './nodes/nodes';
-import { logger, RootNodeProps } from '@image-blog/shared';
-import { EMPTY_CONTROL_NODE } from './nodes/empty-control-node';
-import { EditorAction, EditorActions, editorReducer, getNodeProps, getNodesInRange } from '@image-blog/state';
+import { ControlNodeDescription, logger, NodeDescriptions, RootNodeProps } from '@image-blog/shared';
+import {
+  EditorAction,
+  EditorActions,
+  editorReducerFactory,
+  getNodeCapabilities,
+  getNodeProps,
+  getNodesInRange,
+} from '@image-blog/state';
 
 const log = logger('editor-state');
 
@@ -16,25 +22,17 @@ export const RootEditorContext = createContext({
   data: {} as RootNodeProps,
 });
 
-export const useEditorState = () => {
-  const [editorState, setEditorState] = useReducer(editorReducer, {
-    children: [EMPTY_CONTROL_NODE],
+export const useEditorState = (descriptions: NodeDescriptions) => {
+  const [editorState, setEditorState] = useReducer(editorReducerFactory(descriptions), {
+    children: [ControlNodeDescription.empty()],
     id: 'root',
     data: {},
     focusedNode: [0],
     outerFocusedNode: null,
     outerFocusedRange: null,
     forceFocus: false,
-    capabilities: {
-      canBeDeleted: false,
-      structural: true,
-      immutableChildren: false,
-      canHaveChildren: true,
-      maxChildren: Infinity,
-      minChildren: 1,
-      canBeInnerFocused: false,
-    },
   } satisfies RootNodeProps);
+
   const oldValueAndAction = useRef<{ oldData: RootNodeProps; action: EditorActions }>({
     oldData: editorState,
     action: { type: 'init', payload: undefined, origin: [] },
@@ -107,11 +105,6 @@ export const useOnEditorUpdate = (
   });
 };
 
-export const useNodeData = () => {
-  const node = useNode();
-  return node.data;
-};
-
 export const useNodeHandler = () => {
   const nodeProps = useNode();
   const nodes = useNodeHandlers();
@@ -124,7 +117,8 @@ export const useNodeHandler = () => {
 
 export const useNodeCapabilities = () => {
   const node = useNode();
-  return node.capabilities;
+  const descriptions = useNodeHandlers().map((n) => n.nodeDescription);
+  return getNodeCapabilities(node, descriptions);
 };
 
 export const useIsNodeInnerFocused = () => {

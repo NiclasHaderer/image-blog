@@ -1,5 +1,5 @@
-import { getNextNode, getNodeOffsetBy, getNodeProps, getPreviousNode, isChildOf } from './utils';
-import { logger, RootNodeProps } from '@image-blog/shared';
+import { getNextNode, getNodeCapabilities, getNodeOffsetBy, getNodeProps, getPreviousNode, isChildOf } from './utils';
+import { logger, NodeDescriptions, RootNodeProps } from '@image-blog/shared';
 
 const log = logger('focus');
 
@@ -13,7 +13,11 @@ export const outerFocus = (state: RootNodeProps, path: number[]): RootNodeProps 
   };
 };
 
-export const outerFocusNext = (state: RootNodeProps, mode: 'add' | 'replace'): RootNodeProps => {
+export const outerFocusNext = (
+  state: RootNodeProps,
+  mode: 'add' | 'replace',
+  descriptions: NodeDescriptions
+): RootNodeProps => {
   if (!state.outerFocusedNode) {
     log.debug('outerFocusNext: no outerFocusedNode');
     return state;
@@ -32,7 +36,7 @@ export const outerFocusNext = (state: RootNodeProps, mode: 'add' | 'replace'): R
       state,
       state.outerFocusedNode,
       nodeFocusRange,
-      (props) => !props.capabilities.structural
+      (props) => getNodeCapabilities(props, descriptions).structural
     );
     if (!nextNode) {
       log.debug('outerFocusNext: no nextNode');
@@ -48,7 +52,11 @@ export const outerFocusNext = (state: RootNodeProps, mode: 'add' | 'replace'): R
   }
 };
 
-export const outerFocusPrevious = (state: RootNodeProps, mode: 'add' | 'replace'): RootNodeProps => {
+export const outerFocusPrevious = (
+  state: RootNodeProps,
+  mode: 'add' | 'replace',
+  descriptions: NodeDescriptions
+): RootNodeProps => {
   if (!state.outerFocusedNode) {
     log.debug('outerFocusPrevious: no outerFocusedNode');
     return state;
@@ -67,7 +75,7 @@ export const outerFocusPrevious = (state: RootNodeProps, mode: 'add' | 'replace'
       state,
       state.outerFocusedNode,
       nodeFocusRange,
-      (props) => !props.capabilities.structural
+      (props) => getNodeCapabilities(props, descriptions).structural
     );
     if (!previousNode) {
       log.debug('outerFocusPrevious: no previousNode');
@@ -83,7 +91,12 @@ export const outerFocusPrevious = (state: RootNodeProps, mode: 'add' | 'replace'
   }
 };
 
-export const focus = (state: RootNodeProps, path: number[], force: boolean): RootNodeProps => {
+export const focus = (
+  state: RootNodeProps,
+  path: number[],
+  force: boolean,
+  descriptions: NodeDescriptions
+): RootNodeProps => {
   // Check if node can be focused
   const nodeProps = getNodeProps(state, path);
   if (!nodeProps) {
@@ -91,14 +104,14 @@ export const focus = (state: RootNodeProps, path: number[], force: boolean): Roo
     return state;
   }
 
+  const nodeCapabilities = getNodeCapabilities(nodeProps, descriptions);
   // If the node cannot be focused, focus the next focusable child
-  if (!nodeProps.capabilities.canBeInnerFocused) {
+  if (!nodeCapabilities.canBeInnerFocused) {
     log.debug('focus: node can not be focused, focusing next focusable child', { path, state });
-    const nextFocusableChild = getNextNode(
-      state,
-      path,
-      (props) => !props.capabilities.structural && props.capabilities.canBeInnerFocused
-    );
+    const nextFocusableChild = getNextNode(state, path, (props) => {
+      const nodeCapabilities = getNodeCapabilities(props, descriptions);
+      return !nodeCapabilities.structural && nodeCapabilities.canBeInnerFocused;
+    });
 
     // If there is no next focusable child, do nothing
     if (!nextFocusableChild) {
@@ -126,18 +139,17 @@ export const focus = (state: RootNodeProps, path: number[], force: boolean): Roo
   };
 };
 
-export const focusPrevious = (state: RootNodeProps, force: boolean): RootNodeProps => {
+export const focusPrevious = (state: RootNodeProps, force: boolean, descriptions: NodeDescriptions): RootNodeProps => {
   const reference = state.focusedNode;
   if (!reference) {
     log.debug('focusPrevious: no node focused');
     return state;
   }
 
-  const previousNode = getPreviousNode(
-    state,
-    reference,
-    (props) => !props.capabilities.structural && props.capabilities.canBeInnerFocused
-  );
+  const previousNode = getPreviousNode(state, reference, (props) => {
+    const nodeCapabilities = getNodeCapabilities(props, descriptions);
+    return !nodeCapabilities.structural && nodeCapabilities.canBeInnerFocused;
+  });
   if (!previousNode) {
     log.debug('focusPrevious: no previousNode');
     return state;
@@ -152,13 +164,12 @@ export const focusPrevious = (state: RootNodeProps, force: boolean): RootNodePro
   };
 };
 
-export const focusNext = (state: RootNodeProps, force: boolean): RootNodeProps => {
+export const focusNext = (state: RootNodeProps, force: boolean, descriptions: NodeDescriptions): RootNodeProps => {
   const reference = state.focusedNode || state.outerFocusedNode;
-  const nextNode = getNextNode(
-    state,
-    reference,
-    (props) => !props.capabilities.structural && props.capabilities.canBeInnerFocused
-  );
+  const nextNode = getNextNode(state, reference, (props) => {
+    const nodeCapabilities = getNodeCapabilities(props, descriptions);
+    return !nodeCapabilities.structural && nodeCapabilities.canBeInnerFocused;
+  });
   if (!nextNode) {
     log.debug('focusNext: no nextNode');
     return state;

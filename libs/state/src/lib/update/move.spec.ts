@@ -1,5 +1,5 @@
-import { editorReducer } from '../reducer';
-import { RootNodeProps } from '@image-blog/shared';
+import { editorReducerFactory } from '../reducer';
+import { ControlNodeDescription, DividerNodeDescription, RootNodeProps } from '@image-blog/shared';
 
 describe('Flat list', () => {
   test('Test moving up of multiple blocks', () => {
@@ -30,7 +30,7 @@ describe('Flat list', () => {
       forceFocus: false,
     };
 
-    const newState = editorReducer(originalState, {
+    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
       type: 'move-outer-focused-up',
       payload: null,
       origin: [],
@@ -88,7 +88,7 @@ describe('Flat list', () => {
       forceFocus: false,
     };
 
-    const newState = editorReducer(originalState, {
+    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
       type: 'move-outer-focused-up',
       payload: null,
       origin: [],
@@ -146,7 +146,7 @@ describe('Flat list', () => {
       forceFocus: false,
     };
 
-    const newState = editorReducer(originalState, {
+    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
       type: 'move-outer-focused-down',
       payload: null,
       origin: [],
@@ -204,7 +204,7 @@ describe('Flat list', () => {
       forceFocus: false,
     };
 
-    const newState = editorReducer(originalState, {
+    const newState = editorReducerFactory([ControlNodeDescription, DividerNodeDescription])(originalState, {
       type: 'move-outer-focused-down',
       payload: null,
       origin: [],

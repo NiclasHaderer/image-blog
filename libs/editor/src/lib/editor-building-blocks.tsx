@@ -60,7 +60,8 @@ export const EditorChild: FC<{ index: number[]; children: NodeProps }> = ({ inde
 };
 
 export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { editorState, editorUpdateCbs, update } = useEditorState();
+  const descriptions = useNodeHandlers().map((n) => n.nodeDescription);
+  const { editorState, editorUpdateCbs, update } = useEditorState(descriptions);
 
   return (
     <RootEditorContext.Provider
