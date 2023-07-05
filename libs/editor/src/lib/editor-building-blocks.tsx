@@ -2,7 +2,6 @@ import React, { FC, forwardRef, HTMLProps, ReactNode, useContext } from 'react';
 import { ChildContext, RootEditorContext, UnsetChildContext, useEditorState } from './state-holder';
 import { useNodeHandlers } from './nodes/nodes';
 import { Slot } from './common/slot';
-import { useEditorHistory } from './lib-hooks/history';
 import { NodeProps } from '@image-blog/shared';
 
 export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
@@ -74,10 +73,4 @@ export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ childre
       {children}
     </RootEditorContext.Provider>
   );
-};
-
-export const EditorHistory: FC<{ children?: ReactNode; maxHistory?: number }> = ({ children, maxHistory = 20 }) => {
-  useEditorHistory(maxHistory);
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <>{children}</>;
 };

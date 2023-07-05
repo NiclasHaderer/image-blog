@@ -5,6 +5,7 @@ import {
   ColumnNodeOutlet,
   ControlNode,
   DividerNode,
+  EditorGlobalState,
   EditorHistory,
   ImageNode,
   SideBySideEditor,
@@ -18,7 +19,9 @@ const VIEW_NODES = [new ImageViewNode(), new DividerViewNode(), new ColumnViewNo
 export default function Page() {
   return (
     <SideBySideEditor editorNodes={EDITOR_NODES} viewNodes={VIEW_NODES}>
-      <EditorHistory maxHistory={20} />
+      <EditorGlobalState saveKey="editor">
+        <EditorHistory maxHistory={20} />
+      </EditorGlobalState>
     </SideBySideEditor>
   );
 }

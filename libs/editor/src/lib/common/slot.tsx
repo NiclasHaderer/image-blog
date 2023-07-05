@@ -58,15 +58,15 @@ export const Slot: FC<{ children: ReactNode }> = ({ children }) => {
 
         if (e.key === 'Enter') {
           dispatch('focus', { force: true, at: path });
-        } else if (isShortcut(e.nativeEvent, 'Shift-Alt-ArrowUp')) {
+        } else if (isShortcut(e.nativeEvent, 'Shift+Alt+ArrowUp')) {
           dispatch('move-outer-focused-up', null);
-        } else if (isShortcut(e.nativeEvent, 'Shift-ArrowUp')) {
+        } else if (isShortcut(e.nativeEvent, 'Shift+ArrowUp')) {
           dispatch('outer-focus-previous', { mode: 'add' });
         } else if (isShortcut(e.nativeEvent, 'ArrowUp')) {
           dispatch('outer-focus-previous', { mode: 'replace' });
-        } else if (isShortcut(e.nativeEvent, 'Shift-Alt-ArrowDown')) {
+        } else if (isShortcut(e.nativeEvent, 'Shift+Alt+ArrowDown')) {
           dispatch('move-outer-focused-down', null);
-        } else if (isShortcut(e.nativeEvent, 'Shift-ArrowDown')) {
+        } else if (isShortcut(e.nativeEvent, 'Shift+ArrowDown')) {
           dispatch('outer-focus-next', { mode: 'add' });
         } else if (isShortcut(e.nativeEvent, 'ArrowDown')) {
           dispatch('outer-focus-next', { mode: 'replace' });

@@ -25,7 +25,7 @@ export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
 
   public static empty(): ColumnNodeOutletProps {
     return {
-      id: COLUMN_NODE_ID,
+      id: COLUMN_OUTLET_ID,
       children: [ControlNode.empty()],
       data: undefined,
       capabilities: {
@@ -96,8 +96,12 @@ export class ColumnNode extends AbstractNode<ColumnNodeProps> {
   };
 
   public empty(): ColumnNodeProps {
+    return ColumnNode.empty();
+  }
+
+  public static empty(): ColumnNodeProps {
     return {
-      id: this.id,
+      id: COLUMN_NODE_ID,
       children: [ColumnNodeOutlet.empty(), ColumnNodeOutlet.empty()],
       data: {
         lWidth: '50%',

@@ -1,9 +1,20 @@
-import { focus, focusNext, focusPrevious, outerFocus, outerFocusNext, outerFocusPrevious } from './focus';
-import { addNode, deleteNode, replaceNode } from './nodes';
-import { moveOuterFocusedDown, moveOuterFocusedUp } from './move';
-import { deepFreeze, deleteRange } from './utils';
+import {
+  addNode,
+  deepFreeze,
+  deleteNode,
+  deleteRange,
+  focus,
+  focusNext,
+  focusPrevious,
+  moveOuterFocusedDown,
+  moveOuterFocusedUp,
+  outerFocus,
+  outerFocusNext,
+  outerFocusPrevious,
+  replaceNode,
+} from './update';
 import { logger, RootNodeProps } from '@image-blog/shared';
-import { EditorActions } from '../actions';
+import { EditorActions } from './actions';
 
 const log = logger('reducer');
 

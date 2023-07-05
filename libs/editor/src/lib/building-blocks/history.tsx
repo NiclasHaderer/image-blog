@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import React, { FC, ReactNode, useContext, useState } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';
 import { RootEditorContext, useOnEditorUpdate } from '../state-holder';
 import { RootNodeProps } from '@image-blog/shared';
@@ -19,7 +19,6 @@ export const useEditorHistory = (maxHistory: number) => {
     // We do not want to skip history when we replace the root node
     if (action.type === 'replace-root' && action.payload.skipHistory) return;
 
-    console.log('PUSHING TO HISTORY', action);
     const newPast = [...history.past, editorState];
     if (newPast.length > maxHistory) {
       newPast.shift();
@@ -37,8 +36,6 @@ export const useEditorHistory = (maxHistory: number) => {
         const newPast = [...history.past];
         const newFuture = [editorState, ...history.future];
         const newState = newPast.pop();
-
-        console.log(history.past.length);
 
         if (newState) {
           setHistory({
@@ -79,4 +76,10 @@ export const useEditorHistory = (maxHistory: number) => {
       }
     }
   });
+};
+
+export const EditorHistory: FC<{ children?: ReactNode; maxHistory?: number }> = ({ children, maxHistory = 20 }) => {
+  useEditorHistory(maxHistory);
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{children}</>;
 };

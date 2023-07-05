@@ -5,8 +5,8 @@ export type NodeCapabilities =
       canBeInnerFocused: boolean;
       structural: boolean;
       immutableChildren?: false;
-      minChildren?: undefined;
-      maxChildren?: undefined;
+      minChildren?: undefined | null;
+      maxChildren?: undefined | null;
     }
   | {
       canBeDeleted: boolean;
@@ -14,8 +14,8 @@ export type NodeCapabilities =
       canBeInnerFocused: boolean;
       structural: boolean;
       immutableChildren: true;
-      minChildren?: undefined;
-      maxChildren?: undefined;
+      minChildren?: undefined | null;
+      maxChildren?: undefined | null;
     }
   | {
       // If the node has no element inside of it that can be focused
