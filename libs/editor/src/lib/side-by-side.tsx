@@ -1,8 +1,9 @@
 import { FC, ReactNode, useState } from 'react';
 import { AbstractNode } from './nodes/abstract-node';
 import { EditorViewer, ViewNode } from '@image-blog/view';
-import { Editor, EditorEvents } from './editor';
+import { Editor } from './editor';
 import { RootNodeProps } from '@image-blog/shared';
+import { EditorEvents } from './building-blocks';
 
 export const SideBySideEditor: FC<{
   editorNodes: AbstractNode<any>[];

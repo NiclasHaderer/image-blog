@@ -1,8 +1,7 @@
 import { AbstractNode } from './abstract-node';
-import { DividerNodeDescription, NodeProps } from '@image-blog/shared';
+import { DividerNodeDescription, DividerNodeProps } from '@image-blog/shared';
 import { DividerIcon } from '@image-blog/shared-ui';
-
-export type DividerNodeProps = NodeProps<undefined>;
+import { FC } from 'react';
 
 export class DividerNode extends AbstractNode<DividerNodeProps> {
   public constructor() {
@@ -24,5 +23,5 @@ export class DividerNode extends AbstractNode<DividerNodeProps> {
     return <DividerIcon style={{ width: size, height: size }} />;
   }
 
-  public Render = () => <hr />;
+  public Render: FC<DividerNodeProps> = () => <hr />;
 }

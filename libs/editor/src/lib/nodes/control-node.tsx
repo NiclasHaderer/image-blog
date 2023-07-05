@@ -16,7 +16,7 @@ export class ControlNode extends AbstractNode<ControlNodeProps> {
 
   public Icon = () => null;
 
-  public Render = () => {
+  public Render: FC<ControlNodeProps> = () => {
     const controlInput = useRef<HTMLInputElement>(null);
     const outerDiv = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState<string>();

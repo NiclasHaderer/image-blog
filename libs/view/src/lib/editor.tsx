@@ -1,20 +1,21 @@
-import { forwardRef, HTMLProps } from 'react';
+import { FC, ReactNode } from 'react';
 import { NodeViewProvider } from './context/node-view-provider';
-import { ViewEditorChild } from './nodes/view-editor-child';
 import { ViewNode } from './nodes';
 import { RootNodeProps } from '@image-blog/shared';
+import { ViewEditorChild } from './nodes/view-editor-child';
 
-export const EditorViewer = forwardRef<
-  HTMLDivElement,
-  HTMLProps<HTMLDivElement> & { editorNodes: ViewNode<any>[]; rootNode: RootNodeProps; skipUnknownNodes?: boolean }
->(({ children, editorNodes, rootNode, skipUnknownNodes = true, ...props }, ref) => {
+export const EditorViewer: FC<{
+  editorNodes: ViewNode<any>[];
+  rootNode: RootNodeProps;
+  skipUnknownNodes?: boolean;
+  children: ReactNode;
+}> = ({ children, editorNodes, rootNode, skipUnknownNodes = true }) => {
   return (
-    <div {...props}>
+    <div>
       <NodeViewProvider editorNodes={editorNodes}>
-        {rootNode.children?.map((child, index) => (
-          <ViewEditorChild node={child} key={index} skipUnknownNodes={skipUnknownNodes} />
-        ))}
+        <ViewEditorChild node={rootNode} skipUnknownNodes={skipUnknownNodes} />
+        {children}
       </NodeViewProvider>
     </div>
   );
-});
+};

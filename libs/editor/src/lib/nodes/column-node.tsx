@@ -1,7 +1,7 @@
 import { AbstractNode } from './abstract-node';
 import { useIsNodeInnerFocused, useNodeIndex, useUpdateEditor } from '../state-holder';
 import { ColumnIcon, DragIcon } from '@image-blog/shared-ui';
-import { useEffect, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { useGlobalEvent } from '../hooks/global-events';
 import { EditorChild, EditorChildren } from '../editor-building-blocks';
 import {
@@ -16,9 +16,9 @@ export class ColumnNodeOutlet extends AbstractNode<ColumnNodeOutletProps> {
     super(ColumnNodeOutletDescription, []);
   }
 
-  public Render(props: ColumnNodeOutletProps): JSX.Element | null {
+  public Render: FC<ColumnNodeOutletProps> = (props) => {
     return <EditorChildren>{props}</EditorChildren>;
-  }
+  };
 
   public Name = () => null;
   public Icon = () => null;
@@ -32,7 +32,7 @@ export class ColumnNode extends AbstractNode<ColumnNodeProps> {
   public Name = () => 'Column';
   public Icon = ({ size }: { size: string | number }) => <ColumnIcon width={size} height={size} />;
 
-  public Render = <V extends ColumnNodeProps>({ children, data: { lWidth } }: V) => {
+  public Render: FC<ColumnNodeProps> = ({ children, data: { lWidth } }) => {
     const index = useNodeIndex();
     const dispatch = useUpdateEditor();
     const { force, isFocused } = useIsNodeInnerFocused();

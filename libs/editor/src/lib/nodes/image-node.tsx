@@ -1,13 +1,8 @@
 import { AbstractNode } from './abstract-node';
-import { ImageNodeDescription, NodeProps } from '@image-blog/shared';
+import { ImageNodeDescription, ImageNodeProps } from '@image-blog/shared';
 import { useNodeIndex } from '../state-holder';
 import { ImageIcon } from '@image-blog/shared-ui';
-
-export type ImageNodeProps = NodeProps<{
-  src: string;
-  caption?: string;
-  width?: string;
-}>;
+import { FC } from 'react';
 
 export class ImageNode extends AbstractNode<ImageNodeProps> {
   public constructor() {
@@ -16,7 +11,7 @@ export class ImageNode extends AbstractNode<ImageNodeProps> {
 
   public Name = () => 'Image';
   public Icon = ({ size }: { size: string }) => <ImageIcon style={{ width: size, height: size }} />;
-  public Render = <V extends ImageNodeProps>({ data: { src, width, caption } }: V) => {
+  public Render: FC<ImageNodeProps> = ({ data: { src, width, caption } }) => {
     const index = useNodeIndex();
     return (
       <div className="flex items-center flex-row justify-center">

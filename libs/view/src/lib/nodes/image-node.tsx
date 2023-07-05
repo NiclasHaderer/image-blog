@@ -1,12 +1,13 @@
 import { ImageNodeDescription, ImageNodeProps } from '@image-blog/shared';
-import { ViewNode } from './view-node';
+import { SkipUnknownNodes, ViewNode } from './view-node';
+import { FC } from 'react';
 
 export class ImageViewNode extends ViewNode<ImageNodeProps> {
   public constructor() {
     super(ImageNodeDescription);
   }
 
-  public Render({ data: { src, width, caption } }: ImageNodeProps, skipUnknownNodes = true) {
+  public Render: FC<ImageNodeProps & SkipUnknownNodes> = ({ data: { src, width, caption } }) => {
     return (
       <div className="flex items-center flex-row justify-center">
         <img
@@ -18,5 +19,5 @@ export class ImageViewNode extends ViewNode<ImageNodeProps> {
         {caption && <p className="inline-block">{caption}</p>}
       </div>
     );
-  }
+  };
 }

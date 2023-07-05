@@ -16,5 +16,5 @@ export const ViewEditorChild: FC<{ node: NodeProps; skipUnknownNodes: boolean }>
     );
   }
 
-  return <Node.Render {...node} />;
+  return <Node.Render {...node} skipUnknownNodes={skipUnknownNodes} />;
 };

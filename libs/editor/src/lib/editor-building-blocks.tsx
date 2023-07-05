@@ -1,16 +1,8 @@
-import React, { FC, forwardRef, HTMLProps, ReactNode, useContext } from 'react';
+import React, { FC, ReactNode, useContext } from 'react';
 import { ChildContext, RootEditorContext, UnsetChildContext, useEditorState } from './state-holder';
 import { useNodeHandlers } from './nodes/nodes';
 import { Slot } from './common/slot';
 import { NodeProps } from '@image-blog/shared';
-
-export const RootEditorOutlet: FC = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>((props, ref) => {
-  return (
-    <div ref={ref} {...props}>
-      <EditorChildren>{useContext(RootEditorContext).data}</EditorChildren>
-    </div>
-  );
-});
 
 const NodeRenderer: FC<{ node: NodeProps }> = ({ node }) => {
   const nodes = useNodeHandlers();
@@ -59,10 +51,10 @@ export const EditorChild: FC<{ index: number[]; children: NodeProps }> = ({ inde
   );
 };
 
-export const RootEditorContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const descriptions = useNodeHandlers().map((n) => n.nodeDescription);
-  const { editorState, editorUpdateCbs, update } = useEditorState(descriptions);
-
+export const RootEditorContextProvider: FC<{ children: ReactNode; editorState: ReturnType<typeof useEditorState> }> = ({
+  children,
+  editorState: { editorState, editorUpdateCbs, update },
+}) => {
   return (
     <RootEditorContext.Provider
       value={{

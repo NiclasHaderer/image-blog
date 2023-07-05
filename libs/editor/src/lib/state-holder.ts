@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import { useNodeHandlers } from './nodes/nodes';
-import { ControlNodeDescription, logger, NodeDescriptions, RootNodeProps } from '@image-blog/shared';
+import { logger, NodeDescriptions, RootNodeDescription, RootNodeProps } from '@image-blog/shared';
 import {
   EditorAction,
   EditorActions,
@@ -22,16 +22,11 @@ export const RootEditorContext = createContext({
   data: {} as RootNodeProps,
 });
 
-export const useEditorState = (descriptions: NodeDescriptions) => {
-  const [editorState, setEditorState] = useReducer(editorReducerFactory(descriptions), {
-    children: [ControlNodeDescription.empty()],
-    id: 'root',
-    data: {},
-    focusedNode: [0],
-    outerFocusedNode: null,
-    outerFocusedRange: null,
-    forceFocus: false,
-  } satisfies RootNodeProps);
+export const useEditorState = (descriptions: NodeDescriptions, state: RootNodeProps | undefined) => {
+  const [editorState, setEditorState] = useReducer(
+    editorReducerFactory(descriptions),
+    state ?? RootNodeDescription.empty()
+  );
 
   const oldValueAndAction = useRef<{ oldData: RootNodeProps; action: EditorActions }>({
     oldData: editorState,

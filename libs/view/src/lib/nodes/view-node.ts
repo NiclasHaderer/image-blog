@@ -1,5 +1,7 @@
 import { NodeDescription, NodeProps } from '@image-blog/shared';
-import { JSX } from 'react';
+import { FC } from 'react';
+
+export type SkipUnknownNodes = { skipUnknownNodes: boolean };
 
 export abstract class ViewNode<T extends NodeProps> {
   public constructor(public readonly nodeDescription: NodeDescription<T>) {}
@@ -12,5 +14,5 @@ export abstract class ViewNode<T extends NodeProps> {
     return this.nodeDescription.id === type.id;
   }
 
-  public abstract Render(type: T, skipUnknownNodes?: boolean): JSX.Element | string | null;
+  public abstract Render: FC<T & SkipUnknownNodes>;
 }

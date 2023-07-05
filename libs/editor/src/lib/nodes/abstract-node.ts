@@ -1,5 +1,5 @@
 import fuzzysort from 'fuzzysort';
-import { JSX } from 'react';
+import { FC } from 'react';
 import { NodeDescription, NodeProps } from '@image-blog/shared';
 
 export abstract class AbstractNode<T extends NodeProps> {
@@ -13,11 +13,11 @@ export abstract class AbstractNode<T extends NodeProps> {
     return this.nodeDescription.empty();
   }
 
-  public abstract Render(props: T): JSX.Element | null;
+  public abstract Render: FC<T>;
 
-  public abstract Icon(props: { size: number | string }): JSX.Element | null;
+  public abstract Icon(props: { size: number | string }): ReturnType<FC>;
 
-  public abstract Name(): JSX.Element | string | null;
+  public abstract Name(): ReturnType<FC>;
 
   public canHandle(type: T) {
     return this.nodeDescription.id === type.id;

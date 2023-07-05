@@ -8,13 +8,27 @@ import {
   EditorGlobalState,
   EditorHistory,
   ImageNode,
+  RootNode,
   SideBySideEditor,
 } from '@image-blog/editor';
-import { ColumnOutletViewNode, ColumnViewNode, DividerViewNode, ImageViewNode } from '@image-blog/view';
+import { ColumnOutletViewNode, ColumnViewNode, DividerViewNode, ImageViewNode, RootViewNode } from '@image-blog/view';
 
-const EDITOR_NODES = [new ControlNode(), new ImageNode(), new DividerNode(), new ColumnNode(), new ColumnNodeOutlet()];
+const EDITOR_NODES = [
+  new ControlNode(),
+  new ImageNode(),
+  new DividerNode(),
+  new ColumnNode(),
+  new ColumnNodeOutlet(),
+  new RootNode(),
+];
 
-const VIEW_NODES = [new ImageViewNode(), new DividerViewNode(), new ColumnViewNode(), new ColumnOutletViewNode()];
+const VIEW_NODES = [
+  new ImageViewNode(),
+  new DividerViewNode(),
+  new ColumnViewNode(),
+  new ColumnOutletViewNode(),
+  new RootViewNode(),
+];
 
 export default function Page() {
   return (

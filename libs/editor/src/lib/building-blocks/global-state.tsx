@@ -8,7 +8,7 @@ export const EditorGlobalState: FC<{
   enableCopyHotkey?: boolean;
   copyHotkey?: string;
 }> = ({ children, saveKey, enableCopyHotkey = true, copyHotkey = 'ctrl+alt+c' }) => {
-  useOnEditorUpdate((oldState, newState, action) => {
+  useOnEditorUpdate((oldState, newState) => {
     if (typeof window !== 'undefined') {
       (window as any)[saveKey] = newState;
     }
