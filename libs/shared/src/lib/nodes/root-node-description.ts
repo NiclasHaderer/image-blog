@@ -7,6 +7,7 @@ export interface RootNodeProps extends NodeProps {
   forceFocus: boolean;
   outerFocusedNode: number[] | null;
   outerFocusedRange: number;
+  children: NodeProps[];
 }
 
 export const RootNodeDescription: NodeDescription<RootNodeProps> = {

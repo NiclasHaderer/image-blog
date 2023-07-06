@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useNodeHandlers } from './nodes/nodes';
 import { logger, NodeDescriptions, RootNodeDescription, RootNodeProps } from '@image-blog/shared';
 import {
@@ -12,45 +12,31 @@ import {
 
 const log = logger('editor-state');
 
+type UpdateCb = (oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void;
+
 const unsetRootContext = Symbol('unset-root-context');
 export const RootEditorContext = createContext({
   update: unsetRootContext as unknown as (_: EditorActions) => void,
-  editorUpdateCbs: unsetRootContext as unknown as React.MutableRefObject<
-    ((oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void)[]
-  >,
+  editorUpdateCbs: unsetRootContext as unknown as React.MutableRefObject<UpdateCb[]>,
   data: unsetRootContext as unknown as RootNodeProps,
 });
 
 export const useEditorStateHandler = (descriptions: NodeDescriptions, state: RootNodeProps | undefined) => {
-  const [editorState, setEditorState] = useReducer(
-    editorReducerFactory(descriptions),
-    state ?? RootNodeDescription.empty()
-  );
+  const reducer = useMemo(() => editorReducerFactory(descriptions), [descriptions]);
 
-  const oldValueAndAction = useRef<{ oldData: RootNodeProps; action: EditorActions }>({
-    oldData: editorState,
-    action: { type: 'init', payload: undefined, origin: [] },
-  });
+  const [editorState, setEditorState] = useState(state ?? RootNodeDescription.empty());
+  const editorStateRef = useRef(editorState);
 
-  const editorUpdateCbs = useRef<((oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void)[]>(
-    []
-  );
-
-  // TODO this does not work, because fast dispatching actions will not be caught and therefore not be passed to the
-  //  update callbacks
-  useEffect(() => {
-    const { oldData, action } = oldValueAndAction.current ?? {};
-    editorUpdateCbs.current.forEach((cb) => cb(oldData, editorState, action));
-  }, [editorState]);
+  const editorUpdateCbs = useRef<UpdateCb[]>([]);
 
   return {
     editorState,
     update: (action: EditorActions) => {
-      oldValueAndAction.current = {
-        oldData: editorState,
-        action,
-      };
-      setEditorState(action);
+      const oldState = editorStateRef.current;
+      const newState = reducer(oldState, action);
+      editorStateRef.current = newState;
+      editorUpdateCbs.current.forEach((cb) => cb(oldState, newState, action));
+      setEditorState(newState);
     },
     editorUpdateCbs,
   };
@@ -89,9 +75,7 @@ export const useNode = () => {
   return node;
 };
 
-export const useOnEditorUpdate = (
-  callback: (oldState: RootNodeProps, newState: RootNodeProps, action: EditorActions) => void
-) => {
+export const useOnEditorUpdate = (callback: UpdateCb) => {
   const editorContext = useContext(RootEditorContext);
   useEffect(() => {
     editorContext.editorUpdateCbs.current.push(callback);
