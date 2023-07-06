@@ -21,7 +21,7 @@ export const RootEditorContext = createContext({
   data: unsetRootContext as unknown as RootNodeProps,
 });
 
-export const useEditorState = (descriptions: NodeDescriptions, state: RootNodeProps | undefined) => {
+export const useEditorStateHandler = (descriptions: NodeDescriptions, state: RootNodeProps | undefined) => {
   const [editorState, setEditorState] = useReducer(
     editorReducerFactory(descriptions),
     state ?? RootNodeDescription.empty()
@@ -36,6 +36,8 @@ export const useEditorState = (descriptions: NodeDescriptions, state: RootNodePr
     []
   );
 
+  // TODO this does not work, because fast dispatching actions will not be caught and therefore not be passed to the
+  //  update callbacks
   useEffect(() => {
     const { oldData, action } = oldValueAndAction.current ?? {};
     editorUpdateCbs.current.forEach((cb) => cb(oldData, editorState, action));
@@ -139,4 +141,9 @@ export const useIsNodeOuterFocused = () => {
 export const useNodeIndex = () => {
   const { index } = useContext(ChildContext);
   return index;
+};
+
+export const useEditorState = () => {
+  const rootContext = useContext(RootEditorContext);
+  return rootContext.data;
 };

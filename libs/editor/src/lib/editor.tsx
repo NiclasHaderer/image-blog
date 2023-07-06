@@ -3,7 +3,7 @@ import { FC, ReactNode } from 'react';
 import { EditorChild, RootEditorContextProvider } from './editor-building-blocks';
 import { AbstractNode } from './nodes/abstract-node';
 import { RootNodeProps } from '@image-blog/shared';
-import { useEditorState } from './state-holder';
+import { useEditorStateHandler } from './state-holder';
 
 export const Editor: FC<{ editorNodes: AbstractNode<any>[]; state?: RootNodeProps; children: ReactNode }> = ({
   editorNodes,
@@ -11,7 +11,7 @@ export const Editor: FC<{ editorNodes: AbstractNode<any>[]; state?: RootNodeProp
   children,
 }) => {
   const descriptions = editorNodes.map((n) => n.nodeDescription);
-  const editorState = useEditorState(descriptions, state);
+  const editorState = useEditorStateHandler(descriptions, state);
 
   return (
     <RootEditorContextProvider editorState={editorState}>
