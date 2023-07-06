@@ -135,7 +135,7 @@ export const focus = (
     focusedNode: path,
     outerFocusedNode: null,
     forceFocus: force,
-    outerFocusedRange: null,
+    outerFocusedRange: 0,
   };
 };
 
@@ -160,7 +160,7 @@ export const focusPrevious = (state: RootNodeProps, force: boolean, descriptions
     focusedNode: previousNode,
     outerFocusedNode: null,
     forceFocus: force,
-    outerFocusedRange: null,
+    outerFocusedRange: 0,
   };
 };
 
@@ -179,6 +179,6 @@ export const focusNext = (state: RootNodeProps, force: boolean, descriptions: No
     focusedNode: nextNode,
     outerFocusedNode: null,
     forceFocus: force,
-    outerFocusedRange: null,
+    outerFocusedRange: 0,
   };
 };

@@ -2,7 +2,7 @@ import { ControlNodeDescription, DividerNodeDescription, RootNodeDescription, Ro
 import { editorReducerFactory } from '../reducer';
 
 describe('Flat list', () => {
-  test('Test moving up with single selection', () => {
+  test('Test focus previous with single outer focus', () => {
     const originalState: RootNodeProps = {
       children: [
         {
@@ -16,7 +16,6 @@ describe('Flat list', () => {
         },
       ],
       id: 'root',
-      data: undefined,
       focusedNode: null,
       outerFocusedNode: [2],
       outerFocusedRange: 0,
@@ -26,8 +25,10 @@ describe('Flat list', () => {
     const newState = editorReducerFactory([RootNodeDescription, ControlNodeDescription, DividerNodeDescription])(
       originalState,
       {
-        type: 'move-outer-focused-up',
-        payload: null,
+        type: 'outer-focus-previous',
+        payload: {
+          mode: 'replace',
+        },
         origin: [],
       }
     );
@@ -44,7 +45,6 @@ describe('Flat list', () => {
         },
       ],
       id: 'root',
-      data: undefined,
       focusedNode: null,
       outerFocusedNode: [1],
       outerFocusedRange: 0,
@@ -52,7 +52,7 @@ describe('Flat list', () => {
     });
   });
 
-  test('Test moving up with multiple selection', () => {
+  test('Test focus previous with multiple outer focus', () => {
     const originalState: RootNodeProps = {
       children: [
         {
@@ -66,7 +66,6 @@ describe('Flat list', () => {
         },
       ],
       id: 'root',
-      data: undefined,
       focusedNode: null,
       outerFocusedNode: [2],
       outerFocusedRange: -1,
@@ -76,8 +75,10 @@ describe('Flat list', () => {
     const newState = editorReducerFactory([RootNodeDescription, ControlNodeDescription, DividerNodeDescription])(
       originalState,
       {
-        type: 'move-outer-focused-up',
-        payload: null,
+        type: 'outer-focus-previous',
+        payload: {
+          mode: 'replace',
+        },
         origin: [],
       }
     );
@@ -94,10 +95,9 @@ describe('Flat list', () => {
         },
       ],
       id: 'root',
-      data: undefined,
       focusedNode: null,
-      outerFocusedNode: [1],
-      outerFocusedRange: null,
+      outerFocusedNode: [0],
+      outerFocusedRange: 0,
       forceFocus: false,
     });
   });
