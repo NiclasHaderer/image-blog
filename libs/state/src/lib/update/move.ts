@@ -1,4 +1,4 @@
-import { NodeDescriptions, RootNodeProps } from '@image-blog/shared';
+import { logger, NodeDescriptions, RootNodeProps } from '@image-blog/shared';
 import {
   deleteRange,
   getFirstPath,
@@ -12,6 +12,8 @@ import {
 } from './utils';
 import { addNode } from './nodes';
 
+const log = logger('move');
+
 export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
   // TODO if we try to move it down and we are in a deeply nested node we should move the node one out of the nested node
   // TODO moving down multiple leads to focus issues
@@ -21,7 +23,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: N
   if (!outerFocused) return editorState;
 
   // Get the range that is focused
-  const focusRange = editorState.outerFocusedRange ?? 0;
+  const focusRange = editorState.outerFocusedRange;
 
   // Find the nodes which should be moved. This will only return the nodes which are at the top level of the move
   // operation. The children will before be moved with the parent.
@@ -40,7 +42,10 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: N
     descriptions,
     (props) => !getNodeCapabilities(props, descriptions).structural
   );
-  if (!destination) return editorState;
+  if (!destination) {
+    log.warn('Could not find a destination for the move operation');
+    return editorState;
+  }
 
   // There are different cases for the insertion mode
   const isDeeperToLessDeep = destination.length < outerFocused.length;
@@ -73,6 +78,7 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: N
 
   // Update the outer focused node to the new position
   const newOuterFocused = [...destination];
+
   // Because we are removing nodes from above we have to subtract the length of the nodes from the parent
   if (isLessDeepToDeeper) {
     newOuterFocused[outerFocused.length - 1] -= nodesToMove.length;
@@ -101,10 +107,13 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: N
 export const moveOuterFocusedUp = (editorState: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
   // Check if we have an outer focused node
   const outerFocused = editorState.outerFocusedNode;
-  if (!outerFocused) return editorState;
+  if (!outerFocused) {
+    log.info('No outer focused node found. Skipping move up.');
+    return editorState;
+  }
 
   // Get the range that is focused
-  const focusRange = editorState.outerFocusedRange ?? 0;
+  const focusRange = editorState.outerFocusedRange;
 
   // Find the nodes which should be moved. This will only return the nodes which are at the top level of the move
   // operation. The children will before be moved with the parent.
@@ -121,7 +130,10 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps, descriptions: Nod
     lastPath,
     (props) => !getNodeCapabilities(props, descriptions).structural
   );
-  if (!destination) return editorState;
+  if (!destination) {
+    log.warn('No destination found. Skipping move up.');
+    return editorState;
+  }
 
   // There are different cases for the insertion mode
   const isDeeperToLessDeep = destination.length < outerFocused.length;
@@ -158,7 +170,7 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps, descriptions: Nod
     newOuterFocused = getNextNode(
       editorState,
       destination,
-      (props) => getNodeCapabilities(props, descriptions).structural
+      (props) => !getNodeCapabilities(props, descriptions).structural
     )!;
   }
 

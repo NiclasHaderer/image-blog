@@ -121,20 +121,47 @@ export const getNextNode = (
   }
 };
 
+/**
+ * Returns the next node to insert a node into.
+ * @param root The root node
+ * @param path The path to the node to insert into
+ * @param descriptions The node descriptions
+ * @param condition An optional condition that the node must fulfill
+ */
 export const getNextNodeToInsert = (
   root: RootNodeProps,
   path: number[] | null | undefined,
   descriptions: NodeDescriptions,
   condition?: (props: NodeProps) => boolean
 ): number[] | null => {
+  if (path === null || path === undefined) return null;
+
   let nextNode = getNextNode(root, path, condition);
   let nodeProps = getNodeProps(root, nextNode);
   while (nodeProps && nodeProps.children && nodeProps.children.length > 0) {
     const nodeCaps = getNodeCapabilities(nodeProps, descriptions);
+    // We have found a node that can have children and is not immutable, therefore we can insert into it and it is the next node
     if (nodeCaps.canHaveChildren && !nodeCaps.immutableChildren) break;
     nodeProps = getNodeProps(root, nextNode);
     nextNode = getNextNode(root, nextNode);
   }
+
+  // There does not seem to be a next node which is deeper nested, or at the same leve, therefore we have to look if the
+  // parent of the *path* has some siblings where we can insert into.
+  if (nextNode === null) {
+    const parentPath = getParentNode(root, path, descriptions, undefined);
+    if (!parentPath || parentPath.length === 0) return null;
+    // Get the closest non-structural grand-parent node
+    const grandParentPath = getParentNode(root, parentPath, descriptions, (desc) => {
+      return 'immutableChildren' in desc && !desc.immutableChildren;
+    });
+    const grandParent = getNodeProps(root, grandParentPath);
+    if (!grandParent) return null;
+
+    // and then increase the index of the node th child is in by one
+    nextNode = [...grandParentPath!, path.at(grandParentPath!.length)! + 1];
+  }
+
   return nextNode;
 };
 
@@ -326,7 +353,37 @@ export const getNodeCapabilities = (node: NodeProps, descriptions: NodeDescripti
   const nodeCapabilities = descriptions.find((n) => n.id === node.id)?.capabilities;
   if (!nodeCapabilities) {
     log.error(`Node with id ${node.id} does not exist in the node descriptions`, { node, nodes: descriptions });
-    throw new Error(`Node with id ${node.id} does not exist in the node descriptions`);
+    throw new Error(`Node with id "${node.id}" does not exist in the node descriptions`);
   }
   return nodeCapabilities;
+};
+
+export const getSibling = (root: RootNodeProps, path: number[], offset: number): number[] | null => {
+  const parent = path.slice(0, -1);
+  const parentNode = getNodeProps(root, parent);
+  if (parentNode === null) return null;
+  const index = path.at(-1)!;
+  const siblingIndex = index + offset;
+  if (siblingIndex < 0 || siblingIndex >= parentNode.children!.length) return null;
+  return [...parent, siblingIndex];
+};
+
+export const getParentNode = (
+  root: RootNodeProps,
+  path: number[],
+  descriptions: NodeDescriptions,
+  condition: ((description: NodeCapabilities) => boolean) | undefined
+): number[] | null => {
+  let parentPath = path.slice(0, -1);
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const props = getNodeProps(root, parentPath)!;
+    const description = getNodeCapabilities(props, descriptions);
+    // We have found a parent which matches the condition
+    if (!condition || condition(description)) return parentPath;
+
+    // We have reached the root node
+    if (parentPath.length === 0) return null;
+    parentPath = parentPath.slice(0, -1);
+  }
 };
