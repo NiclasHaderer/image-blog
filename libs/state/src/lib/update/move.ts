@@ -180,7 +180,7 @@ export const moveOuterFocusedUp = (editorState: RootNodeProps, descriptions: Nod
   // Because it is guaranteed that the nodes we move are in a flat list we can just add the length of the list to the
   // index of the destination node.
   if (focusRange < 0) {
-    newOuterFocused[outerFocused.length - 1] += nodesToMove.length - 1;
+    newOuterFocused[newOuterFocused.length - 1] += nodesToMove.length - 1;
   }
 
   // Set the focus to the new position
