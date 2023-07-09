@@ -628,5 +628,61 @@ describe('Nested list', () => {
     });
   });
 
+  test('Move two blocks from one child into another child - bottom to top selection', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }, { id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 0, 2],
+      outerFocusedRange: -1,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-down', origin: [0, 0, 2], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }, { id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 1, 1],
+      outerFocusedRange: -1,
+      forceFocus: false,
+    });
+    const state2 = reducer(state1, { type: 'move-outer-focused-up', origin: [0, 1, 0], payload: null });
+    expect(state2).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }, { id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 0, 2],
+      outerFocusedRange: -1,
+      forceFocus: false,
+    });
+  });
+
   // TODO move two blocks from one child into another child - bottom to top selection
 });
