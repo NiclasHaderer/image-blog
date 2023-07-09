@@ -26,7 +26,7 @@ const generateJestTest = async (stateTransitions: StateTransition[]) => {
   `;
 
   // copy test to clipboard
-  await navigator.clipboard.writeText(test);
+  await window.navigator.clipboard.writeText(test);
 };
 
 export const TestGenerator: FC<{
