@@ -21,53 +21,7 @@ export const outerFocus = (state: RootNodeProps, path: number[]): RootNodeProps 
   };
 };
 
-export const outerFocusNext = (
-  state: RootNodeProps,
-  mode: 'add' | 'replace',
-  descriptions: NodeDescriptions
-): RootNodeProps => {
-  if (!state.outerFocusedNode) {
-    log.debug('outerFocusNext: no outerFocusedNode');
-    return state;
-  }
-
-  const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange + 1 : 1;
-  const nextNode = getNodeOffsetBy(
-    state,
-    state.outerFocusedNode,
-    nodeFocusRange,
-    (props) => !getNodeCapabilities(props, descriptions).structural,
-    true
-  );
-  if (!nextNode) {
-    log.debug('outerFocusNext: no nextNode');
-    return state;
-  }
-
-  if (mode === 'add') {
-    const difference = getNodeDifference(state, state.outerFocusedNode, nextNode);
-    return {
-      ...state,
-      focusedNode: null,
-      forceFocus: false,
-      outerFocusedRange: difference,
-    };
-  } else {
-    return {
-      ...state,
-      outerFocusedNode: nextNode,
-      focusedNode: null,
-      forceFocus: false,
-      outerFocusedRange: 0,
-    };
-  }
-};
-
-export const outerFocusPrevious = (
-  state: RootNodeProps,
-  mode: 'add' | 'replace',
-  descriptions: NodeDescriptions
-): RootNodeProps => {
+const addOuterFocusBackwards = (state: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
   if (!state.outerFocusedNode) {
     log.debug('outerFocusPrevious: no outerFocusedNode');
     return state;
@@ -87,24 +41,122 @@ export const outerFocusPrevious = (
     return state;
   }
 
-  if (mode === 'add') {
-    const difference = getNodeDifference(state, state.outerFocusedNode, previousNode);
+  const difference = getNodeDifference(state, state.outerFocusedNode, previousNode);
 
-    return {
-      ...state,
-      focusedNode: null,
-      forceFocus: false,
-      outerFocusedRange: difference,
-    };
-  } else {
-    return {
-      ...state,
-      outerFocusedNode: previousNode,
-      focusedNode: null,
-      forceFocus: false,
-      outerFocusedRange: 0,
-    };
+  return {
+    ...state,
+    focusedNode: null,
+    forceFocus: false,
+    outerFocusedRange: difference,
+  };
+};
+
+const moveOuterFocusBackwards = (state: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
+  if (!state.outerFocusedNode) {
+    log.debug('outerFocusPrevious: no outerFocusedNode');
+    return state;
   }
+  const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange - 1 : -1;
+
+  const previousNode = getNodeOffsetBy(
+    state,
+    state.outerFocusedNode,
+    nodeFocusRange,
+    (props) => !getNodeCapabilities(props, descriptions).structural,
+    false
+  );
+  if (!previousNode) {
+    log.debug('outerFocusPrevious: no previousNode');
+    return state;
+  }
+
+  return {
+    ...state,
+    outerFocusedNode: previousNode,
+    focusedNode: null,
+    forceFocus: false,
+    outerFocusedRange: 0,
+  };
+};
+
+export const outerFocusPrevious = (
+  state: RootNodeProps,
+  mode: 'add' | 'replace',
+  descriptions: NodeDescriptions
+): RootNodeProps => {
+  if (mode === 'add') {
+    return addOuterFocusBackwards(state, descriptions);
+  } else {
+    return moveOuterFocusBackwards(state, descriptions);
+  }
+};
+
+export const outerFocusNext = (
+  state: RootNodeProps,
+  mode: 'add' | 'replace',
+  descriptions: NodeDescriptions
+): RootNodeProps => {
+  if (mode === 'add') {
+    return addOuterFocusForwards(state, descriptions);
+  } else {
+    return moveOuterFocusForwards(state, descriptions);
+  }
+};
+
+const addOuterFocusForwards = (state: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
+  if (!state.outerFocusedNode) {
+    log.debug('outerFocusNext: no outerFocusedNode');
+    return state;
+  }
+
+  const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange + 1 : 1;
+  const nextNode = getNodeOffsetBy(
+    state,
+    state.outerFocusedNode,
+    nodeFocusRange,
+    (props) => !getNodeCapabilities(props, descriptions).structural,
+    true
+  );
+  if (!nextNode) {
+    log.debug('outerFocusNext: no nextNode');
+    return state;
+  }
+
+  const difference = getNodeDifference(state, state.outerFocusedNode, nextNode);
+  return {
+    ...state,
+    focusedNode: null,
+    forceFocus: false,
+    outerFocusedRange: difference,
+  };
+};
+
+const moveOuterFocusForwards = (state: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
+  if (!state.outerFocusedNode) {
+    log.debug('outerFocusNext: no outerFocusedNode');
+    return state;
+  }
+
+  const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange + 1 : 1;
+  const nextNode = getNodeOffsetBy(
+    state,
+    state.outerFocusedNode,
+    nodeFocusRange,
+    (props) => !getNodeCapabilities(props, descriptions).structural,
+    true
+  );
+  if (!nextNode) {
+    log.debug('outerFocusNext: no nextNode');
+    return state;
+  }
+
+  return {
+    ...state,
+    outerFocusedNode: nextNode,
+    focusedNode: null,
+    forceFocus: false,
+    outerFocusedRange: 0,
+  };
 };
 
 export const focus = (
