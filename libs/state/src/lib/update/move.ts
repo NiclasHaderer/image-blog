@@ -15,9 +15,6 @@ import { addNode } from './nodes';
 const log = logger('move');
 
 export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: NodeDescriptions): RootNodeProps => {
-  // TODO if we try to move it down and we are in a deeply nested node we should move the node one out of the nested node
-  // TODO moving down multiple leads to focus issues
-  // TODO check if there is a difference between selection order
   // Check if we have an outer focused node
   const outerFocused = editorState.outerFocusedNode;
   if (!outerFocused) return editorState;
@@ -91,6 +88,16 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: N
 
   // If we focused from bottom up and then move down we have to add the length of the nodes to the parent
   if (focusRange < 0 && isLessDeepToDeeper) {
+    newOuterFocused[newOuterFocused.length - 1] += nodesToMove.length - 1;
+  }
+
+  // We focus from bottom to top and move two or more items outside of node a and inside of node b, which is a sibling of
+  // node a
+  if (!isLessDeepToDeeper && !isDeeperToLessDeep && focusRange < 0 && !sameParent(destination, outerFocused)) {
+    newOuterFocused[newOuterFocused.length - 1] += nodesToMove.length - 1;
+  }
+
+  if (isDeeperToLessDeep && focusRange < 0) {
     newOuterFocused[newOuterFocused.length - 1] += nodesToMove.length - 1;
   }
 

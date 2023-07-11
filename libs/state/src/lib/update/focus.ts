@@ -1,4 +1,12 @@
-import { getNextNode, getNodeCapabilities, getNodeOffsetBy, getNodeProps, getPreviousNode, isChildOf } from './utils';
+import {
+  getNextNode,
+  getNodeCapabilities,
+  getNodeDifference,
+  getNodeOffsetBy,
+  getNodeProps,
+  getPreviousNode,
+  isChildOf,
+} from './utils';
 import { logger, NodeDescriptions, RootNodeProps } from '@image-blog/shared';
 
 const log = logger('focus');
@@ -24,24 +32,27 @@ export const outerFocusNext = (
   }
 
   const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange + 1 : 1;
+  const nextNode = getNodeOffsetBy(
+    state,
+    state.outerFocusedNode,
+    nodeFocusRange,
+    (props) => !getNodeCapabilities(props, descriptions).structural,
+    true
+  );
+  if (!nextNode) {
+    log.debug('outerFocusNext: no nextNode');
+    return state;
+  }
+
   if (mode === 'add') {
+    const difference = getNodeDifference(state, state.outerFocusedNode, nextNode);
     return {
       ...state,
       focusedNode: null,
       forceFocus: false,
-      outerFocusedRange: nodeFocusRange,
+      outerFocusedRange: difference,
     };
   } else {
-    const nextNode = getNodeOffsetBy(
-      state,
-      state.outerFocusedNode,
-      nodeFocusRange,
-      (props) => !getNodeCapabilities(props, descriptions).structural
-    );
-    if (!nextNode) {
-      log.debug('outerFocusNext: no nextNode');
-      return state;
-    }
     return {
       ...state,
       outerFocusedNode: nextNode,
@@ -63,24 +74,29 @@ export const outerFocusPrevious = (
   }
 
   const nodeFocusRange = state.outerFocusedRange ? state.outerFocusedRange - 1 : -1;
+
+  const previousNode = getNodeOffsetBy(
+    state,
+    state.outerFocusedNode,
+    nodeFocusRange,
+    (props) => !getNodeCapabilities(props, descriptions).structural,
+    false
+  );
+  if (!previousNode) {
+    log.debug('outerFocusPrevious: no previousNode');
+    return state;
+  }
+
   if (mode === 'add') {
+    const difference = getNodeDifference(state, state.outerFocusedNode, previousNode);
+
     return {
       ...state,
       focusedNode: null,
       forceFocus: false,
-      outerFocusedRange: nodeFocusRange,
+      outerFocusedRange: difference,
     };
   } else {
-    const previousNode = getNodeOffsetBy(
-      state,
-      state.outerFocusedNode,
-      nodeFocusRange,
-      (props) => !getNodeCapabilities(props, descriptions).structural
-    );
-    if (!previousNode) {
-      log.debug('outerFocusPrevious: no previousNode');
-      return state;
-    }
     return {
       ...state,
       outerFocusedNode: previousNode,

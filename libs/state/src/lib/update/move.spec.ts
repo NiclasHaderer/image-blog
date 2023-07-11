@@ -684,5 +684,173 @@ describe('Nested list', () => {
     });
   });
 
-  // TODO move two blocks from one child into another child - bottom to top selection
+  test('Move two block outside of a 2 deep nested node - bottom to top selection', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }, { id: 'divider' }, { id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 1, 2],
+      outerFocusedRange: -1,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-down', origin: [0, 1, 2], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'divider' },
+        { id: 'divider' },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [2],
+      outerFocusedRange: -1,
+      forceFocus: false,
+    });
+  });
+
+  test('Move two block outside of a 2 deep nested node - top to bottom selection', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }, { id: 'divider' }, { id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 1, 1],
+      outerFocusedRange: 1,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-down', origin: [0, 1, 2], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'divider' },
+        { id: 'divider' },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1],
+      outerFocusedRange: 1,
+      forceFocus: false,
+    });
+  });
+
+  test('Move nested element', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [{ id: 'control', children: [] }],
+            },
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                { id: 'control', children: [] },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-up', origin: [1], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [{ id: 'control', children: [] }],
+            },
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                { id: 'control', children: [] },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state2 = reducer(state1, { type: 'move-outer-focused-down', origin: [0], payload: null });
+    expect(state2).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [{ id: 'control', children: [] }],
+            },
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                { id: 'control', children: [] },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+  });
 });

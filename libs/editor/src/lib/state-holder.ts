@@ -7,7 +7,7 @@ import {
   editorReducerFactory,
   getNodeCapabilities,
   getNodeProps,
-  getNodesInRange,
+  getPathsInRange,
 } from '@image-blog/state';
 
 const log = logger('editor-state');
@@ -118,7 +118,7 @@ export const useIsNodeOuterFocused = () => {
   const outerFocusNode = rootContext.outerFocusedNode;
   const range = rootContext.outerFocusedRange ?? 0;
   if (!outerFocusNode) return false;
-  const focusedNodes = getNodesInRange(rootContext, outerFocusNode, range);
+  const focusedNodes = getPathsInRange(rootContext, outerFocusNode, range);
   return focusedNodes.some((node) => node.join('.') === index.join('.'));
 };
 

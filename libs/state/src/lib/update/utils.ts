@@ -5,13 +5,17 @@ const log = logger('utils');
 const returnIfConditionOrElse = (
   root: RootNodeProps,
   path: number[] | null | undefined,
-  condition: ((props: NodeProps) => boolean) | undefined,
-  callback: (root: RootNodeProps, path: number[], condition?: (props: NodeProps) => boolean) => number[] | null
+  condition: ((props: NodeProps, path: number[]) => boolean) | undefined,
+  callback: (
+    root: RootNodeProps,
+    path: number[],
+    condition?: (props: NodeProps, path: number[]) => boolean
+  ) => number[] | null
 ): number[] | null => {
   if (!path) return null;
   const node = getNodeProps(root, path);
   if (!node) return null;
-  if (condition && !condition(node)) {
+  if (condition && !condition(node, path)) {
     return callback(root, path, condition);
   }
   return path;
@@ -20,7 +24,7 @@ const returnIfConditionOrElse = (
 export const getPreviousNode = (
   root: RootNodeProps,
   path: number[],
-  condition?: (props: NodeProps) => boolean
+  condition?: (props: NodeProps, path: number[]) => boolean
 ): number[] | null => {
   if (!path) return null;
   const parentPath = path.slice(0, path.length - 1);
@@ -65,7 +69,7 @@ const getLastNode = (root: RootNodeProps, path: number[] | null | undefined): nu
 export const getNextNode = (
   root: RootNodeProps,
   path: number[] | null | undefined,
-  condition?: (props: NodeProps) => boolean
+  condition?: (props: NodeProps, path: number[]) => boolean
 ): number[] | null => {
   if (!path) return null;
   const parentPath = path.slice(0, path.length - 1);
@@ -132,7 +136,7 @@ export const getNextNodeToInsert = (
   root: RootNodeProps,
   path: number[] | null | undefined,
   descriptions: NodeDescriptions,
-  condition?: (props: NodeProps) => boolean
+  condition?: (props: NodeProps, path: number[]) => boolean
 ): number[] | null => {
   if (path === null || path === undefined) return null;
 
@@ -243,7 +247,7 @@ export const getFirstPath = (paths: number[][] | null | undefined): number[] | n
   return sorted.at(0) ?? null;
 };
 
-export const getNodesInRange = (root: RootNodeProps, origin: number[], range: number): number[][] => {
+export const getPathsInRange = (root: RootNodeProps, origin: number[], range: number): number[][] => {
   const nodes: number[][] = [origin];
   let currentPath: number[] | null = origin;
   while (currentPath && range !== 0) {
@@ -263,29 +267,43 @@ export const getNodeOffsetBy = (
   root: RootNodeProps,
   path: number[],
   offset: number,
-  condition?: (props: NodeProps) => boolean
+  condition?: (props: NodeProps) => boolean,
+  forwards = offset > 0
 ): number[] | null => {
   if (offset === 0) return path;
   while (offset !== 0) {
     if (offset < 0) {
-      path = getPreviousNode(root, path, condition) ?? path;
+      path = getPreviousNode(root, path) ?? path;
       offset++;
     } else {
-      path = getNextNode(root, path, condition) ?? path;
+      path = getNextNode(root, path) ?? path;
       offset--;
     }
   }
+
+  // Get the props of the node at a certain point
+  const nodeAtPos = getNodeProps(root, path);
+  // If the node does not exist, we return null
+  if (!nodeAtPos) return null;
+
+  // If there is a condition which has to be meet by the node and the condition is not met we go back/forwards until we
+  // find a node which meets the condition
+  if (condition && !condition(nodeAtPos)) {
+    const executor = forwards ? getNextNode : getPreviousNode;
+    return executor(root, path, condition);
+  }
+
   return path;
 };
 
 export const getNodeRange = (root: RootNodeProps, origin: number[], range: number): [number[], NodeProps][] => {
-  const nodes = getNodesInRange(root, origin, range);
+  const paths = getPathsInRange(root, origin, range);
 
   // Get the node which is the furthest up in the tree
-  const firstPath = getFirstPath(nodes)!;
+  const firstPath = getFirstPath(paths)!;
 
   // Check if there are nodes which are on the same level as the first node
-  const sameLevelNodes = nodes.filter((node) => node.length === firstPath?.length);
+  const sameLevelNodes = paths.filter((node) => node.length === firstPath.length);
 
   // We are only concerned with the nodes which are on the same level as the first node, as the other ones are
   // children of these sameLevelNodes
@@ -321,16 +339,27 @@ export const sameParent = (a: number[], b: number[]): boolean => {
   return equalPaths(parentA, parentB);
 };
 
-export const isChildOf = (a: number[], b: number[], direct = false): boolean => {
-  // If "a" is the child of "b", then "a" has to be longer than "b"
-  if (a.length <= b.length) return false;
+export const isChildOf = (child: number[], parent: number[], direct = false): boolean => {
+  // If "child" is the child of "parent", then "child" has to be longer than "parent"
+  if (child.length <= parent.length) return false;
 
-  // Get parent of "a"
-  const parentA = a.slice(0, -1);
-  if (direct) return equalPaths(parentA, b);
+  // Get parent of "child"
+  const parentOfChild = child.slice(0, -1);
+  if (direct || parent.length === parentOfChild.length) return equalPaths(parentOfChild, parent);
 
-  // Check if the parent of "a" is a child of "b"
-  return isChildOf(parentA, b, false);
+  // Check if the parent of "child" is a child of "parent"
+  return isChildOf(parentOfChild, parent, false);
+};
+
+export const isParentOf = (parent: number[], child: number[], direct = false): boolean => {
+  // If "parent" is the parent of "child", then "parent" has to be shorter than "child"
+  if (parent.length >= child.length) return false;
+
+  // Get parent of "child"
+  const parentOfChild = child.slice(0, -1);
+  if (direct || parent.length === parentOfChild.length) return equalPaths(parentOfChild, parent);
+
+  return isParentOf(parent, parentOfChild, false);
 };
 
 export const deepFreeze = <T>(obj: T): T => {
@@ -386,4 +415,46 @@ export const getParentNode = (
     if (parentPath.length === 0) return null;
     parentPath = parentPath.slice(0, -1);
   }
+};
+
+/**
+ * This calculates the difference between two nodes.
+ * If the startNode is before the endNode then the returned value will be positive, otherwise the value will be negative
+ */
+export const getNodeDifference = (root: RootNodeProps, start: number[], end: number[]): number => {
+  if (equalPaths(start, end)) return 0;
+  const offset = isBeforeNode(start, end) ? 1 : -1;
+
+  let steps = 1;
+  let newPath = getNodeOffsetBy(root, start, offset);
+  while (newPath !== null && !equalPaths(newPath, end)) {
+    newPath = getNodeOffsetBy(root, newPath, offset);
+    steps += 1;
+  }
+
+  return steps * offset;
+};
+
+export const isBeforeNode = (start: number[], end: number[]): boolean => {
+  const index = Math.min(start.length, end.length);
+  for (let i = 0; i < index; ++i) {
+    const startIdx = start[i];
+    const endIdx = end[i];
+    if (startIdx === endIdx) continue;
+    return startIdx < endIdx;
+  }
+
+  return start.length < end.length;
+};
+
+export const isAfterNode = (start: number[], end: number[]): boolean => {
+  const index = Math.min(start.length, end.length);
+  for (let i = 0; i < index; ++i) {
+    const startIdx = start[i];
+    const endIdx = end[i];
+    if (startIdx === endIdx) continue;
+    return startIdx > endIdx;
+  }
+
+  return start.length > end.length;
 };
