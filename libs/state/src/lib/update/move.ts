@@ -5,9 +5,10 @@ import {
   getLastPath,
   getNextNode,
   getNextNodeToInsert,
+  getNodeCapabilities,
   getNodeRange,
   getPreviousNode,
-  getNodeCapabilities,
+  isParentOf,
   sameParent,
 } from './utils';
 import { addNode } from './nodes';
@@ -37,7 +38,8 @@ export const moveOuterFocusedDown = (editorState: RootNodeProps, descriptions: N
     editorState,
     lastPath,
     descriptions,
-    (props) => !getNodeCapabilities(props, descriptions).structural
+    (props, path) =>
+      !getNodeCapabilities(props, descriptions).structural && !nodePositions.find((n) => isParentOf(n, path))
   );
   if (!destination) {
     log.warn('Could not find a destination for the move operation');
