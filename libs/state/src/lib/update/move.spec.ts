@@ -4,6 +4,7 @@ import {
   ColumnNodeOutletDescription,
   ControlNodeDescription,
   DividerNodeDescription,
+  ImageNodeDescription,
   RootNodeDescription,
   RootNodeProps,
 } from '@image-blog/shared';
@@ -267,6 +268,7 @@ describe('Nested list', () => {
     ColumnNodeOutletDescription,
     ColumnNodeDescription,
     DividerNodeDescription,
+    ImageNodeDescription,
   ]);
 
   test('Move one block into same nesting level, but different parent', () => {
@@ -850,6 +852,1141 @@ describe('Nested list', () => {
       focusedNode: null,
       outerFocusedNode: [1],
       outerFocusedRange: 0,
+      forceFocus: false,
+    });
+  });
+  test('move deeply nested element down', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-down', origin: [1], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 0, 0],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state2 = reducer(state1, { type: 'move-outer-focused-down', origin: [1, 0, 0], payload: null });
+    expect(state2).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 0, 1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state3 = reducer(state2, { type: 'move-outer-focused-down', origin: [1, 0, 1], payload: null });
+    expect(state3).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 1, 0],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state4 = reducer(state3, { type: 'move-outer-focused-down', origin: [1, 1, 0], payload: null });
+    expect(state4).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 1, 1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state5 = reducer(state4, { type: 'move-outer-focused-down', origin: [1, 1, 1], payload: null });
+    expect(state5).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [2],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+  });
+
+  test('move deeply nested list up', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [2],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-up', origin: [2], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 1, 1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state2 = reducer(state1, { type: 'move-outer-focused-up', origin: [1, 1, 1], payload: null });
+    expect(state2).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 1, 0],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state3 = reducer(state2, { type: 'move-outer-focused-up', origin: [1, 1, 0], payload: null });
+    expect(state3).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 0, 1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state4 = reducer(state3, { type: 'move-outer-focused-up', origin: [1, 0, 1], payload: null });
+    expect(state4).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1, 0, 0],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+
+    const state5 = reducer(state4, { type: 'move-outer-focused-up', origin: [1, 0, 0], payload: null });
+    expect(state5).toEqual({
+      id: 'root',
+      children: [
+        { id: 'control', children: [] },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        { id: 'control', children: [] },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1],
+      outerFocusedRange: 0,
+      forceFocus: false,
+    });
+  });
+
+  test('move multiple deeply nested up - bottom to top selection', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [2],
+      outerFocusedRange: -6,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-up', origin: [2], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 1, 2],
+      outerFocusedRange: -6,
+      forceFocus: false,
+    });
+
+    const state2 = reducer(state1, { type: 'move-outer-focused-up', origin: [0, 1, 2], payload: null });
+    expect(state2).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 1, 1],
+      outerFocusedRange: -6,
+      forceFocus: false,
+    });
+
+    const state3 = reducer(state2, { type: 'move-outer-focused-up', origin: [0, 1, 0, 1], payload: null });
+    expect(state3).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 0, 2],
+      outerFocusedRange: -6,
+      forceFocus: false,
+    });
+
+    const state4 = reducer(state3, { type: 'move-outer-focused-up', origin: [0, 0, 2], payload: null });
+    expect(state4).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 0, 1],
+      outerFocusedRange: -6,
+      forceFocus: false,
+    });
+
+    const state5 = reducer(state4, { type: 'move-outer-focused-up', origin: [0, 0, 0, 1], payload: null });
+    expect(state5).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1],
+      outerFocusedRange: -6,
+      forceFocus: false,
+    });
+  });
+
+  test('move multiple deeply nested down - top to bottom selection', () => {
+    const state0 = {
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0],
+      outerFocusedRange: 6,
+      forceFocus: false,
+    };
+    const state1 = reducer(state0, { type: 'move-outer-focused-down', origin: [1], payload: null });
+    expect(state1).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 0, 0],
+      outerFocusedRange: 6,
+      forceFocus: false,
+    });
+
+    const state2 = reducer(state1, { type: 'move-outer-focused-down', origin: [0, 0, 0, 1], payload: null });
+    expect(state2).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 0, 1],
+      outerFocusedRange: 6,
+      forceFocus: false,
+    });
+
+    const state3 = reducer(state2, { type: 'move-outer-focused-down', origin: [0, 0, 1, 0, 1], payload: null });
+    expect(state3).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                { id: 'control', children: [] },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 1, 0],
+      outerFocusedRange: 6,
+      forceFocus: false,
+    });
+
+    const state4 = reducer(state3, { type: 'move-outer-focused-down', origin: [0, 1, 1], payload: null });
+    expect(state4).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            {
+              id: 'column-outlet',
+              children: [
+                { id: 'control', children: [] },
+                {
+                  id: 'column',
+                  children: [
+                    { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+                    { id: 'column-outlet', children: [{ id: 'divider' }] },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+                {
+                  id: 'column',
+                  children: [
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      id: 'column-outlet',
+                      children: [
+                        {
+                          id: 'image',
+                          data: {
+                            src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                            caption: '',
+                            width: '50%',
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                  data: { lWidth: '50%' },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [0, 1, 1],
+      outerFocusedRange: 6,
+      forceFocus: false,
+    });
+
+    const state5 = reducer(state4, { type: 'move-outer-focused-down', origin: [0, 1, 1, 0, 1], payload: null });
+    expect(state5).toEqual({
+      id: 'root',
+      children: [
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+            { id: 'column-outlet', children: [{ id: 'control', children: [] }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            { id: 'column-outlet', children: [{ id: 'divider' }, { id: 'divider' }] },
+            { id: 'column-outlet', children: [{ id: 'divider' }] },
+          ],
+          data: { lWidth: '50%' },
+        },
+        {
+          id: 'column',
+          children: [
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+            {
+              id: 'column-outlet',
+              children: [
+                {
+                  id: 'image',
+                  data: {
+                    src: "data:image/svg+xml,%3Csvg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'%3E%3C/path%3E%3C/svg%3E",
+                    caption: '',
+                    width: '50%',
+                  },
+                },
+              ],
+            },
+          ],
+          data: { lWidth: '50%' },
+        },
+      ],
+      focusedNode: null,
+      outerFocusedNode: [1],
+      outerFocusedRange: 6,
       forceFocus: false,
     });
   });
