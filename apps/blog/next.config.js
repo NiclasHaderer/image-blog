@@ -1,21 +1,17 @@
 //@ts-check
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { withNx } = require('@nx/next/plugins/with-nx');
+const { composePlugins, withNx } = require('@nx/next');
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
-  reactStrictMode: true,
   nx: {
-    // Set this to true if you would like to use SVGR
-    // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  reactStrictMode: true,
 };
 
 const withMDX = require('@next/mdx')({
@@ -31,4 +27,10 @@ const withMDX = require('@next/mdx')({
   },
 });
 
-module.exports = withMDX(withNx(nextConfig));
+const plugins = [
+  // Add more Next.js plugins to this list if needed.
+  withNx,
+  withMDX,
+];
+
+module.exports = composePlugins(...plugins)(nextConfig);
