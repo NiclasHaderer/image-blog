@@ -1,3 +1,3 @@
-import Something from './posts/new/page';
-
-export default Something;
+export default function () {
+  return <h1>Empty</h1>;
+}
