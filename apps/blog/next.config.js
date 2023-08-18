@@ -4,12 +4,13 @@
 const { composePlugins, withNx } = require('@nx/next');
 
 /**
- * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ * @type {import("@nx/next/plugins/with-nx").WithNxOptions}
  **/
 const nextConfig = {
   nx: {
     svgr: false,
   },
+  transpilePackages: ['@luftschloss/validation', '@luftschloss/common'],
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   reactStrictMode: true,
 };

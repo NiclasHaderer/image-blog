@@ -28,4 +28,5 @@ module.exports = {
       'text-secondary': 'var(--text-secondary)',
     },
   },
+  plugins: [require('@tailwindcss/typography')],
 };
