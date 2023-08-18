@@ -1,7 +1,7 @@
 import { PostCard } from '../components/post-card';
-import { getPosts } from '../utils/posts';
+import { getPosts, ListedPost } from '../utils/posts';
 
-export default function Home({ posts }: { posts: Awaited<ReturnType<typeof getPosts>> }) {
+export default function Home({ posts }: { posts: ListedPost[] }) {
   return (
     <div>
       <h1 className="mt-24 mb-12 font-bold text-3xl">Latest Posts</h1>

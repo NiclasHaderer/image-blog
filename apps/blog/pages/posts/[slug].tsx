@@ -1,10 +1,13 @@
-import { getPost, getPosts } from '../../utils/posts';
+import { getPosts } from '../../utils/posts';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemote } from 'next-mdx-remote';
 import Head from 'next/head';
-import { Something } from '../../components/something';
+import { Image } from '../../components/image';
+import { getPost } from '../../utils/post';
+import { getImagePath } from '../../utils/image-path';
+import { NosSsr } from '../../components/no-ssr';
 
-export default function Post({ data, content }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+export default function Post({ data, content, slug }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
   return (
     <div>
       <h1 className="font-bold text-7xl mt-24 mb-12">{data.title}</h1>
@@ -14,7 +17,9 @@ export default function Post({ data, content }: Awaited<ReturnType<typeof getSta
         <meta name="description" content={data.description} />
       </Head>
       <div className="prose mt-12">
-        <MDXRemote {...content} components={{ Something: Something }} />
+        <NosSsr>
+          <MDXRemote {...content} components={{ Image: Image }} scope={{ getImagePath: getImagePath(slug) }} />
+        </NosSsr>
       </div>
     </div>
   );
@@ -37,6 +42,7 @@ export const getStaticProps = async ({
   props: {
     data: Awaited<ReturnType<typeof getPost>>['data'];
     content: Awaited<ReturnType<typeof serialize>>;
+    slug: string;
   };
 }> => {
   const post = await getPost(params.slug);
@@ -45,6 +51,7 @@ export const getStaticProps = async ({
     props: {
       data: JSON.parse(JSON.stringify(post.data)),
       content: mdxSource,
+      slug: params.slug,
     },
   };
 };

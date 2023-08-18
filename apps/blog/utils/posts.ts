@@ -3,36 +3,19 @@ import path from 'path';
 import matter from 'gray-matter';
 import slugify from 'slugify';
 import { PostMetadata } from './post-metadata';
+import { assertUnique } from './list';
+import { isSupportedImageFile, optimizeImage } from './image';
+import { newestFileTime } from './file';
+import { PostImagesMetadata } from './post-images-metadata';
+import { getPost } from './post';
 
-const assertUnique = (arr: string[]) => {
-  const unique = new Set(arr).size === arr.length;
-  if (!unique) {
-    // get the duplicates
-    const duplicates = arr.filter((item, index) => arr.indexOf(item) !== index);
-    throw new Error(`Duplicate items found: ${duplicates.join(', ')}`);
-  }
+export interface ListedPost {
+  slug: string;
+  fileName: string;
+  data: PostMetadata;
+}
 
-  return true;
-};
-
-export const getPost = async (folder: string): Promise<{ content: string; data: PostMetadata }> => {
-  const postFolder = path.join('posts', folder);
-  const fileContents = await fs.promises.readFile(path.join(`${postFolder}/post.mdx`), 'utf8');
-  const { data, content } = matter(fileContents);
-
-  const coerced = PostMetadata.coerceSave(data);
-  if (!coerced.success) {
-    console.error(coerced.issues);
-    throw new Error(`Invalid post metadata in ${folder}`);
-  }
-
-  return {
-    data: PostMetadata.coerce(data),
-    content,
-  };
-};
-
-export const getPosts = async () => {
+export const getPosts = async (): Promise<ListedPost[]> => {
   const folders = await fs.promises.readdir(path.join('posts'));
   // Maks sure that the folders are really folders
   folders.forEach((folder) => {
@@ -61,12 +44,10 @@ export const getPosts = async () => {
   );
 
   // Make sure that the slugs are unique
-  const slugs = posts.map((post) => post.slug);
-  assertUnique(slugs);
+  assertUnique(posts.map((post) => post.slug));
 
   // Make sure that the dates are valid date-strings and sort the posts by date
-
-  return posts
+  const transformedPosts = posts
     .map((post) => {
       const dateMs = Date.parse(post.data.date);
       if (isNaN(dateMs)) {
@@ -76,4 +57,76 @@ export const getPosts = async () => {
     })
     .sort(([, d1], [, d2]) => d2 - d1)
     .map((post) => post[0]);
+
+  // Save the images the post might contain into the public folder
+  for (const post of transformedPosts) {
+    // Get the images for the post
+    const imageSourceFolder = path.join('posts', post.fileName, 'images');
+
+    // If the image source folder does not exist, remove the images that belong to that post (if they exist)
+    if (!fs.existsSync(imageSourceFolder)) {
+      if (fs.existsSync(path.join('public', 'images', post.slug))) {
+        await fs.promises.rm(path.join('public', 'images', post.slug), { recursive: true });
+      }
+      continue;
+    }
+
+    // Validate that only images are in the folder
+    const images = await fs.promises.readdir(imageSourceFolder);
+    for (const image of images) {
+      const isFile = fs.lstatSync(path.join(imageSourceFolder, image)).isFile();
+      if (!isFile) throw new Error(`Image ${image} is not a file`);
+      if (!isSupportedImageFile(image)) throw new Error(`Image ${image} is not a supported image file`);
+    }
+
+    const newestFile = await newestFileTime(images.map((image) => path.join(imageSourceFolder, image)));
+
+    // Read the metadata file if it exists
+    let oldPostImageMetadata: PostImagesMetadata | undefined;
+    if (fs.existsSync(path.join('public', 'images', post.slug, 'metadata.json'))) {
+      const data = await fs.promises.readFile(path.join('public', 'images', post.slug, 'metadata.json'), 'utf8');
+      const dataParsed = JSON.parse(data);
+      if (PostImagesMetadata.validateSave(dataParsed).success) {
+        oldPostImageMetadata = dataParsed;
+      } else {
+        console.warn('Could not parse image metadata file');
+      }
+    }
+
+    // If the file-count is the same and the newest image has not been modified since the last time, skip the image
+    // transformation
+    if (oldPostImageMetadata?.imageCount === images.length && oldPostImageMetadata?.newestImageDate === newestFile) {
+      continue;
+    }
+
+    // Remove the old images
+    const imageFolder = path.join('public', 'images', post.slug);
+    if (fs.existsSync(imageFolder)) {
+      await fs.promises.rm(imageFolder, { recursive: true });
+    }
+    await fs.promises.mkdir(imageFolder, { recursive: true });
+
+    // Transform the images and save them into the public folder
+    const awaitable = images.map(async (image) => {
+      const imageName = image.split('.')[0];
+      const imageOutputPath = `${imageFolder}/${imageName}`;
+      if (!fs.existsSync(imageOutputPath)) await fs.promises.mkdir(imageOutputPath, { recursive: true });
+      await optimizeImage(path.join(imageSourceFolder, image), imageOutputPath);
+    });
+
+    await Promise.all(awaitable);
+
+    // Save a metadata file which contains the newest date one of the images has been modified at and the number of
+    // images.
+    // Save the metadata file into the public folder of the post.
+    const postImageMetadata: PostImagesMetadata = {
+      newestImageDate: newestFile,
+      imageCount: images.length,
+    };
+
+    // Write the metadata file
+    await fs.promises.writeFile(path.join(imageFolder, 'metadata.json'), JSON.stringify(postImageMetadata, null, 2));
+  }
+
+  return transformedPosts;
 };
