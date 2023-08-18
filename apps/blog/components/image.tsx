@@ -14,25 +14,25 @@ export const Image: FC<{ path: ImagePath }> = ({ path: { path } }) => {
     md: `${path}/md.webp`,
     l: `${path}/lg.webp`,
   };
-  const sizesSquared = {
-    original: `${path}/original_square.webp`,
-    xs: `${path}/xs_square.webp`,
-    s: `${path}/s_square.webp`,
-    md: `${path}/md_square.webp`,
-    l: `${path}/lg_square.webp`,
-  };
+  // const sizesSquared = {
+  //   original: `${path}/original_square.webp`,
+  //   xs: `${path}/xs_square.webp`,
+  //   s: `${path}/s_square.webp`,
+  //   md: `${path}/md_square.webp`,
+  //   l: `${path}/lg_square.webp`,
+  // };
 
   const imageWrapperRef = useRef<HTMLDivElement>(null);
   const pictureRef = useRef<HTMLImageElement>(null);
   const inViewPort = useHasBeenVisible(imageWrapperRef);
   const [loaded, setLoaded] = useState(false);
 
+  // {/*https://stackoverflow.com/questions/39777833/image-onload-event-in-isomorphic-universal-react-register-event-after-image-is*/}
   const visible = loaded && inViewPort;
   return (
     <div className="relative" ref={imageWrapperRef}>
       <picture
         className={`w-full transition-opacity opacity-0 duration-500 ${visible ? '!opacity-100' : ''}`}
-        {/*https://stackoverflow.com/questions/39777833/image-onload-event-in-isomorphic-universal-react-register-event-after-image-is*/}
         onLoad={() => setLoaded(true)}
       >
         <source srcSet={sizes.original} media="(min-width: 1200px)" />
