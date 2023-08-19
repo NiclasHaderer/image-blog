@@ -16,6 +16,14 @@ interface ImageSizes {
   l: string;
 }
 
+const fadeDurations = {
+  200: 'duration-200',
+  300: 'duration-300',
+  500: 'duration-500',
+  700: 'duration-700',
+  1000: 'duration-1000',
+};
+
 /**
  * This is an image that uses a low-res placeholder (blurred) image and then
  * loads the full image when it comes into view.
@@ -30,15 +38,8 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
       l: path.getSize('lg', mode),
     };
 
-    const fadeDuration = {
-      300: 'duration-300',
-      500: 'duration-500',
-      700: 'duration-700',
-      1000: 'duration-1000',
-    }[fadeInDuration];
-
+    const fadeOutDuration = fadeDurations[fadeInDuration];
     const srcSet = useImageSrcSet(sizes);
-
     const imageWrapperRef = useRef<HTMLDivElement | null>(null);
     const inViewPort = useHasBeenVisible(imageWrapperRef);
 
@@ -67,27 +68,27 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
         }}
         {...props}
       >
+        {!hide && (
+          <div
+            className={`overflow-hidden z-10 transition-opacity absolute inset-0 opacity-100 ${fadeOutDuration} ${
+              visible ? '!opacity-0' : ''
+            }`}
+          >
+            <img src={sizes.xs} className="w-full h-full blur-xl scale-125" alt="" loading="lazy" />
+          </div>
+        )}
+
         <img
-          className={`w-full transition-opacity opacity-0 ${fadeDuration} ${visible ? '!opacity-100' : ''}`}
+          className={`w-full`}
           alt=""
-          loading="lazy"
+          width={path.resolution.width}
+          height={path.resolution.height}
           srcSet={srcSet}
-          src={sizes.xs}
           onLoad={() => setLoaded(true)}
           ref={(element) => {
             if (element?.complete) setLoaded(true);
           }}
         />
-
-        {!hide && (
-          <div
-            className={`overflow-hidden transition-opacity absolute top-0 left-0 right-0 opacity-100 ${fadeDuration} ${
-              visible ? '!opacity-0' : ''
-            }`}
-          >
-            <img src={sizes.xs} className="w-full blur-xl scale-125" alt="" loading="lazy" />
-          </div>
-        )}
       </div>
     );
   }
