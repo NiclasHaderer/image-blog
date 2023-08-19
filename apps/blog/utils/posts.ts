@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
 import slugify from 'slugify';
 import { PostMetadata } from './post-metadata';
 import { assertUnique } from './list';
@@ -36,9 +35,9 @@ export const getPosts = async (): Promise<ListedPost[]> => {
     folders.map(async (folderName) => {
       const postData = await getPost(folderName);
       return {
-        slug: slugify(postData.data.title, { lower: true }),
+        slug: slugify(postData.metadata.title, { lower: true }),
         fileName: folderName,
-        data: postData.data,
+        data: postData.metadata,
       };
     })
   );
@@ -111,10 +110,13 @@ export const getPosts = async (): Promise<ListedPost[]> => {
       const imageName = image.split('.')[0];
       const imageOutputPath = `${imageFolder}/${imageName}`;
       if (!fs.existsSync(imageOutputPath)) await fs.promises.mkdir(imageOutputPath, { recursive: true });
-      await optimizeImage(path.join(imageSourceFolder, image), imageOutputPath);
+      const size = await optimizeImage(path.join(imageSourceFolder, image), imageOutputPath);
+      return {
+        [imageName]: size,
+      };
     });
 
-    await Promise.all(awaitable);
+    const sizes = await Promise.all(awaitable).then((sizes) => sizes.reduce((acc, curr) => ({ ...acc, ...curr }), {}));
 
     // Save a metadata file which contains the newest date one of the images has been modified at and the number of
     // images.
@@ -122,6 +124,7 @@ export const getPosts = async (): Promise<ListedPost[]> => {
     const postImageMetadata: PostImagesMetadata = {
       newestImageDate: newestFile,
       imageCount: images.length,
+      imageSizes: sizes,
     };
 
     // Write the metadata file

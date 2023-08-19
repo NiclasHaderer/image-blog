@@ -1,25 +1,34 @@
 import { getPosts } from '../../utils/posts';
 import { serialize } from 'next-mdx-remote/serialize';
-import { MDXRemote } from 'next-mdx-remote';
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import Head from 'next/head';
 import { Image } from '../../components/image';
-import { getPost } from '../../utils/post';
+import { getPost, getPostImagesMetadata } from '../../utils/post';
 import { getImagePath } from '../../utils/image-path';
-import { NosSsr } from '../../components/no-ssr';
+import { LightboxImage } from '../../components/standalone-image';
+import { PostMetadata } from '../../utils/post-metadata';
+import { PostImagesMetadata } from '../../utils/post-images-metadata';
 
-export default function Post({ data, content, slug }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+export default function Post({
+  metadata,
+  content,
+  slug,
+  imagesMetadata,
+}: Awaited<ReturnType<typeof getStaticProps>>['props']) {
   return (
     <div>
-      <h1 className="font-bold text-7xl mt-24 mb-12">{data.title}</h1>
-      <time className="text-gray-500 italic">{data.date}</time>
+      <h1 className="font-bold text-7xl mt-24 mb-12">{metadata.title}</h1>
+      <time className="text-gray-500 italic">{metadata.date}</time>
       <Head>
-        <title>{data.title}</title>
-        <meta name="description" content={data.description} />
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
       </Head>
       <div className="prose mt-12">
-        <NosSsr>
-          <MDXRemote {...content} components={{ Image: Image }} scope={{ getImagePath: getImagePath(slug) }} />
-        </NosSsr>
+        <MDXRemote
+          {...content}
+          components={{ Image, LightboxImage }}
+          scope={{ getImagePath: getImagePath(slug, imagesMetadata.imageSizes) }}
+        />
       </div>
     </div>
   );
@@ -40,16 +49,19 @@ export const getStaticProps = async ({
   params: { slug: string };
 }): Promise<{
   props: {
-    data: Awaited<ReturnType<typeof getPost>>['data'];
-    content: Awaited<ReturnType<typeof serialize>>;
+    metadata: PostMetadata;
+    content: MDXRemoteSerializeResult;
+    imagesMetadata: PostImagesMetadata;
     slug: string;
   };
 }> => {
   const post = await getPost(params.slug);
+  const imagesMetadata = await getPostImagesMetadata(params.slug);
   const mdxSource = await serialize(post.content);
   return {
     props: {
-      data: JSON.parse(JSON.stringify(post.data)),
+      metadata: JSON.parse(JSON.stringify(post.metadata)),
+      imagesMetadata: JSON.parse(JSON.stringify(imagesMetadata)),
       content: mdxSource,
       slug: params.slug,
     },

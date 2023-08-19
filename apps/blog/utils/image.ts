@@ -1,5 +1,4 @@
 import sharp from 'sharp';
-import fs from 'fs';
 
 /**
  * There are multiple output image formats that will be created using this function using sharp.
@@ -7,7 +6,13 @@ import fs from 'fs';
  * @param imagePath
  * @param outputDirectory
  */
-export const optimizeImage = async (imagePath: string, outputDirectory: string) => {
+export const optimizeImage = async (
+  imagePath: string,
+  outputDirectory: string
+): Promise<{
+  width: number;
+  height: number;
+}> => {
   // Read the original image
   const image = sharp(imagePath);
   const imageInfo = await image.metadata();
@@ -19,27 +24,69 @@ export const optimizeImage = async (imagePath: string, outputDirectory: string) 
   }
 
   // Create original aspect ratio images
-  await createImage(image, `${outputDirectory}/original.webp`, width);
-  await createImage(image, `${outputDirectory}/lg.webp`, Math.min(1600, width));
-  await createImage(image, `${outputDirectory}/md.webp`, Math.min(800, width));
-  await createImage(image, `${outputDirectory}/s.webp`, Math.min(400, width));
-  await createImage(image, `${outputDirectory}/xs.webp`, Math.min(50, width));
-
+  await createImage(image, `${outputDirectory}/original.webp`, { width: null, height: null });
+  await createImage(
+    image,
+    `${outputDirectory}/lg.webp`,
+    width > height ? { width: Math.min(width, 1600), height: null } : { width: null, height: Math.min(width, 1600) }
+  );
+  await createImage(
+    image,
+    `${outputDirectory}/md.webp`,
+    width > height
+      ? {
+          width: Math.min(width, 800),
+          height: null,
+        }
+      : { width: null, height: Math.min(width, 800) }
+  );
+  await createImage(
+    image,
+    `${outputDirectory}/s.webp`,
+    width > height
+      ? {
+          width: Math.min(width, 400),
+          height: null,
+        }
+      : { width: null, height: Math.min(width, 400) }
+  );
+  await createImage(
+    image,
+    `${outputDirectory}/xs.webp`,
+    width > height
+      ? {
+          width: Math.min(width, 50),
+          height: null,
+        }
+      : { width: null, height: Math.min(width, 50) }
+  );
   // Create square aspect ratio images
   const squareSize = Math.min(width, height);
-  await createSquareImage(image, `${outputDirectory}/square_original.webp`, squareSize);
+  await createSquareImage(image, `${outputDirectory}/original_square.webp`, squareSize);
   await createSquareImage(image, `${outputDirectory}/lg_square.webp`, Math.min(1600, squareSize));
   await createSquareImage(image, `${outputDirectory}/md_square.webp`, Math.min(800, squareSize));
   await createSquareImage(image, `${outputDirectory}/s_square.webp`, Math.min(400, squareSize));
   await createSquareImage(image, `${outputDirectory}/xs_square.webp`, Math.min(50, squareSize));
+
+  return { width, height };
 };
 
 const createSquareImage = async (image: sharp.Sharp, imageOutputPath: string, size: number) => {
   await image.clone().resize(size, size, { fit: 'cover' }).webp({ quality: 80 }).toFile(imageOutputPath);
 };
 
-const createImage = async (image: sharp.Sharp, imageOutputPath: string, width: number) => {
-  await image.clone().resize(width, null).webp({ quality: 80 }).toFile(imageOutputPath);
+const createImage = async (
+  image: sharp.Sharp,
+  imageOutputPath: string,
+  size:
+    | { width: number; height: null }
+    | {
+        height: number;
+        width: null;
+      }
+    | { width: null; height: null }
+) => {
+  await image.clone().resize(size.width, size.height).webp({ quality: 80 }).toFile(imageOutputPath);
 };
 
 export const isSupportedImageFile = (filename: string): boolean => {

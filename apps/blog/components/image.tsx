@@ -1,68 +1,152 @@
-import { FC, HTMLAttributes, useRef, useState } from 'react';
+import { forwardRef, HTMLAttributes, useCallback, useEffect, useRef, useState } from 'react';
 import { ImagePath } from '../utils/image-path';
 import { useHasBeenVisible } from '../hooks/has-been-visible';
 
-interface ImageProps extends HTMLAttributes<HTMLDivElement> {
+export interface ImageProps extends HTMLAttributes<HTMLDivElement> {
   path: ImagePath;
   mode?: 'normal' | 'square';
+  fadeInDuration?: 300 | 500 | 700 | 1000;
+}
+
+interface ImageSizes {
+  original: string;
+  xs: string;
+  s: string;
+  md: string;
+  l: string;
 }
 
 /**
  * This is an image that uses a low-res placeholder (blurred) image and then
  * loads the full image when it comes into view.
  */
-export const Image: FC<ImageProps> = ({ path: { path }, mode = 'normal' }) => {
-  const sizes =
-    mode === 'normal'
-      ? {
-          original: `${path}/original.webp`,
-          xs: `${path}/xs.webp`,
-          s: `${path}/s.webp`,
-          md: `${path}/md.webp`,
-          l: `${path}/lg.webp`,
-        }
-      : {
-          original: `${path}/original_square.webp`,
-          xs: `${path}/xs_square.webp`,
-          s: `${path}/s_square.webp`,
-          md: `${path}/md_square.webp`,
-          l: `${path}/lg_square.webp`,
-        };
+export const Image = forwardRef<HTMLElement, ImageProps>(
+  ({ path, mode = 'normal', fadeInDuration = 500, ...props }, ref) => {
+    const sizes: ImageSizes = {
+      original: path.getSize('original', mode),
+      xs: path.getSize('xs', mode),
+      s: path.getSize('s', mode),
+      md: path.getSize('md', mode),
+      l: path.getSize('lg', mode),
+    };
 
-  const imageWrapperRef = useRef<HTMLDivElement>(null);
-  const inViewPort = useHasBeenVisible(imageWrapperRef);
-  const [loaded, setLoaded] = useState(false);
+    const fadeDuration = {
+      300: 'duration-300',
+      500: 'duration-500',
+      700: 'duration-700',
+      1000: 'duration-1000',
+    }[fadeInDuration];
 
-  const visible = loaded && inViewPort;
-  return (
-    <div className="relative" ref={imageWrapperRef}>
-      <picture
-        className={`w-full transition-opacity opacity-0 duration-500 ${visible ? '!opacity-100' : ''}`}
-        onLoad={() => setLoaded(true)}
+    const srcSet = useImageSrcSet(sizes);
+
+    const imageWrapperRef = useRef<HTMLDivElement | null>(null);
+    const inViewPort = useHasBeenVisible(imageWrapperRef);
+
+    const [loaded, setLoaded] = useState(false);
+    const [hide, setHide] = useState(false);
+
+    useEffect(() => {
+      if (!loaded) return;
+      const timeout = setTimeout(() => setHide(true), fadeInDuration);
+      return () => clearTimeout(timeout);
+    }, [loaded]);
+
+    const visible = loaded && inViewPort;
+    return (
+      <div
+        className="relative"
+        ref={(instance) => {
+          imageWrapperRef.current = instance;
+          if (ref) {
+            if (typeof ref === 'function') {
+              ref(instance);
+            } else {
+              ref.current = instance;
+            }
+          }
+        }}
+        {...props}
       >
-        <source srcSet={sizes.original} media="(min-width: 1800px)" />
-        <source srcSet={sizes.l} media="(min-width: 900px)" />
-        <source srcSet={sizes.md} media="(min-width: 500px)" />
-        <source srcSet={sizes.s} media="(min-width: 100px)" />
-        <source srcSet={sizes.xs} media="(min-width: 0px)" />
         <img
-          className="w-full"
+          className={`w-full transition-opacity opacity-0 ${fadeDuration} ${visible ? '!opacity-100' : ''}`}
           alt=""
           loading="lazy"
+          srcSet={srcSet}
           src={sizes.xs}
+          onLoad={() => setLoaded(true)}
           ref={(element) => {
             if (element?.complete) setLoaded(true);
           }}
         />
-      </picture>
 
-      <div
-        className={`overflow-hidden transition-opacity absolute top-0 left-0 right-0 opacity-100 duration-500 ${
-          visible ? '!opacity-0' : ''
-        }`}
-      >
-        <img src={sizes.xs} className="w-full blur-xl scale-125" alt="" loading="lazy" />
+        {!hide && (
+          <div
+            className={`overflow-hidden transition-opacity absolute top-0 left-0 right-0 opacity-100 ${fadeDuration} ${
+              visible ? '!opacity-0' : ''
+            }`}
+          >
+            <img src={sizes.xs} className="w-full blur-xl scale-125" alt="" loading="lazy" />
+          </div>
+        )}
       </div>
-    </div>
+    );
+  }
+);
+
+export const useActiveImage = (sizes: ImageSizes): string => {
+  const getActiveImage = useCallback(() => {
+    if (typeof window === 'undefined') return sizes.md;
+
+    const screenWidth = window.innerWidth;
+    let activeImage = sizes.xs; // Default to the smallest image
+
+    if (screenWidth >= 1800) {
+      activeImage = sizes.original;
+    } else if (screenWidth >= 900) {
+      activeImage = sizes.l;
+    } else if (screenWidth >= 500) {
+      activeImage = sizes.md;
+    } else if (screenWidth >= 100) {
+      activeImage = sizes.s;
+    }
+    return activeImage;
+  }, [sizes]);
+
+  const [activeImage, setActiveImage] = useState<string>(getActiveImage());
+  useEffect(() => setActiveImage(getActiveImage()), [getActiveImage]);
+  return activeImage;
+};
+
+export const useImageSizes = (path: ImagePath, mode: 'normal' | 'square' = 'normal'): ImageSizes => {
+  const [sizes, setSizes] = useState<ImageSizes>({
+    original: path.getSize('original', mode),
+    xs: path.getSize('xs', mode),
+    s: path.getSize('s', mode),
+    md: path.getSize('md', mode),
+    l: path.getSize('lg', mode),
+  });
+
+  useEffect(
+    () =>
+      setSizes({
+        original: path.getSize('original', mode),
+        xs: path.getSize('xs', mode),
+        s: path.getSize('s', mode),
+        md: path.getSize('md', mode),
+        l: path.getSize('lg', mode),
+      }),
+    [path, mode]
   );
+  return sizes;
+};
+
+export const useImageSrcSet = (sizes: ImageSizes): string => {
+  const [srcSet, setSrcSet] = useState<string>(
+    `${sizes.original} 1800w, ${sizes.l} 900w, ${sizes.md} 500w, ${sizes.s} 100w, ${sizes.xs} 1w`
+  );
+  useEffect(
+    () => setSrcSet(`${sizes.original} 1800w, ${sizes.l} 900w, ${sizes.md} 500w, ${sizes.s} 100w, ${sizes.xs} 1w`),
+    [sizes]
+  );
+  return srcSet;
 };

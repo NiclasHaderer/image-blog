@@ -2,8 +2,9 @@ import { PostMetadata } from './post-metadata';
 import path from 'path';
 import fs from 'fs';
 import matter from 'gray-matter';
+import { PostImagesMetadata } from './post-images-metadata';
 
-export const getPost = async (folder: string): Promise<{ content: string; data: PostMetadata }> => {
+export const getPost = async (folder: string): Promise<{ content: string; metadata: PostMetadata }> => {
   const postFolder = path.join('posts', folder);
   const fileContents = await fs.promises.readFile(path.join(`${postFolder}/post.mdx`), 'utf8');
   const { data, content } = matter(fileContents);
@@ -15,7 +16,14 @@ export const getPost = async (folder: string): Promise<{ content: string; data: 
   }
 
   return {
-    data: PostMetadata.coerce(data),
+    metadata: PostMetadata.coerce(data),
     content,
   };
+};
+
+export const getPostImagesMetadata = async (folder: string): Promise<PostImagesMetadata> => {
+  const publicImagesFolder = path.join('public', 'images', folder);
+  const metadataFile = path.join(publicImagesFolder, 'metadata.json');
+  const metadataContent = await fs.promises.readFile(metadataFile, 'utf8');
+  return PostImagesMetadata.coerce(JSON.parse(metadataContent));
 };
