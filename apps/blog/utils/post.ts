@@ -9,6 +9,10 @@ export const getPost = async (folder: string): Promise<{ content: string; metada
   const fileContents = await fs.promises.readFile(path.join(`${postFolder}/post.mdx`), 'utf8');
   const { data, content } = matter(fileContents);
 
+  if (Object.keys(data).length === 0) {
+    throw new Error('No metadata found in post.mdx. Make sure that the file starts with a metadata block!');
+  }
+
   const coerced = PostMetadata.coerceSave(data);
   if (!coerced.success) {
     console.error(coerced.issues);

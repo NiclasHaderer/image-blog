@@ -5,7 +5,7 @@ import 'photoswipe/dist/photoswipe.css';
 import { useInitialRender } from '../hooks/initial-render';
 
 export const LightboxImage: FC<ImageProps> = (props) => {
-  const sizes = useImageSizes(props.path, props.mode);
+  const sizes = useImageSizes(props.image, props.mode ?? 'normal');
   const srcSet = useImageSrcSet(sizes);
   const activeImage = useActiveImage(sizes);
 
@@ -18,10 +18,9 @@ export const LightboxImage: FC<ImageProps> = (props) => {
     <Gallery>
       <Item
         original={sizes.original}
-        width={props.path.resolution.width}
-        height={props.path.resolution.height}
         thumbnail={activeImage}
         originalSrcset={srcSet}
+        {...props.image.getSize('original', props.mode ?? 'normal')}
       >
         {({ ref, open }) => <Image {...props} onClick={open} ref={ref} />}
       </Item>

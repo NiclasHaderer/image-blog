@@ -5,9 +5,10 @@ import Head from 'next/head';
 import { Image } from '../../components/image';
 import { getPost, getPostImagesMetadata } from '../../utils/post';
 import { getImageProps } from '../../utils/image-props';
-import { LightboxImage } from '../../components/standalone-image';
+import { LightboxImage } from '../../components/lightbox-image';
 import { PostMetadata } from '../../utils/post-metadata';
 import { PostImagesMetadata } from '../../utils/post-images-metadata';
+import { Gallery } from '../../components/gallery';
 
 export default function Post({
   metadata,
@@ -26,7 +27,7 @@ export default function Post({
       <div className="prose mt-12">
         <MDXRemote
           {...content}
-          components={{ Image, LightboxImage }}
+          components={{ Image, LightboxImage, Gallery }}
           scope={{ getImageProps: getImageProps(slug, imagesMetadata.imageSizes) }}
         />
       </div>

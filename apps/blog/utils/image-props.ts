@@ -1,26 +1,45 @@
-export interface ImageProps {
+import type { ImageSizes } from './post-images-metadata';
+import { ImageSizeNames } from './post-images-metadata';
+
+export interface LocalImageProps {
   post: string;
   imageName: string;
-  resolution: {
-    width: number;
-    height: number;
-  };
-  getSize(size: 'original' | 'lg' | 'md' | 's' | 'xs', mode?: 'normal' | 'square'): string;
+  getUrl(size: ImageSizeNames, mode: 'normal' | 'square'): string;
+  getSize(size: ImageSizeNames, mode: 'normal' | 'square'): { width: number; height: number };
+  sizes(mode: 'normal' | 'square'): { width: number; height: number; src: string }[];
 }
 
-export const getImageProps = (
+export const getImageProps = <T extends string | string[]>(
   post: string,
-  imageSizes: Record<string, { width: number; height: number }>
-): ((imageName: string) => ImageProps) => {
-  return (imageName) => {
+  imageSizes: ImageSizes
+): ((imageName: T) => T extends any[] ? LocalImageProps[] : LocalImageProps) => {
+  const get = (imageName: string): LocalImageProps => {
     if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist in post ${post}`);
     return {
       post,
       imageName,
-      resolution: imageSizes[imageName],
-      getSize: (size, mode = 'normal') => {
+      getUrl(size, mode) {
         return `/images/${post}/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
       },
+      getSize(size, mode) {
+        return imageSizes[imageName][mode][size];
+      },
+      sizes(mode) {
+        return (Object.keys(imageSizes[imageName][mode]) as ImageSizeNames[]).map((size) => {
+          return {
+            width: imageSizes[imageName][mode][size].width,
+            height: imageSizes[imageName][mode][size].height,
+            src: this.getUrl(size, mode),
+          };
+        });
+      },
     };
+  };
+
+  return (imageName) => {
+    if (Array.isArray(imageName)) {
+      return imageName.map((name) => get(name)) as T extends any[] ? LocalImageProps[] : LocalImageProps;
+    }
+    return get(imageName) as T extends any[] ? LocalImageProps[] : LocalImageProps;
   };
 };

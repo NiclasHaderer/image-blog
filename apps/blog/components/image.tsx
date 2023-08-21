@@ -1,9 +1,9 @@
-import { forwardRef, HTMLAttributes, useCallback, useEffect, useRef, useState } from 'react';
-import { ImageProps } from '../utils/image-props';
+import { forwardRef, HTMLAttributes, useEffect, useRef, useState } from 'react';
+import { LocalImageProps } from '../utils/image-props';
 import { useHasBeenVisible } from '../hooks/has-been-visible';
 
-export interface ImageElementProps extends HTMLAttributes<HTMLDivElement> {
-  path: ImageProps;
+export interface ImageProps extends HTMLAttributes<HTMLDivElement> {
+  image: LocalImageProps;
   alt: string;
   mode?: 'normal' | 'square';
   fadeInDuration?: 300 | 500 | 700 | 1000;
@@ -29,9 +29,9 @@ const fadeDurations = {
  * This is an image that uses a low-res placeholder (blurred) image and then
  * loads the full image when it comes into view.
  */
-export const Image = forwardRef<HTMLElement, ImageElementProps>(
-  ({ path, mode = 'normal', fadeInDuration = 500, alt, ...props }, ref) => {
-    const sizes: ImageSizes = useImageSizes(path, mode);
+export const Image = forwardRef<HTMLElement, ImageProps>(
+  ({ image, mode = 'normal', fadeInDuration = 500, alt, ...props }, ref) => {
+    const sizes: ImageSizes = useImageSizes(image, mode);
     const fadeOutDuration = fadeDurations[fadeInDuration];
     const srcSet = useImageSrcSet(sizes);
     const imageWrapperRef = useRef<HTMLDivElement | null>(null);
@@ -79,11 +79,11 @@ export const Image = forwardRef<HTMLElement, ImageElementProps>(
 
         <img
           className={`w-full`}
-          width={path.resolution.width}
-          height={path.resolution.height}
+          {...image.getSize('original', mode)}
           srcSet={srcSet}
           alt={alt}
           onLoad={() => setLoaded(true)}
+          loading="lazy"
           ref={(element) => {
             if (element?.complete) {
               // Delay the blur up, because for some reason the image is sometimes not loaded
@@ -96,60 +96,53 @@ export const Image = forwardRef<HTMLElement, ImageElementProps>(
   }
 );
 
-export const useActiveImage = (sizes: ImageSizes): string => {
-  const getActiveImage = useCallback(() => {
-    if (typeof window === 'undefined') return sizes.md;
+export const getActiveImage = (sizes: ImageSizes) => {
+  if (typeof window === 'undefined') return sizes.md;
 
-    const screenWidth = window.innerWidth;
-    let activeImage = sizes.xs; // Default to the smallest image
+  const screenWidth = window.innerWidth;
+  let activeImage = sizes.xs; // Default to the smallest image
 
-    if (screenWidth >= 1800) {
-      activeImage = sizes.original;
-    } else if (screenWidth >= 900) {
-      activeImage = sizes.l;
-    } else if (screenWidth >= 500) {
-      activeImage = sizes.md;
-    } else if (screenWidth >= 100) {
-      activeImage = sizes.s;
-    }
-    return activeImage;
-  }, [sizes]);
-
-  const [activeImage, setActiveImage] = useState<string>(getActiveImage());
-  useEffect(() => setActiveImage(getActiveImage()), [getActiveImage]);
+  if (screenWidth >= 1800) {
+    activeImage = sizes.original;
+  } else if (screenWidth >= 900) {
+    activeImage = sizes.l;
+  } else if (screenWidth >= 500) {
+    activeImage = sizes.md;
+  } else if (screenWidth >= 100) {
+    activeImage = sizes.s;
+  }
   return activeImage;
 };
 
-export const useImageSizes = (path: ImageProps, mode: 'normal' | 'square' = 'normal'): ImageSizes => {
-  const [sizes, setSizes] = useState<ImageSizes>({
-    original: path.getSize('original', mode),
-    xs: path.getSize('xs', mode),
-    s: path.getSize('s', mode),
-    md: path.getSize('md', mode),
-    l: path.getSize('lg', mode),
-  });
+export const useActiveImage = (sizes: ImageSizes): string => {
+  const [activeImage, setActiveImage] = useState<string>(getActiveImage(sizes));
+  useEffect(() => setActiveImage(() => getActiveImage(sizes)), [sizes]);
+  return activeImage;
+};
 
-  useEffect(
-    () =>
-      setSizes({
-        original: path.getSize('original', mode),
-        xs: path.getSize('xs', mode),
-        s: path.getSize('s', mode),
-        md: path.getSize('md', mode),
-        l: path.getSize('lg', mode),
-      }),
-    [path, mode]
-  );
+export const useImageSizes = (image: LocalImageProps, mode: 'normal' | 'square'): ImageSizes => {
+  const [sizes, setSizes] = useState(getImageSizes(image, mode));
+
+  useEffect(() => setSizes(getImageSizes(image, mode)), [image, mode]);
   return sizes;
 };
 
+export const getImageSizes = (image: LocalImageProps, mode: 'normal' | 'square'): ImageSizes => {
+  return {
+    original: image.getUrl('original', mode),
+    xs: image.getUrl('xs', mode),
+    s: image.getUrl('s', mode),
+    md: image.getUrl('md', mode),
+    l: image.getUrl('lg', mode),
+  };
+};
+
 export const useImageSrcSet = (sizes: ImageSizes): string => {
-  const [srcSet, setSrcSet] = useState<string>(
-    `${sizes.original} 1800w, ${sizes.l} 900w, ${sizes.md} 500w, ${sizes.s} 100w, ${sizes.xs} 1w`
-  );
-  useEffect(
-    () => setSrcSet(`${sizes.original} 1800w, ${sizes.l} 900w, ${sizes.md} 500w, ${sizes.s} 100w, ${sizes.xs} 1w`),
-    [sizes]
-  );
+  const [srcSet, setSrcSet] = useState(getImageSrcSet(sizes));
+  useEffect(() => setSrcSet(getImageSrcSet(sizes)), [sizes]);
   return srcSet;
+};
+
+export const getImageSrcSet = (sizes: ImageSizes): string => {
+  return `${sizes.original} 1800w, ${sizes.l} 900w, ${sizes.md} 500w, ${sizes.s} 100w, ${sizes.xs} 1w`;
 };
