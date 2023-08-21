@@ -33,7 +33,7 @@ export const Gallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mod
 export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mode = 'normal' }) => {
   return (
     <PhotoAlbum
-      spacing={10}
+      spacing={3}
       photos={images.map((image) => ({
         srcSet: image.sizes(mode),
         src: image.getUrl('original', mode),
@@ -41,7 +41,7 @@ export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'mason
         props: image,
       }))}
       renderPhoto={({
-        imageProps: { src, alt, className, style, width, onClick, height, srcSet: gallerySrcSet, ...restImageProps },
+        imageProps: { src, alt, className, style, width, onClick, height, ...restImageProps },
         photo: { props },
       }) => {
         const sizes = getImageSizes(props, mode);
@@ -59,7 +59,7 @@ export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'mason
               <img
                 src={src}
                 alt={alt}
-                srcSet={gallerySrcSet}
+                srcSet={srcSet}
                 style={style}
                 className={`${className ?? ''} cursor-pointer`}
                 ref={ref as any}
