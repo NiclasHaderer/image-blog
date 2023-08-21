@@ -15,14 +15,18 @@ export const LightboxImage: FC<ImageProps> = (props) => {
     // Only render the image if it's the initial render, because the item uses a layoutEffect
     <Image {...props} />
   ) : (
-    <Gallery>
+    <Gallery
+      options={{
+        zoom: false,
+      }}
+    >
       <Item
         original={sizes.original}
         thumbnail={activeImage}
         originalSrcset={srcSet}
         {...props.image.getSize('original', props.mode ?? 'normal')}
       >
-        {({ ref, open }) => <Image {...props} onClick={open} ref={ref} />}
+        {({ ref, open }) => <Image className="cursor-pointer" {...props} onClick={open} ref={ref} />}
       </Item>
     </Gallery>
   );

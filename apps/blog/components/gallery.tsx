@@ -16,7 +16,15 @@ export const Gallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mod
   return initialRender ? (
     <InternalGallery images={images} layout={layout} mode={mode} />
   ) : (
-    <PhotoswipeGallery>
+    <PhotoswipeGallery
+      options={{
+        arrowNext: true,
+        arrowPrev: true,
+        zoom: false,
+        counter: true,
+        loop: true,
+      }}
+    >
       <InternalGallery images={images} layout={layout} mode={mode} />
     </PhotoswipeGallery>
   );
@@ -25,6 +33,7 @@ export const Gallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mod
 export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mode = 'normal' }) => {
   return (
     <PhotoAlbum
+      spacing={10}
       photos={images.map((image) => ({
         srcSet: image.sizes(mode),
         src: image.getUrl('original', mode),
