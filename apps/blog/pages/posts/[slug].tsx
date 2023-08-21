@@ -4,7 +4,7 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import Head from 'next/head';
 import { Image } from '../../components/image';
 import { getPost, getPostImagesMetadata } from '../../utils/post';
-import { getImagePath } from '../../utils/image-path';
+import { getImageProps } from '../../utils/image-props';
 import { LightboxImage } from '../../components/standalone-image';
 import { PostMetadata } from '../../utils/post-metadata';
 import { PostImagesMetadata } from '../../utils/post-images-metadata';
@@ -27,7 +27,7 @@ export default function Post({
         <MDXRemote
           {...content}
           components={{ Image, LightboxImage }}
-          scope={{ getImagePath: getImagePath(slug, imagesMetadata.imageSizes) }}
+          scope={{ getImageProps: getImageProps(slug, imagesMetadata.imageSizes) }}
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-export interface ImagePath {
+export interface ImageProps {
   post: string;
   imageName: string;
   resolution: {
@@ -8,11 +8,12 @@ export interface ImagePath {
   getSize(size: 'original' | 'lg' | 'md' | 's' | 'xs', mode?: 'normal' | 'square'): string;
 }
 
-export const getImagePath = (
+export const getImageProps = (
   post: string,
   imageSizes: Record<string, { width: number; height: number }>
-): ((imageName: string) => ImagePath) => {
+): ((imageName: string) => ImageProps) => {
   return (imageName) => {
+    if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist in post ${post}`);
     return {
       post,
       imageName,

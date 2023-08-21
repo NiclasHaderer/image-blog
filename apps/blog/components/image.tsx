@@ -1,9 +1,10 @@
 import { forwardRef, HTMLAttributes, useCallback, useEffect, useRef, useState } from 'react';
-import { ImagePath } from '../utils/image-path';
+import { ImageProps } from '../utils/image-props';
 import { useHasBeenVisible } from '../hooks/has-been-visible';
 
-export interface ImageProps extends HTMLAttributes<HTMLDivElement> {
-  path: ImagePath;
+export interface ImageElementProps extends HTMLAttributes<HTMLDivElement> {
+  path: ImageProps;
+  alt: string;
   mode?: 'normal' | 'square';
   fadeInDuration?: 300 | 500 | 700 | 1000;
 }
@@ -28,16 +29,9 @@ const fadeDurations = {
  * This is an image that uses a low-res placeholder (blurred) image and then
  * loads the full image when it comes into view.
  */
-export const Image = forwardRef<HTMLElement, ImageProps>(
-  ({ path, mode = 'normal', fadeInDuration = 500, ...props }, ref) => {
-    const sizes: ImageSizes = {
-      original: path.getSize('original', mode),
-      xs: path.getSize('xs', mode),
-      s: path.getSize('s', mode),
-      md: path.getSize('md', mode),
-      l: path.getSize('lg', mode),
-    };
-
+export const Image = forwardRef<HTMLElement, ImageElementProps>(
+  ({ path, mode = 'normal', fadeInDuration = 500, alt, ...props }, ref) => {
+    const sizes: ImageSizes = useImageSizes(path, mode);
     const fadeOutDuration = fadeDurations[fadeInDuration];
     const srcSet = useImageSrcSet(sizes);
     const imageWrapperRef = useRef<HTMLDivElement | null>(null);
@@ -50,7 +44,7 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
       if (!loaded) return;
       const timeout = setTimeout(() => setHide(true), fadeInDuration);
       return () => clearTimeout(timeout);
-    }, [loaded]);
+    }, [fadeInDuration, loaded]);
 
     const visible = loaded && inViewPort;
     return (
@@ -70,23 +64,31 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
       >
         {!hide && (
           <div
-            className={`overflow-hidden z-10 transition-opacity absolute inset-0 opacity-100 ${fadeOutDuration} ${
+            className={`overflow-hidden z-10 transition-opacity ease-in absolute inset-0 opacity-100 ${fadeOutDuration} ${
               visible ? '!opacity-0' : ''
             }`}
           >
-            <img src={sizes.xs} className="w-full h-full blur-xl scale-125" alt="" loading="lazy" />
+            <img
+              src={sizes.xs}
+              className="w-full h-full blur-xl scale-125"
+              alt={`Placeholder: ${alt}`}
+              loading="lazy"
+            />
           </div>
         )}
 
         <img
           className={`w-full`}
-          alt=""
           width={path.resolution.width}
           height={path.resolution.height}
           srcSet={srcSet}
+          alt={alt}
           onLoad={() => setLoaded(true)}
           ref={(element) => {
-            if (element?.complete) setLoaded(true);
+            if (element?.complete) {
+              // Delay the blur up, because for some reason the image is sometimes not loaded
+              setTimeout(() => setLoaded(true), 100);
+            }
           }}
         />
       </div>
@@ -118,7 +120,7 @@ export const useActiveImage = (sizes: ImageSizes): string => {
   return activeImage;
 };
 
-export const useImageSizes = (path: ImagePath, mode: 'normal' | 'square' = 'normal'): ImageSizes => {
+export const useImageSizes = (path: ImageProps, mode: 'normal' | 'square' = 'normal'): ImageSizes => {
   const [sizes, setSizes] = useState<ImageSizes>({
     original: path.getSize('original', mode),
     xs: path.getSize('xs', mode),

@@ -24,6 +24,10 @@ export const getPost = async (folder: string): Promise<{ content: string; metada
 export const getPostImagesMetadata = async (folder: string): Promise<PostImagesMetadata> => {
   const publicImagesFolder = path.join('public', 'images', folder);
   const metadataFile = path.join(publicImagesFolder, 'metadata.json');
+  // Check if file exists and if not, return empty metadata
+  if (!fs.existsSync(metadataFile)) {
+    return { imageCount: 0, imageSizes: {}, newestImageDate: 0 };
+  }
   const metadataContent = await fs.promises.readFile(metadataFile, 'utf8');
   return PostImagesMetadata.coerce(JSON.parse(metadataContent));
 };
