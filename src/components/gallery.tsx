@@ -33,6 +33,7 @@ export const Gallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mod
 export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mode = 'normal' }) => {
   return (
     <PhotoAlbum
+      defaultContainerWidth={800}
       spacing={3}
       photos={images.map((image) => ({
         srcSet: image.sizes(mode),
