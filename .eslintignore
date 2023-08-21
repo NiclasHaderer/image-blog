@@ -1,5 +1,0 @@
-node_modules
-**/vite.config.ts
-.next
-jest.config.ts
-dist
