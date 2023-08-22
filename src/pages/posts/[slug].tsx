@@ -24,7 +24,7 @@ export default function Post({
         <meta name="description" content={metadata.description} />
       </Head>
       <div className="prose">
-        <h1 className="font-bold text-7xl mt-24 mb-12">{metadata.title}</h1>
+        <h1>{metadata.title}</h1>
 
         <article>
           <MDXRemote

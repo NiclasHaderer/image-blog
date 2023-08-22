@@ -38,3 +38,4 @@ next-env.d.ts
 /posts/
 public/images
 .idea
+/public/licenses.json

@@ -22,6 +22,7 @@ const config: Config = {
       'surface-1': 'var(--surface-1)',
       'surface-2': 'var(--surface-2)',
       text: 'var(--text)',
+      "text-unimportant": "var(--text-unimportant)",
       primary: 'var(--primary)',
       'primary-active': 'var(--primary-active)',
       'text-primary': 'var(--text-primary)',
@@ -30,6 +31,11 @@ const config: Config = {
       'text-secondary': 'var(--text-secondary)',
     },
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [
+      require('@tailwindcss/typography')({
+        target: "modern",
+        className: "prose",
+      })
+  ],
 };
 export default config;
