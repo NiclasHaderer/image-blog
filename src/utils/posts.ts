@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import slugify from 'slugify';
-import { PostMetadata } from './post-metadata';
+import { PostMetadata } from '../models/post-metadata';
 import { assertUnique } from './list';
 import { isSupportedImageFile, optimizeImage } from './image';
 import { newestFileTime } from './file';
-import { PostImagesMetadata } from './post-images-metadata';
+import { PostImagesMetadata } from '../models/post-images-metadata';
 import { getPost } from './post';
 
 export interface ListedPost {
@@ -39,7 +39,7 @@ export const getPosts = async (): Promise<ListedPost[]> => {
         fileName: folderName,
         data: postData.metadata,
       };
-    })
+    }),
   );
 
   // Make sure that the slugs are unique

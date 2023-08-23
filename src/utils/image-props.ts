@@ -1,5 +1,5 @@
-import type { ImageSizes } from './post-images-metadata';
-import { ImageSizeNames } from './post-images-metadata';
+import type { ImageSizes } from '../models/post-images-metadata';
+import { ImageSizeNames } from '../models/post-images-metadata';
 
 export interface LocalImageProps {
   post: string;
@@ -11,7 +11,7 @@ export interface LocalImageProps {
 
 export const getImageProps = <T extends string | string[]>(
   post: string,
-  imageSizes: ImageSizes
+  imageSizes: ImageSizes,
 ): ((imageName: T) => T extends any[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
     if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist in post ${post}`);

@@ -1,8 +1,8 @@
-import { PostMetadata } from './post-metadata';
+import { PostMetadata } from '../models/post-metadata';
 import path from 'node:path';
 import fs from 'node:fs';
 import matter from 'gray-matter';
-import { PostImagesMetadata } from './post-images-metadata';
+import { PostImagesMetadata } from '../models/post-images-metadata';
 
 export const getPost = async (folder: string): Promise<{ content: string; metadata: PostMetadata }> => {
   const postFolder = path.join('posts', folder);

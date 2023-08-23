@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { FC } from 'react';
-import type { PostMetadata } from '@/utils/post-metadata';
+import type { PostMetadata } from '@/models/post-metadata';
 
 export const PostCard: FC<PostMetadata & { slug: string }> = ({ title, date, description, slug }) => {
   return (

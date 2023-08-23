@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { ImageSizes } from './post-images-metadata';
+import { ImageSizes } from '../models/post-images-metadata';
 
 const calculateSize = (imageSize: { width: number; height: number }, maxDimension: number) => {
   const ratio = Math.min(maxDimension / imageSize.width, maxDimension / imageSize.height, 1);
@@ -61,7 +61,7 @@ const createSquareImage = async (image: sharp.Sharp, imageOutputPath: string, si
 const createImage = async (
   image: sharp.Sharp,
   imageOutputPath: string,
-  size: { width: number; height: number }
+  size: { width: number; height: number },
 ): Promise<{ width: number; height: number }> => {
   const newImg = image.clone().resize(size.width, size.height).webp({ quality: 80 });
   await newImg.toFile(imageOutputPath);

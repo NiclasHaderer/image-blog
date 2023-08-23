@@ -15,7 +15,7 @@ export const ImageSizes = luft.record(
   luft.object({
     square: Sizes,
     normal: Sizes,
-  })
+  }),
 );
 export type ImageSizes = LuftInfer<typeof ImageSizes>;
 
