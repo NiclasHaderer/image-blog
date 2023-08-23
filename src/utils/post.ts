@@ -1,8 +1,9 @@
-import { PostMetadata } from '../models/post-metadata';
+import { PostMetadata } from '@/models/post-metadata';
 import path from 'node:path';
 import fs from 'node:fs';
 import matter from 'gray-matter';
-import { PostImagesMetadata } from '../models/post-images-metadata';
+import { PostImagesMetadata } from '@/models/post-images-metadata';
+import { getAllPostsMetadata } from '@/utils/posts';
 
 export const getPost = async (folder: string): Promise<{ content: string; metadata: PostMetadata }> => {
   const postFolder = path.join('posts', folder);
@@ -23,6 +24,15 @@ export const getPost = async (folder: string): Promise<{ content: string; metada
     metadata: PostMetadata.coerce(data),
     content,
   };
+};
+
+export const getPostBySlug = async (slug: string): Promise<{ content: string; metadata: PostMetadata }> => {
+  const posts = await getAllPostsMetadata();
+  const post = posts.find((post) => post.slug === slug);
+  if (!post) {
+    throw new Error(`No post found with slug ${slug}`);
+  }
+  return getPost(post.fileName);
 };
 
 export const getPostImagesMetadata = async (folder: string): Promise<PostImagesMetadata> => {

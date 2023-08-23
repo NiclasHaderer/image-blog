@@ -1,5 +1,5 @@
-import type { ImageSizes } from '../models/post-images-metadata';
-import { ImageSizeNames } from '../models/post-images-metadata';
+import type { ImageSizes } from '@/models/post-images-metadata';
+import { ImageSizeNames } from '@/models/post-images-metadata';
 
 export interface LocalImageProps {
   post: string;

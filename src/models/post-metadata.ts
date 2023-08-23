@@ -12,6 +12,6 @@ export const PostMetadata = luft.object({
   image: luft.string().optional(),
   layout: luft.literal(['prose']),
   tags: luft.array(luft.string()).optional(),
-});
+}).treatMissingKeyAs("undefined");
 
 export type PostMetadata = LuftInfer<typeof PostMetadata>;

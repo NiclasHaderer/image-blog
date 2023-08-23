@@ -7,9 +7,11 @@ import { getPosts } from '@/utils/posts';
 import { Image } from '@/components/image';
 import { PostMetadata } from '@/models/post-metadata';
 import { PostImagesMetadata } from '@/models/post-images-metadata';
-import { getPost, getPostImagesMetadata } from '@/utils/post';
+import { getPostBySlug, getPostImagesMetadata } from '@/utils/post';
 import { LightboxImage } from '@/components/lightbox-image';
 import { Gallery } from '@/components/gallery';
+import remarkGfm from 'remark-gfm';
+import remarkEmoji from 'remark-emoji';
 
 export default function Post({
   metadata,
@@ -60,9 +62,13 @@ export const getStaticProps = async ({
   };
 }> => {
   const slug = params!.slug as string;
-  const post = await getPost(slug);
+  const post = await getPostBySlug(slug);
   const imagesMetadata = await getPostImagesMetadata(slug);
-  const mdxSource = await serialize(post.content);
+  const mdxSource = await serialize(post.content, {
+    mdxOptions: {
+      remarkPlugins: [remarkGfm, remarkEmoji],
+    },
+  });
   return {
     props: {
       metadata: JSON.parse(JSON.stringify(post.metadata)),

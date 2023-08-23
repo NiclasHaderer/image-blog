@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { ImageSizes } from '../models/post-images-metadata';
+import { ImageSizes } from '@/models/post-images-metadata';
 
 const calculateSize = (imageSize: { width: number; height: number }, maxDimension: number) => {
   const ratio = Math.min(maxDimension / imageSize.width, maxDimension / imageSize.height, 1);

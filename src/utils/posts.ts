@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import slugify from 'slugify';
-import { PostMetadata } from '../models/post-metadata';
+import { PostMetadata } from '@/models/post-metadata';
 import { assertUnique } from './list';
 import { isSupportedImageFile, optimizeImage } from './image';
 import { newestFileTime } from './file';
-import { PostImagesMetadata } from '../models/post-images-metadata';
+import { PostImagesMetadata } from '@/models/post-images-metadata';
 import { getPost } from './post';
 
 export interface ListedPost {
@@ -14,8 +14,10 @@ export interface ListedPost {
   data: PostMetadata;
 }
 
-export const getPosts = async (): Promise<ListedPost[]> => {
-  const folders = await fs.promises.readdir(path.join('posts'));
+export const getPostFolder = async (): Promise<string[]> => {
+  // Read the posts folder from an environment variable or default to the posts folder in the root directory
+  const postsDir = process.env.POSTS_DIR || 'posts';
+  const folders = await fs.promises.readdir(postsDir);
   // Maks sure that the folders are really folders
   folders.forEach((folder) => {
     if (!fs.lstatSync(path.join('posts', folder)).isDirectory()) {
@@ -29,6 +31,11 @@ export const getPosts = async (): Promise<ListedPost[]> => {
       throw new Error(`Post ${folder} does not have a post.mdx file`);
     }
   });
+  return folders;
+};
+
+export const getAllPostsMetadata = async (): Promise<{ slug: string; fileName: string; data: PostMetadata }[]> => {
+  const folders = await getPostFolder();
 
   // Load the posts
   const posts = await Promise.all(
@@ -44,6 +51,11 @@ export const getPosts = async (): Promise<ListedPost[]> => {
 
   // Make sure that the slugs are unique
   assertUnique(posts.map((post) => post.slug));
+  return posts;
+};
+
+export const getPosts = async (): Promise<ListedPost[]> => {
+  const posts = await getAllPostsMetadata();
 
   // Make sure that the dates are valid date-strings and sort the posts by date
   const transformedPosts = posts
