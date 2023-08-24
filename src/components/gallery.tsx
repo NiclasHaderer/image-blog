@@ -2,8 +2,8 @@ import { FC } from 'react';
 import PhotoAlbum from 'react-photo-album';
 import { useInitialRender } from '@/hooks/initial-render';
 import { Gallery as PhotoswipeGallery, Item as PhotoswipeItem } from 'react-photoswipe-gallery';
-import { getActiveImage, getImageSizes, getImageSrcSet } from './image';
 import type { LocalImageProps } from '@/utils/image-props';
+import { getActiveImage, getImageSizes, getImageSrcSet } from '@/hooks/image';
 
 interface ImageGalleryProps {
   images: LocalImageProps[];

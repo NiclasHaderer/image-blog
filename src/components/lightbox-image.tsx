@@ -1,8 +1,9 @@
 import { Gallery, Item } from 'react-photoswipe-gallery';
 import { FC } from 'react';
-import { Image, ImageProps, useActiveImage, useImageSizes, useImageSrcSet } from './image';
 import 'photoswipe/dist/photoswipe.css';
 import { useInitialRender } from '@/hooks/initial-render';
+import { Image, ImageProps } from '@/components/image';
+import { useActiveImage, useImageSizes, useImageSrcSet } from '@/hooks/image';
 
 export const LightboxImage: FC<ImageProps> = (props) => {
   const sizes = useImageSizes(props.image, props.mode ?? 'normal');
