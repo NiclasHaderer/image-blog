@@ -1,6 +1,6 @@
 import { PostCard } from '@/components/post-card';
-import type { ListedPost } from '@/utils/posts';
-import { getPosts } from '@/utils/posts';
+import type { ListedPost } from '../../post-manager/posts';
+import { getPosts } from '../../post-manager/posts';
 
 export default function Home({ posts }: { posts: ListedPost[] }) {
   return (

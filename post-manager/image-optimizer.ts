@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { ImageSizes } from '@/models/post-images-metadata';
+import { ImageResolutionsWithAspectRations } from '@/models/raw-post';
 
 const calculateSize = (imageSize: { width: number; height: number }, maxDimension: number) => {
   const ratio = Math.min(maxDimension / imageSize.width, maxDimension / imageSize.height, 1);
@@ -12,7 +12,10 @@ const calculateSize = (imageSize: { width: number; height: number }, maxDimensio
  * @param imagePath
  * @param outputDirectory
  */
-export const optimizeImage = async (imagePath: string, outputDirectory: string): Promise<ImageSizes['string']> => {
+export const optimizeImage = async (
+  imagePath: string,
+  outputDirectory: string,
+): Promise<ImageResolutionsWithAspectRations> => {
   // Read the original image
   const image = sharp(imagePath);
   const imageInfo = await image.metadata();
@@ -69,11 +72,23 @@ const createImage = async (
   return { width: metadata.width!, height: metadata.height! };
 };
 
-export const isSupportedImageFile = (filename: string): boolean => {
+const isSupportedImageFile = (filename: string): boolean => {
   const supportedExtensions: string[] = ['jpeg', 'jpg', 'png', 'webp', 'gif', 'avif', 'tiff'];
 
   // Extract the file extension from the filename
   const fileExtension: string = filename.split('.').pop()!.toLowerCase();
 
   return supportedExtensions.includes(fileExtension);
+};
+
+const getImageMetadata = async (imagePath: string): Promise<{ width: number; height: number }> => {
+  const image = sharp(imagePath);
+  const metadata = await image.metadata();
+  return { width: metadata.width!, height: metadata.height! };
+};
+
+export const ImageOptimizer = {
+  isSupportedImageFile,
+  getImageMetadata,
+  optimize: optimizeImage,
 };

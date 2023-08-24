@@ -3,11 +3,11 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import Head from 'next/head';
 import { GetStaticPaths } from 'next';
 import { getImageProps } from '@/utils/image-props';
-import { getPosts } from '@/utils/posts';
+import { getPosts } from '../../../post-manager/posts';
 import { Image } from '@/components/image';
 import { PostMetadata } from '@/models/post-metadata';
 import { PostImagesMetadata } from '@/models/post-images-metadata';
-import { getPostBySlug, getPostImagesMetadata } from '@/utils/post';
+import { getPostBySlug, getPostImageMetadata } from '../../../post-manager/post';
 import { LightboxImage } from '@/components/lightbox-image';
 import { Gallery } from '@/components/gallery';
 import remarkGfm from 'remark-gfm';
@@ -63,7 +63,7 @@ export const getStaticProps = async ({
 }> => {
   const slug = params!.slug as string;
   const post = await getPostBySlug(slug);
-  const imagesMetadata = await getPostImagesMetadata(slug);
+  const imagesMetadata = await getPostImageMetadata(slug);
   const mdxSource = await serialize(post.content, {
     mdxOptions: {
       remarkPlugins: [remarkGfm, remarkEmoji],
