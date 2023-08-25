@@ -32,10 +32,9 @@ const compilePost = async (post: Post, postDir: string) => {
 };
 
 const compileImage = async (image: Post['images'][number], imagesDir: string) => {
-  const imagePath = path.join(imagesDir, image.path);
   return {
     ...image,
-    resolutions: await ImageOptimizer.optimize(imagePath, imagesDir),
+    resolutions: await ImageOptimizer.optimize(image.path, imagesDir),
   };
 };
 

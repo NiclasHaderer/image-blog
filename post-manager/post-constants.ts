@@ -1,9 +1,9 @@
 export const PostConstants = {
-  PostGroupMetadataFilename: 'metadata.json',
+  PostGroupMetadataFilename: 'group-metadata.json',
   PostFilename: 'post.mdx',
   PostImagesFolder: 'images',
-  CompiledPostMetadataFilename: 'metadata.json',
-  CompiledPostGroupMetadataFilename: 'metadata.json',
+  CompiledPostMetadataFilename: 'post-metadata.json',
+  CompiledPostGroupMetadataFilename: 'group-metadata.json',
   CompiledPostImagesFolder: 'images',
   CompiledPostFilename: 'post.json',
 } as const;

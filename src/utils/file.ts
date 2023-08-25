@@ -2,6 +2,7 @@ import { LuftInfer, LuftType } from '@luftschloss/validation';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ParsingResult } from '@luftschloss/validation/src/lib/types/base-type';
+import { parseWith } from '@/utils/validation';
 
 export const newestFileTime = async (files: string[]) => {
   const times = await Promise.all(files.map((file) => fs.promises.stat(file).then((stats) => stats.mtimeMs)));
@@ -26,11 +27,13 @@ export const parseFile = async <T extends LuftType, M extends 'safe' | 'unsafe' 
   mode?: M,
 ): Promise<M extends 'safe' ? ParsingResult<LuftInfer<T>> : LuftInfer<T>> => {
   const fileContents = await fs.promises.readFile(file, 'utf-8');
-  const jsonContents = JSON.parse(fileContents);
-  if (mode === 'safe') {
-    return parser.coerceSave(jsonContents) as M extends 'safe' ? ParsingResult<LuftInfer<T>> : LuftInfer<T>;
+  try {
+    const jsonContents = JSON.parse(fileContents);
+    return parseWith(jsonContents, parser, { file, mode });
+  } catch (e) {
+    console.error(`File ${file} is not a valid JSON file!`);
+    throw e;
   }
-  return parser.coerce(jsonContents);
 };
 
 export const ensureDir = async (dir: string | string[], options = { recursive: true }) => {

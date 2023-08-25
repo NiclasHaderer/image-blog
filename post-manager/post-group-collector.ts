@@ -11,7 +11,7 @@ const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetad
   let postGroupFolders = await getItemsIn(postsFolder, 'folder');
 
   let metadata: PostGroupMetadata[] = [];
-  // Check if the post-group folder has a `metadata.json` file and if yes read it
+  // Check if the post-group folder has a `metadata.json` file and if yes, read it
   for (let postFolder of postGroupFolders) {
     let metadataFile = path.join(postFolder, PostConstants.PostGroupMetadataFilename);
     if (!fs.existsSync(metadataFile)) {

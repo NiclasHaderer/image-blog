@@ -6,8 +6,9 @@ import { getItemsIn } from '@/utils/file';
 import matter from 'gray-matter';
 import slugify from 'slugify';
 import { ImageOptimizer } from './image-optimizer';
+import { parseWith } from '@/utils/validation';
 
-const parsePostFile = async (postFile: string): Promise<PostMetadata> => {
+const parsePostFile = async (postFile: string): Promise<Omit<PostMetadata, 'postFolder'>> => {
   const fileContents = await fs.promises.readFile(path.join(postFile), 'utf8');
   const { data } = matter(fileContents);
 
@@ -15,7 +16,9 @@ const parsePostFile = async (postFile: string): Promise<PostMetadata> => {
     throw new Error('No metadata found in post.mdx. Make sure that the file starts with a metadata block!');
   }
 
-  let parsedMetadata = PostMetadata.omit(['slug', 'postPath', 'modifiedAt']).coerce(data);
+  let parsedMetadata = parseWith(data, PostMetadata.omit(['slug', 'postPath', 'modifiedAt', 'postFolder']), {
+    file: postFile,
+  });
   return {
     ...parsedMetadata,
     slug: slugify(parsedMetadata.title, { lower: true }),
@@ -36,7 +39,10 @@ const collectMetadata = async (postGroup: PostGroupMetadata): Promise<PostMetada
       );
       continue;
     }
-    posts.push(await parsePostFile(postFile));
+    posts.push({
+      ...(await parsePostFile(postFile)),
+      postFolder,
+    });
   }
   return posts;
 };

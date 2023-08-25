@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "post-manager": "tsc && node esbuild.mjs && node --inspect -r source-map-support/register post-manager/dist/main.js",
+    "post-manager": "tsc --project tsconfig.json && node esbuild.mjs && node -r source-map-support/register post-manager/dist/main.js",
     "post-manager:watch": "nodemon -e '*' --exec 'npm run post-manager'",
     "start": "next start",
     "lint": "next lint",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
-    "@luftschloss/validation": "^0.1.0",
+    "@luftschloss/validation": "^0.1.1",
     "@tabler/icons-react": "^2.32.0",
     "next-mdx-remote": "^4.4.1",
     "react": "18.2.0",

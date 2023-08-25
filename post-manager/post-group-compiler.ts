@@ -3,7 +3,7 @@ import path from 'node:path';
 import { PostConstants } from './post-constants';
 import { PostPreferences } from '@/preferences';
 import fs from 'node:fs';
-import { parseFile } from '@/utils/file';
+import { ensureDir, parseFile } from '@/utils/file';
 import { PostsCompiler } from './posts-compiler';
 
 const getExistingPostGroup = async (outputDir: string) => {
@@ -28,6 +28,7 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
       {} as CompiledPostGroup['posts'],
     ),
   };
+  await ensureDir(postGroupDir);
   await fs.promises.writeFile(metadataPath, JSON.stringify(compiledPostGroup));
 };
 
