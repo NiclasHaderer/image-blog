@@ -12,7 +12,9 @@ export const getItemsIn = async (folder: string, type: 'folder' | 'file') => {
   const shouldBeFolder = type === 'folder';
   const items = await fs.promises.readdir(folder);
   const isFolderLookup = await Promise.all(
-    items.map((item) => fs.promises.stat(item).then((stats) => stats.isDirectory() === shouldBeFolder)),
+    items.map((item) =>
+      fs.promises.stat(path.join(folder, item)).then((stats) => stats.isDirectory() === shouldBeFolder),
+    ),
   );
   const folders = items.filter((_, index) => isFolderLookup[index]);
   return folders.map((f) => path.join(folder, f));

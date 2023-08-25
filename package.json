@@ -5,9 +5,21 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "post-manager": "tsc && node esbuild.mjs && node --inspect -r source-map-support/register post-manager/dist/main.js",
+    "post-manager:watch": "nodemon -e '*' --exec 'npm run post-manager'",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "license-report --output=json > public/licenses.json"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "post-manager/dist/*"
+    ],
+    "watch": [
+      "src",
+      "post-manager",
+      "posts"
+    ]
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -34,15 +46,17 @@
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
-    "chokidar": "^3.5.3",
+    "esbuild": "^0.19.2",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
     "eslint-config-prettier": "8.1.0",
     "gray-matter": "^4.0.3",
     "license-report": "^6.4.0",
     "next": "13.4.19",
+    "nodemon": "^3.0.1",
     "postcss": "8.4.28",
     "prettier": "^3.0.2",
+    "source-map-support": "^0.5.21",
     "tailwindcss": "3.3.3",
     "typescript": "5.1.6"
   }
