@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "license": "license-report --output=json > public/licenses.json",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "license-report --output=json > public/licenses.json"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -29,17 +29,17 @@
     "slugify": "^1.6.6"
   },
   "devDependencies": {
-    "license-report": "^6.4.0",
-    "gray-matter": "^4.0.3",
-    "chokidar": "^3.5.3",
     "@tailwindcss/typography": "0.5.9",
     "@types/node": "20.5.1",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
+    "chokidar": "^3.5.3",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
     "eslint-config-prettier": "8.1.0",
+    "gray-matter": "^4.0.3",
+    "license-report": "^6.4.0",
     "next": "13.4.19",
     "postcss": "8.4.28",
     "prettier": "^3.0.2",

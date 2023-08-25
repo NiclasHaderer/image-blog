@@ -1,17 +1,19 @@
-import type { ImageSizes } from '@/models/post-images-metadata';
-import { ImageSizeNames } from '@/models/post-images-metadata';
+import type { CompiledPost, ImageResolutions } from '@/models/raw-post';
 
 export interface LocalImageProps {
   post: string;
   imageName: string;
-  getUrl(size: ImageSizeNames, mode: 'normal' | 'square'): string;
-  getSize(size: ImageSizeNames, mode: 'normal' | 'square'): { width: number; height: number };
+
+  getUrl(size: keyof ImageResolutions, mode: 'normal' | 'square'): string;
+
+  getSize(size: keyof ImageResolutions, mode: 'normal' | 'square'): { width: number; height: number };
+
   sizes(mode: 'normal' | 'square'): { width: number; height: number; src: string }[];
 }
 
 export const getImageProps = <T extends string | string[]>(
   post: string,
-  imageSizes: ImageSizes,
+  imageSizes: CompiledPost['images'],
 ): ((imageName: T) => T extends any[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
     if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist in post ${post}`);
@@ -22,13 +24,12 @@ export const getImageProps = <T extends string | string[]>(
         return `/images/${post}/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
       },
       getSize(size, mode) {
-        return imageSizes[imageName][mode][size];
+        return imageSizes[imageName].resolutions[mode][size];
       },
       sizes(mode) {
-        return (Object.keys(imageSizes[imageName][mode]) as ImageSizeNames[]).map((size) => {
+        return (Object.keys(imageSizes[imageName].resolutions[mode]) as (keyof ImageResolutions)[]).map((size) => {
           return {
-            width: imageSizes[imageName][mode][size].width,
-            height: imageSizes[imageName][mode][size].height,
+            ...this.getSize(size, mode),
             src: this.getUrl(size, mode),
           };
         });

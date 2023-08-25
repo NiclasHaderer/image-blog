@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { FC } from 'react';
-import type { PostMetadata } from '@/models/post-metadata';
+import type { CompiledPost } from '@/models/raw-post';
 
-export const PostCard: FC<PostMetadata & { slug: string }> = ({ title, date, description, slug }) => {
+export const PostCard: FC<CompiledPost & { slug: string }> = ({ title, date, description, slug }) => {
   return (
     <div className="my-4 py-4 border-b">
       <h2 className="font-bold text-2xl my-4">{title}</h2>

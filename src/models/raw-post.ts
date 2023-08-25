@@ -1,4 +1,4 @@
-import { LuftInfer, luft } from '@luftschloss/validation';
+import { luft, LuftInfer } from '@luftschloss/validation';
 
 export const ImageResolution = luft.object({
   width: luft.int(),
@@ -59,7 +59,7 @@ export type Post = LuftInfer<typeof Post>;
 export const CompiledPost = Post.omit(['images']).extend(
   luft.object({
     images: luft.record(
-      luft.string(),
+      luft.string().named('imageName'),
       PostImageMetadata.extend(
         luft.object({
           resolutions: ImageResolutionsWithAspectRations,
