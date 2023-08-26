@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getPostGroup, getPostGroups } from '@/utils/post';
 
 export default function PostGroupPage({ postGroup }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+  console.log(postGroup, postGroup.posts);
   return (
     <div>
       <h1>{postGroup.title}</h1>
@@ -34,7 +35,7 @@ export const getStaticProps = async ({
 }): Promise<{
   props: { postGroup: CompiledPostGroup };
 }> => {
-  const postGroup = getPostGroup(params.postGroupSlug);
+  const postGroup = await getPostGroup(params.postGroupSlug);
   return {
     props: {
       postGroup: JSON.parse(JSON.stringify(postGroup)),

@@ -1,8 +1,8 @@
-import { FC, ReactNode } from 'react';
+import { FC, Fragment, ReactNode } from 'react';
 import Link from 'next/link';
 import { IconMenuDeep } from '@tabler/icons-react';
 import { Menu, Transition } from '@headlessui/react';
-import { Fragment, useEffect, useRef, useState } from 'react';
+
 export const Navbar: FC = () => {
   return (
     <nav className="mx-2 mb-2">

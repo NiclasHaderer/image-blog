@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import typography from '@tailwindcss/typography';
 
 const config: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
@@ -22,7 +23,7 @@ const config: Config = {
       'surface-1': 'var(--surface-1)',
       'surface-2': 'var(--surface-2)',
       text: 'var(--text)',
-      "text-unimportant": "var(--text-unimportant)",
+      'text-unimportant': 'var(--text-unimportant)',
       primary: 'var(--primary)',
       'primary-active': 'var(--primary-active)',
       'text-primary': 'var(--text-primary)',
@@ -32,10 +33,10 @@ const config: Config = {
     },
   },
   plugins: [
-      require('@tailwindcss/typography')({
-        target: "modern",
-        className: "prose",
-      })
+    typography({
+      target: 'modern',
+      className: 'prose',
+    }),
   ],
 };
 export default config;

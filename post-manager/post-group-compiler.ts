@@ -34,7 +34,7 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
 
 const compile = async (postGroup: PostGroup) => {
   const postGroupDir = path.join(PostPreferences.CompiledPostsDir, postGroup.slug);
-  let existingPostGroup = await getExistingPostGroup(postGroupDir);
+  const existingPostGroup = await getExistingPostGroup(postGroupDir);
   console.group(`PostGroup: ${postGroup.title}`);
   if (!existingPostGroup) {
     console.log(`Compiling new post-group: ${postGroup.title}`);

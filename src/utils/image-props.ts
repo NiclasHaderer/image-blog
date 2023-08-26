@@ -12,13 +12,17 @@ export interface LocalImageProps {
 
 export const getImageProps = <T extends string | string[]>(
   imageSizes: CompiledPost['images'],
+  postGroupSlug: string,
+  postSlug: string,
 ): ((imageName: T) => T extends any[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
     if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist!`);
     return {
       imageName,
       getUrl(size, mode) {
-        return `/images/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
+        return `/gen-images/${postGroupSlug}/${postSlug}/${imageName}/${size}${
+          mode === 'normal' ? '' : '_square'
+        }.webp`;
       },
       getSize(size, mode) {
         return imageSizes[imageName].resolutions[mode][size];

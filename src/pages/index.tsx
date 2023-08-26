@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getPostGroups } from '@/utils/post';
+import { copyImages, getPostGroups, symlinkImages } from '@/utils/post';
 
 export default function Home({ postGroups }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
   return (
@@ -14,9 +14,16 @@ export default function Home({ postGroups }: Awaited<ReturnType<typeof getStatic
   );
 }
 
-// TODO symlink image folders from posts in dev, copy in prod
 export const getStaticProps = async () => {
   const postGroups = await getPostGroups();
+
+  // Check if we are running in production
+  if (process.env.NODE_ENV === 'production') {
+    await copyImages(postGroups);
+  } else {
+    await symlinkImages(postGroups);
+  }
+
   return {
     props: {
       postGroups,

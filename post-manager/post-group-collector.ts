@@ -8,12 +8,12 @@ import { PostCollector } from './posts-collector';
 import { PostPreferences } from '@/preferences';
 
 const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetadata[]> => {
-  let postGroupFolders = await getItemsIn(postsFolder, 'folder');
+  const postGroupFolders = await getItemsIn(postsFolder, 'folder');
 
-  let metadata: PostGroupMetadata[] = [];
+  const metadata: PostGroupMetadata[] = [];
   // Check if the post-group folder has a `metadata.json` file and if yes, read it
-  for (let postFolder of postGroupFolders) {
-    let metadataFile = path.join(postFolder, PostConstants.PostGroupMetadataFilename);
+  for (const postFolder of postGroupFolders) {
+    const metadataFile = path.join(postFolder, PostConstants.PostGroupMetadataFilename);
     if (!fs.existsSync(metadataFile)) {
       console.error(
         `The post-group folder ${postFolder} does not contain a ${PostConstants.PostGroupMetadataFilename} file!`,

@@ -16,7 +16,7 @@ const parsePostFile = async (postFile: string): Promise<Omit<PostMetadata, 'post
     throw new Error('No metadata found in post.mdx. Make sure that the file starts with a metadata block!');
   }
 
-  let parsedMetadata = parseWith(data, PostMetadata.omit(['slug', 'postPath', 'modifiedAt', 'postFolder']), {
+  const parsedMetadata = parseWith(data, PostMetadata.omit(['slug', 'postPath', 'modifiedAt', 'postFolder']), {
     file: postFile,
   });
   return {
@@ -30,8 +30,8 @@ const parsePostFile = async (postFile: string): Promise<Omit<PostMetadata, 'post
 const collectMetadata = async (postGroup: PostGroupMetadata): Promise<PostMetadata[]> => {
   const postFolders = await getItemsIn(postGroup.folderPath, 'folder');
 
-  let posts: PostMetadata[] = [];
-  for (let postFolder of postFolders) {
+  const posts: PostMetadata[] = [];
+  for (const postFolder of postFolders) {
     const postFile = path.join(postFolder, PostConstants.PostFilename);
     if (!fs.existsSync(postFile)) {
       console.error(

@@ -21,7 +21,7 @@ export default function Post({ post, content }: Awaited<ReturnType<typeof getSta
           <MDXRemote
             {...content}
             components={{ Image, LightboxImage, Gallery }}
-            scope={{ getImageProps: getImageProps(post.images) }}
+            scope={{ getImageProps: getImageProps(post.images, post.postSlug, post.slug) }}
           />
         </article>
       </div>

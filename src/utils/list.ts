@@ -8,3 +8,10 @@ export const assertUnique = (arr: string[]) => {
 
   return true;
 };
+
+export const zip = <T, U extends any[]>(arr: T[], func: (item: T) => U): [T, U[number]][] => {
+  return arr.flatMap((item) => {
+    const result = func(item);
+    return result.map((r) => [item, r] as const);
+  }) as [T, U[number]][];
+};

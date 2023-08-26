@@ -1,9 +1,45 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "eslint-config-prettier"
+    "eslint-config-prettier",
+    "plugin:@typescript-eslint/recommended"
   ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "root": true,
   "rules": {
-    "@next/next/no-img-element": "off"
-  }
+    "@next/next/no-img-element": "off",
+    "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-misused-promises": "error",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "none",
+        "argsIgnorePattern": "^_+$",
+        "varsIgnorePattern": "^_+$",
+        "caughtErrorsIgnorePattern": "^_+$"
+      }
+    ],
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "all"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ]
+    }
+  ]
 }
