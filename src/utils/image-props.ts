@@ -1,7 +1,6 @@
 import type { CompiledPost, ImageResolutions } from '@/models/raw-post';
 
 export interface LocalImageProps {
-  post: string;
   imageName: string;
 
   getUrl(size: keyof ImageResolutions, mode: 'normal' | 'square'): string;
@@ -12,16 +11,14 @@ export interface LocalImageProps {
 }
 
 export const getImageProps = <T extends string | string[]>(
-  post: string,
   imageSizes: CompiledPost['images'],
 ): ((imageName: T) => T extends any[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
-    if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist in post ${post}`);
+    if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist!`);
     return {
-      post,
       imageName,
       getUrl(size, mode) {
-        return `/images/${post}/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
+        return `/images/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
       },
       getSize(size, mode) {
         return imageSizes[imageName].resolutions[mode][size];

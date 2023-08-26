@@ -1,28 +1,43 @@
 import { CompiledPostGroup } from '@/models/raw-post';
 import { GetStaticPaths } from 'next';
-import { getItemsIn, parseFile } from '@/utils/file';
-import { PostPreferences } from '@/preferences';
-import { PostConstants } from '../../../post-manager/post-constants';
+import Link from 'next/link';
+import { getPostGroup, getPostGroups } from '@/utils/post';
 
 export default function PostGroupPage({ postGroup }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
-  return <code>{JSON.stringify(postGroup)}</code>;
+  return (
+    <div>
+      <h1>{postGroup.title}</h1>
+      <p>{postGroup.description}</p>
+      <ul>
+        {Object.values(postGroup.posts).map((post) => (
+          <li key={post.slug}>
+            <Link href={`${postGroup.slug}/${post.slug}`}>{post.title}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const postGroupPaths = await getPostGroups();
   return {
-    paths: await getItemsIn(PostPreferences.CompiledPostsDir, 'folder'),
+    paths: postGroupPaths.map((postGroupPath) => ({ params: { postGroupSlug: postGroupPath.slug } })),
     fallback: false,
   };
 };
 
-export const getStaticProps = async ({ params }: { params: { postGroupSlug: string } }) => {
+export const getStaticProps = async ({
+  params,
+}: {
+  params: { postGroupSlug: string };
+}): Promise<{
+  props: { postGroup: CompiledPostGroup };
+}> => {
+  const postGroup = getPostGroup(params.postGroupSlug);
   return {
     props: {
-      postGroup: await parseFile(
-        `${PostPreferences.CompiledPostsDir}/${params.postGroupSlug}/${PostConstants.CompiledPostGroupMetadataFilename}`,
-        CompiledPostGroup,
-        { mode: 'validate' },
-      ),
+      postGroup: JSON.parse(JSON.stringify(postGroup)),
     },
   };
 };

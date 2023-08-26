@@ -110,3 +110,12 @@ export type CompiledPostGroup = LuftInfer<typeof CompiledPostGroup>;
 
 export const PostGroupMetadata = PostGroup.omit(['posts']).named('PostGroupMetadata');
 export type PostGroupMetadata = LuftInfer<typeof PostGroupMetadata>;
+
+export const PostContent = luft
+  .object({
+    compiledSource: luft.string(),
+    scope: luft.record(luft.string(), luft.any()),
+    frontmatter: luft.record(luft.string(), luft.any()),
+  })
+  .named('PostContent');
+export type PostContent = LuftInfer<typeof PostContent>;

@@ -1,4 +1,4 @@
-import { CompiledPost, Post } from '@/models/raw-post';
+import { CompiledPost, Post, PostContent } from '@/models/raw-post';
 import { PostConstants } from './post-constants';
 import path from 'node:path';
 import { ensureDir, parseFile, saveFile } from '@/utils/file';
@@ -7,7 +7,6 @@ import { serialize } from 'next-mdx-remote/serialize';
 import remarkGfm from 'remark-gfm';
 import remarkEmoji from 'remark-emoji';
 import { ImageOptimizer } from './image-optimizer';
-import { luft } from '@luftschloss/validation';
 
 const getExistingPost = async (outputDir: string): Promise<CompiledPost | undefined> => {
   // Check if the post already exists by reading its metadata
@@ -25,11 +24,12 @@ const compilePost = async (post: Post, postDir: string) => {
   const postContent = await fs.promises.readFile(post.postPath, 'utf-8');
   const serializedPost = await serialize(postContent, {
     mdxOptions: {
+      development: false,
       remarkPlugins: [remarkGfm, remarkEmoji],
     },
   });
   const postPath = path.join(postDir, PostConstants.CompiledPostFilename);
-  await saveFile(postPath, serializedPost, luft.any());
+  await saveFile(postPath, serializedPost, PostContent);
 };
 
 const compileImage = async (image: Post['images'][number], imagesDir: string) => {

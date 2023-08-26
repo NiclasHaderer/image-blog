@@ -1,27 +1,29 @@
-import { serialize } from 'next-mdx-remote/serialize';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import Head from 'next/head';
 import { GetStaticPaths } from 'next';
-import remarkGfm from 'remark-gfm';
-import remarkEmoji from 'remark-emoji';
-import { CompiledPost } from '@/models/raw-post';
+import { getPost, getPostContent, getPostGroups } from '@/utils/post';
+import { MDXRemote } from 'next-mdx-remote';
+import { Image } from '@/components/image';
+import { LightboxImage } from '@/components/lightbox-image';
+import { Gallery } from '@/components/gallery';
+import { getImageProps } from '@/utils/image-props';
 
-export default function Post({ metadata, content, slug }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+export default function Post({ post, content }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+  console.log(content);
   return (
     <main className="flex justify-center">
       <Head>
-        <title>{metadata.title}</title>
-        <meta name="description" content={metadata.description} />
+        <title>{post.title}</title>
+        <meta name="description" content={post.description} />
       </Head>
       <div className="prose">
-        <h1>{metadata.title}</h1>
+        <h1>{post.title}</h1>
 
         <article>
-          {/*<MDXRemote*/}
-          {/*  {...content}*/}
-          {/*  components={{ Image, LightboxImage, Gallery }}*/}
-          {/*  scope={{ getImageProps: getImageProps(slug, imagesMetadata.imageSizes) }}*/}
-          {/*/>*/}
+          <MDXRemote
+            {...content}
+            components={{ Image, LightboxImage, Gallery }}
+            scope={{ getImageProps: getImageProps(post.images) }}
+          />
         </article>
       </div>
     </main>
@@ -29,37 +31,24 @@ export default function Post({ metadata, content, slug }: Awaited<ReturnType<typ
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = [{ slug: 'test' }];
-  const paths = posts.map((post) => ({ params: { slug: post.slug } }));
+  const postGroups = await getPostGroups();
+  const paths = postGroups.flatMap((postGroup) =>
+    Object.values(postGroup.posts).map((post) => ({ params: { postSlug: post.slug, postGroupSlug: postGroup.slug } })),
+  );
   return {
     paths,
     fallback: false,
   };
 };
 
-export const getStaticProps = async ({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<{
-  props: {
-    metadata: CompiledPost;
-    content: MDXRemoteSerializeResult;
-    slug: string;
-  };
-}> => {
-  const slug = params!.slug as string;
-  const post = [{ slug: 'test' }];
-  const mdxSource = await serialize('#hello world', {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm, remarkEmoji],
-    },
-  });
+export const getStaticProps = async ({ params }: { params: { postSlug: string; postGroupSlug: string } }) => {
+  const post = await getPost(params.postGroupSlug, params.postSlug);
+  const content = await getPostContent(params.postGroupSlug, params.postSlug);
+
   return {
     props: {
-      metadata: JSON.parse(JSON.stringify({})),
-      content: mdxSource,
-      slug: slug,
+      post,
+      content,
     },
   };
 };
