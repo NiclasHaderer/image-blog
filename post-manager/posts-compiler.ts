@@ -1,18 +1,19 @@
 import { CompiledPost, Post } from '@/models/raw-post';
 import { PostConstants } from './post-constants';
 import path from 'node:path';
-import { ensureDir, parseFile } from '@/utils/file';
+import { ensureDir, parseFile, saveFile } from '@/utils/file';
 import fs from 'node:fs';
 import { serialize } from 'next-mdx-remote/serialize';
 import remarkGfm from 'remark-gfm';
 import remarkEmoji from 'remark-emoji';
 import { ImageOptimizer } from './image-optimizer';
+import { luft } from '@luftschloss/validation';
 
-const getExistingPost = async (outputDir: string) => {
+const getExistingPost = async (outputDir: string): Promise<CompiledPost | undefined> => {
   // Check if the post already exists by reading its metadata
   const metadataPath = path.join(outputDir, PostConstants.CompiledPostMetadataFilename);
   if (!fs.existsSync(metadataPath)) return undefined;
-  const metadata = await parseFile(metadataPath, CompiledPost, 'safe');
+  const metadata = await parseFile(metadataPath, CompiledPost, { safety: 'safe' });
   if (metadata.success) {
     return metadata.data;
   }
@@ -28,7 +29,7 @@ const compilePost = async (post: Post, postDir: string) => {
     },
   });
   const postPath = path.join(postDir, PostConstants.CompiledPostFilename);
-  await fs.promises.writeFile(postPath, JSON.stringify(serializedPost));
+  await saveFile(postPath, serializedPost, luft.any());
 };
 
 const compileImage = async (image: Post['images'][number], imagesDir: string) => {
@@ -57,7 +58,7 @@ const _compile = async (post: Post, postDir: string, imagesDir: string) => {
       {} as CompiledPost['images'],
     ),
   };
-  await fs.promises.writeFile(metadataPath, JSON.stringify(compiledPostMetadata));
+  await saveFile(metadataPath, compiledPostMetadata, CompiledPost);
 };
 
 const updatePostIfNecessary = async (
@@ -130,7 +131,7 @@ const compile = async (post: Post, outputDir: string) => {
 
   // Save the post-metadata
   const metadataPath = path.join(postDir, PostConstants.CompiledPostMetadataFilename);
-  await fs.promises.writeFile(metadataPath, JSON.stringify(existingPost));
+  await saveFile(metadataPath, existingPost, CompiledPost);
 };
 
 export const PostsCompiler = {

@@ -33,7 +33,7 @@ export const PostImageMetadata = luft
     path: luft.string(),
     name: luft.string(),
     // The date timestamp (ms) the image was modified on disk. The date the image was taken is not relevant!
-    modifiedAt: luft.int(),
+    modifiedAt: luft.number(),
   })
   .named('PostImageMetadata');
 export type PostImageMetadata = LuftInfer<typeof PostImageMetadata>;
@@ -61,7 +61,7 @@ export const Post = luft
     postFolder: luft.string(),
 
     // Used to determine when the post-file itself was modified (images are not included)
-    modifiedAt: luft.int(),
+    modifiedAt: luft.number(),
   })
   .named('Post');
 export type Post = LuftInfer<typeof Post>;
@@ -96,7 +96,7 @@ export const PostGroup = luft
 
     // The date the post-group was modified. This does not necessarily have to be the latest date one of the posts was
     // modified. It only tracks the date the post-group was modified.
-    modifiedAt: luft.int(),
+    modifiedAt: luft.number(),
   })
   .named('PostGroup');
 export type PostGroup = LuftInfer<typeof PostGroup>;

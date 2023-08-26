@@ -4,12 +4,7 @@ import path from 'node:path';
 import { ParsingResult } from '@luftschloss/validation/src/lib/types/base-type';
 import { parseWith } from '@/utils/validation';
 
-export const newestFileTime = async (files: string[]) => {
-  const times = await Promise.all(files.map((file) => fs.promises.stat(file).then((stats) => stats.mtimeMs)));
-  return Math.max(...times);
-};
-
-export const getItemsIn = async (folder: string, type: 'folder' | 'file') => {
+export const getItemsIn = async (folder: string, type: 'folder' | 'file', makeAbsolute = true) => {
   const shouldBeFolder = type === 'folder';
   const items = await fs.promises.readdir(folder);
   const isFolderLookup = await Promise.all(
@@ -18,22 +13,29 @@ export const getItemsIn = async (folder: string, type: 'folder' | 'file') => {
     ),
   );
   const folders = items.filter((_, index) => isFolderLookup[index]);
+  if (!makeAbsolute) return folders;
   return folders.map((f) => path.join(folder, f));
 };
 
-export const parseFile = async <T extends LuftType, M extends 'safe' | 'unsafe' | undefined = undefined>(
+export const parseFile = async <T extends LuftType, S extends 'safe' | 'unsafe' | undefined = undefined>(
   file: string,
   parser: T,
-  mode?: M,
-): Promise<M extends 'safe' ? ParsingResult<LuftInfer<T>> : LuftInfer<T>> => {
+  { mode, safety }: { mode?: 'validate' | 'coerce'; safety?: S } = {},
+): Promise<S extends 'safe' ? ParsingResult<LuftInfer<T>> : LuftInfer<T>> => {
   const fileContents = await fs.promises.readFile(file, 'utf-8');
+  let jsonContents;
   try {
-    const jsonContents = JSON.parse(fileContents);
-    return parseWith(jsonContents, parser, { file, mode });
+    jsonContents = JSON.parse(fileContents);
   } catch (e) {
     console.error(`File ${file} is not a valid JSON file!`);
     throw e;
   }
+  return parseWith(jsonContents, parser, { file, safety, mode });
+};
+
+export const saveFile = async <T extends LuftType, D extends LuftInfer<T>>(file: string, data: D, parser: T) => {
+  const parsed = parseWith(data, parser, { file, safety: 'unsafe', mode: 'validate' });
+  await fs.promises.writeFile(file, JSON.stringify(parsed));
 };
 
 export const ensureDir = async (dir: string | string[], options = { recursive: true }) => {

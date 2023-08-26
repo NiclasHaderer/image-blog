@@ -3,13 +3,13 @@ import path from 'node:path';
 import { PostConstants } from './post-constants';
 import { PostPreferences } from '@/preferences';
 import fs from 'node:fs';
-import { ensureDir, parseFile } from '@/utils/file';
+import { ensureDir, parseFile, saveFile } from '@/utils/file';
 import { PostsCompiler } from './posts-compiler';
 
 const getExistingPostGroup = async (outputDir: string) => {
   const metadataPath = path.join(outputDir, PostConstants.CompiledPostGroupMetadataFilename);
   if (!fs.existsSync(metadataPath)) return undefined;
-  const metadata = await parseFile(metadataPath, CompiledPostGroup, 'safe');
+  const metadata = await parseFile(metadataPath, CompiledPostGroup, { safety: 'safe' });
   if (metadata.success) {
     return metadata.data;
   }
@@ -29,7 +29,7 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
     ),
   };
   await ensureDir(postGroupDir);
-  await fs.promises.writeFile(metadataPath, JSON.stringify(compiledPostGroup));
+  await saveFile(metadataPath, compiledPostGroup, CompiledPostGroup);
 };
 
 const compile = async (postGroup: PostGroup) => {
