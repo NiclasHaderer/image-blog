@@ -8,6 +8,8 @@ import remarkGfm from 'remark-gfm';
 import remarkEmoji from 'remark-emoji';
 import { ImageOptimizer } from './image-optimizer';
 
+const isProd = process.argv.includes('--prod');
+
 const getExistingPost = async (outputDir: string): Promise<CompiledPost | undefined> => {
   // Check if the post already exists by reading its metadata
   const metadataPath = path.join(outputDir, PostConstants.CompiledPostMetadataFilename);
@@ -24,7 +26,9 @@ const compilePost = async (post: Post, postDir: string) => {
   const postContent = await fs.promises.readFile(post.postPath, 'utf-8');
   const serializedPost = await serialize(postContent, {
     mdxOptions: {
-      development: false,
+      // Depending on the environment (next prod/dev), we have to enable/disable, otherwise this will result in
+      // jsx not defined errors
+      development: !isProd,
       remarkPlugins: [remarkGfm, remarkEmoji],
     },
   });
@@ -44,7 +48,13 @@ const _compile = async (post: Post, postDir: string, imagesDir: string) => {
   await compilePost(post, postDir);
 
   // Write the images
-  const imageResolutions = await Promise.all(post.images.map((image) => compileImage(image, imagesDir)));
+  const imageResolutions = await Promise.all(
+    post.images.map(async (image) => {
+      const imageDir = path.join(imagesDir, image.name);
+      await ensureDir(imageDir);
+      return compileImage(image, imageDir);
+    }),
+  );
 
   // Save the post-metadata
   const metadataPath = path.join(postDir, PostConstants.CompiledPostMetadataFilename);
@@ -61,24 +71,6 @@ const _compile = async (post: Post, postDir: string, imagesDir: string) => {
   await saveFile(metadataPath, compiledPostMetadata, CompiledPost);
 };
 
-const updatePostIfNecessary = async (
-  post: Post,
-  existingPost: CompiledPost,
-  postDir: string,
-  imagesDir: string,
-): Promise<CompiledPost> => {
-  // Check if the post has been modified
-  if (existingPost.modifiedAt < post.modifiedAt) {
-    await _compile(post, postDir, imagesDir);
-  }
-
-  const { images, ...postWithoutImages } = post;
-  return {
-    ...existingPost,
-    ...postWithoutImages,
-  };
-};
-
 const updateImagesIfNecessary = async (post: Post, existingPost: CompiledPost, imagesDir: string) => {
   const newImageMetadata = {
     ...existingPost.images,
@@ -86,11 +78,18 @@ const updateImagesIfNecessary = async (post: Post, existingPost: CompiledPost, i
   // Check if any of the images have been modified
   const newImages = post.images.filter((image) => {
     const existingImage = existingPost.images[image.name];
-    if (!existingImage) return true;
-    return existingImage.modifiedAt < image.modifiedAt;
+
+    const shouldUpdate = !existingImage || existingImage.modifiedAt < image.modifiedAt;
+    if (!shouldUpdate) console.log(`Skipping image: ${image.name}`);
+    return shouldUpdate;
   });
   // Compile the new images
-  const newImageResolutions = await Promise.all(newImages.map((image) => compileImage(image, imagesDir)));
+  const newImageResolutions = await Promise.all(
+    newImages.map((image) => {
+      console.log(`Compiling modified image: ${image.name}`);
+      return compileImage(image, imagesDir);
+    }),
+  );
   // Add the new images to the existing images
   for (const newImage of newImageResolutions) {
     newImageMetadata[newImage.name] = newImage;
@@ -103,6 +102,7 @@ const updateImagesIfNecessary = async (post: Post, existingPost: CompiledPost, i
   });
   // Remove the deleted images
   for (const deletedImage of deletedImages) {
+    console.log(`Deleting image: ${deletedImage}`);
     fs.rmSync(path.join(imagesDir, deletedImage), { recursive: true, force: true });
     delete newImageMetadata[deletedImage];
   }
@@ -119,12 +119,22 @@ const compile = async (post: Post, outputDir: string) => {
   const imagesDir = path.join(postDir, PostConstants.PostImagesFolder);
 
   await ensureDir([postDir, imagesDir]);
-
-  let existingPost = await getExistingPost(outputDir);
-  if (!existingPost) return _compile(post, postDir, imagesDir);
-
-  // Update the post if necessary
-  existingPost = await updatePostIfNecessary(post, existingPost, postDir, imagesDir);
+  console.group(`Post: ${post.title}`);
+  let existingPost = await getExistingPost(postDir);
+  if (!existingPost) {
+    console.log(`Compiling new post: ${post.title}`);
+    return _compile(post, postDir, imagesDir);
+  } else if (existingPost.modifiedAt < post.modifiedAt) {
+    console.log(`Compiling modified post: ${post.title}`);
+    await compilePost(post, postDir);
+    const { images: _, ...newPostWithoutImages } = post;
+    existingPost = {
+      ...existingPost,
+      ...newPostWithoutImages,
+    };
+  } else {
+    console.log(`Skipping post: ${post.title}`);
+  }
 
   // Update the images if necessary
   existingPost = await updateImagesIfNecessary(post, existingPost, imagesDir);

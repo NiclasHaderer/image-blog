@@ -8,7 +8,6 @@ import { Gallery } from '@/components/gallery';
 import { getImageProps } from '@/utils/image-props';
 
 export default function Post({ post, content }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
-  console.log(content);
   return (
     <main className="flex justify-center">
       <Head>

@@ -31,6 +31,8 @@ export const Gallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mod
 };
 
 export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mode = 'normal' }) => {
+  const initialRender = useInitialRender();
+
   return (
     <PhotoAlbum
       defaultContainerWidth={800}
@@ -53,6 +55,20 @@ export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'mason
         const sizes = getImageSizes(props, mode);
         const srcSet = getImageSrcSet(sizes);
         const activeImage = getActiveImage(sizes);
+
+        if (initialRender) {
+          return (
+            <img
+              src={src}
+              alt={alt}
+              srcSet={srcSet}
+              style={style}
+              className={`${className ?? ''} cursor-pointer`}
+              onClick={onClick}
+              {...restImageProps}
+            />
+          );
+        }
 
         return (
           <PhotoswipeItem

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run post-manager && next build",
-    "post-manager": "tsc --project tsconfig.json && node esbuild.mjs && node -r source-map-support/register post-manager/dist/main.js",
+    "build": "node esbuild.mjs && node -r source-map-support/register post-manager/dist/main.js --prod && next build",
+    "post-manager": "node esbuild.mjs && node -r source-map-support/register post-manager/dist/main.js",
     "post-manager:watch": "nodemon -e '*' --exec 'npm run post-manager'",
     "start": "next start",
     "lint": "next lint",

@@ -35,11 +35,16 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
 const compile = async (postGroup: PostGroup) => {
   const postGroupDir = path.join(PostPreferences.CompiledPostsDir, postGroup.slug);
   let existingPostGroup = await getExistingPostGroup(postGroupDir);
+  console.group(`PostGroup: ${postGroup.title}`);
   if (!existingPostGroup) {
+    console.log(`Compiling new post-group: ${postGroup.title}`);
     await _compile(postGroup, postGroupDir);
   } else if (existingPostGroup.modifiedAt < postGroup.modifiedAt) {
     // Check if the post-group was modified
+    console.log(`Compiling modified post-group: ${postGroup.title}`);
     await _compile(postGroup, postGroupDir);
+  } else {
+    console.log(`Skipping post-group: ${postGroup.title}`);
   }
 
   // Compile all posts
