@@ -1,22 +1,23 @@
-import { CompiledPostGroup } from '@/models/raw-post';
 import { GetStaticPaths } from 'next';
 import Link from 'next/link';
-import { getPostGroup, getPostGroups } from '@/utils/post';
+import { getPostGroup, getPostGroups, getPostGroupUrls } from '@/utils/post';
+import { MainLayout } from '@/components/main-layout';
 
-export default function PostGroupPage({ postGroup }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
-  console.log(postGroup, postGroup.posts);
+export default function PostGroupPage({ postGroup, groupUrls }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
   return (
-    <div>
-      <h1>{postGroup.title}</h1>
-      <p>{postGroup.description}</p>
-      <ul>
-        {Object.values(postGroup.posts).map((post) => (
-          <li key={post.slug}>
-            <Link href={`${postGroup.slug}/${post.slug}`}>{post.title}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <MainLayout navItems={groupUrls}>
+      <div>
+        <h1>{postGroup.title}</h1>
+        <p>{postGroup.description}</p>
+        <ul>
+          {Object.values(postGroup.posts).map((post) => (
+            <li key={post.slug}>
+              <Link href={`${postGroup.slug}/${post.slug}`}>{post.title}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </MainLayout>
   );
 }
 
@@ -28,17 +29,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps = async ({
-  params,
-}: {
-  params: { postGroupSlug: string };
-}): Promise<{
-  props: { postGroup: CompiledPostGroup };
-}> => {
+export const getStaticProps = async ({ params }: { params: { postGroupSlug: string } }) => {
   const postGroup = await getPostGroup(params.postGroupSlug);
+  const groupUrls = await getPostGroupUrls();
+
   return {
     props: {
-      postGroup: JSON.parse(JSON.stringify(postGroup)),
+      postGroup: postGroup,
+      groupUrls,
     },
   };
 };

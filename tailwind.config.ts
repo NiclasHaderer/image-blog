@@ -11,6 +11,8 @@ const config: Config = {
       2: 'var(--p-m)',
       3: 'var(--p-l)',
     },
+    minWidth: (utils) => utils.theme('width'),
+    maxWidth: (utils) => utils.theme('width'),
     margin: {
       0: '0',
       1: 'var(--p)',
@@ -32,11 +34,6 @@ const config: Config = {
       'text-secondary': 'var(--text-secondary)',
     },
   },
-  plugins: [
-    typography({
-      target: 'modern',
-      className: 'prose',
-    }),
-  ],
+  plugins: [typography()],
 };
 export default config;

@@ -3,10 +3,10 @@ import { NpmLicense } from '@/models/license';
 
 const additionalLicenses: NpmLicense[] = [
   {
-    licenseType: 'Freepik License',
-    name: 'Freepik',
-    link: 'https://www.freepik.com/free-photo/tradition-travel-background-sketch-material_1171064.htm',
-    author: '4045',
+    licenseType: 'Reshot Stock Icon Free License. ',
+    name: 'Reshot',
+    link: 'https://www.reshot.com/free-svg-icons/item/mountain-range-J4CZG3UE97/',
+    author: 'M0DE0N ',
   },
 ];
 

@@ -45,3 +45,12 @@
   --accent-active: #ffa6a6;
   --text-accent: #000;
 }
+
+
+html, body, #__next {
+  height: 100%;
+}
+
+a {
+  display: inline-block;
+}

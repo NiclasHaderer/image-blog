@@ -50,7 +50,7 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
     const visible = loaded && inViewPort;
     return (
       <div
-        className={`relative ${className}`}
+        className={`relative ${className ?? ''}`}
         ref={(instance) => {
           imageWrapperRef.current = instance;
           if (ref) {

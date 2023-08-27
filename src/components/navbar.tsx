@@ -1,38 +1,29 @@
-import { FC, Fragment, ReactNode } from 'react';
+import { FC, forwardRef, Fragment, ReactNode } from 'react';
 import Link from 'next/link';
 import { IconMenuDeep } from '@tabler/icons-react';
 import { Menu, Transition } from '@headlessui/react';
+import { Logo } from '@/components/logo';
 
-export const Navbar: FC = () => {
+export const Navbar: FC<{
+  navItems: { href: string; label: string }[];
+}> = ({ navItems }) => {
   return (
-    <nav className="mx-2 mb-2">
+    <nav className="p-1 shadow-sm drop-shadow-2xl min-w-full">
       <div className="hidden lg:flex gap-x-6">
         <NavbarItem href={'/'}>
-          <img
-            src="/logo/logo-200.webp"
-            alt="Home"
-            className="w-20 lg:h-20 rounded-lg hover:bg-surface-1 transition-colors"
-          />
+          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-surface-1 transition-colors" />
         </NavbarItem>
 
-        <NavbarItem href={'/wedding-photography'}>Wedding Photography</NavbarItem>
-
-        <NavbarItem href={'/animal-photography'}>Animal Photography</NavbarItem>
-
-        <NavbarItem href={'/blog'}>Blog</NavbarItem>
-
-        <NavbarItem href={'/about'}>About</NavbarItem>
-
-        <NavbarItem href={'/contact'}>Contact</NavbarItem>
+        {navItems.map(({ href, label }) => (
+          <NavbarItem href={href} key={href}>
+            {label}
+          </NavbarItem>
+        ))}
       </div>
 
       <div className="lg:hidden flex justify-between items-center">
         <NavbarItem href={'/'}>
-          <img
-            src="/logo/logo-200.webp"
-            alt="Home"
-            className="w-20 lg:h-20 rounded-lg hover:bg-surface-1 transition-colors"
-          />
+          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-surface-1 transition-colors" />
         </NavbarItem>
         <Menu as="div" className="relative inline-block text-left">
           <Menu.Button className="flex items-center">
@@ -50,21 +41,11 @@ export const Navbar: FC = () => {
           >
             <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-surface divide-y divide-surface-1 rounded-md shadow-lg focus:outline-none">
               <div className="px-1 py-1 ">
-                <Menu.Item>
-                  <NavbarItem href={'/wedding-photography'}>Wedding Photography</NavbarItem>
-                </Menu.Item>
-                <Menu.Item>
-                  <NavbarItem href={'/animal-photography'}>Animal Photography</NavbarItem>
-                </Menu.Item>
-                <Menu.Item>
-                  <NavbarItem href={'/blog'}>Blog</NavbarItem>
-                </Menu.Item>
-                <Menu.Item>
-                  <NavbarItem href={'/about'}>About</NavbarItem>
-                </Menu.Item>
-                <Menu.Item>
-                  <NavbarItem href={'/contact'}>Contact</NavbarItem>
-                </Menu.Item>
+                {navItems.map(({ href, label }) => (
+                  <Menu.Item key={href}>
+                    <NavbarItem href={href}>{label}</NavbarItem>
+                  </Menu.Item>
+                ))}
               </div>
             </Menu.Items>
           </Transition>
@@ -74,13 +55,16 @@ export const Navbar: FC = () => {
   );
 };
 
-const NavbarItem: FC<{
-  href: string;
-  children: ReactNode;
-}> = ({ href, children }) => {
+const NavbarItem = forwardRef<
+  HTMLAnchorElement,
+  {
+    href: string;
+    children: ReactNode;
+  }
+>(({ href, children }, ref) => {
   const childIsText = typeof children === 'string';
   return (
-    <Link href={href} className="flex items-center">
+    <Link href={href} className="flex items-center" ref={ref}>
       {childIsText ? (
         <span className="rounded-lg px-2 py-1 text-lg text-text-unimportant hover:bg-surface-1 transition-colors whitespace-nowrap w-full">
           {children}
@@ -90,4 +74,5 @@ const NavbarItem: FC<{
       )}
     </Link>
   );
-};
+});
+NavbarItem.displayName = 'NavbarItem';

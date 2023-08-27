@@ -14,7 +14,7 @@ export const getImageProps = <T extends string | string[]>(
   imageSizes: CompiledPost['images'],
   postGroupSlug: string,
   postSlug: string,
-): ((imageName: T) => T extends any[] ? LocalImageProps[] : LocalImageProps) => {
+): ((imageName: T) => T extends string[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
     if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist!`);
     return {
@@ -40,8 +40,8 @@ export const getImageProps = <T extends string | string[]>(
 
   return (imageName) => {
     if (Array.isArray(imageName)) {
-      return imageName.map((name) => get(name)) as T extends any[] ? LocalImageProps[] : LocalImageProps;
+      return imageName.map((name) => get(name)) as T extends string[] ? LocalImageProps[] : LocalImageProps;
     }
-    return get(imageName) as T extends any[] ? LocalImageProps[] : LocalImageProps;
+    return get(imageName) as T extends string[] ? LocalImageProps[] : LocalImageProps;
   };
 };

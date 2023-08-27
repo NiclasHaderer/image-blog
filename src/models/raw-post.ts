@@ -54,7 +54,7 @@ export const Post = luft
     layout: luft.literal(['post']),
     tags: luft.array(luft.string()).optional(),
 
-    headerImage: PostImageMetadata.optional(),
+    headerImage: luft.string().optional(),
     images: luft.array(PostImageMetadata),
     // Information about the whereabouts of the post
     postPath: luft.string(),
@@ -66,14 +66,19 @@ export const Post = luft
   .named('Post');
 export type Post = LuftInfer<typeof Post>;
 
+const PostImages = luft
+  .record(
+    luft.string().named('imageName'),
+    PostImageMetadata.merge({
+      resolutions: ImageResolutionsWithAspectRations,
+    }),
+  )
+  .named('PostImages');
+export type PostImages = LuftInfer<typeof PostImages>;
+
 export const CompiledPost = Post.omit(['images'])
   .merge({
-    images: luft.record(
-      luft.string().named('imageName'),
-      PostImageMetadata.merge({
-        resolutions: ImageResolutionsWithAspectRations,
-      }),
-    ),
+    images: PostImages,
   })
   .named('CompiledPost');
 export type CompiledPost = LuftInfer<typeof CompiledPost>;
@@ -88,7 +93,7 @@ export const PostGroup = luft
     // title of the post (will be transformed to a slug)
     title: luft.string(),
     description: luft.string().optional(),
-    headerImage: PostImageMetadata.optional(),
+    headerImage: luft.string().optional(),
     posts: luft.array(Post),
     layout: luft.literal(['post']),
     // Information about the whereabouts of the post-group
