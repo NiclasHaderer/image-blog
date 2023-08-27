@@ -19,6 +19,18 @@ export const getPostGroup = async (groupName: string): Promise<CompiledPostGroup
   return JSON.parse(JSON.stringify(postGroup)) as CompiledPostGroup;
 };
 
+export const getPostsOfGroup = async (
+  groupName: string,
+): Promise<
+  (CompiledPost & {
+    group: { slug: string; title: string };
+  })[]
+> => {
+  const group = await getPostGroup(groupName);
+  const posts = Object.values(group.posts).map((post) => getPost(groupName, post.slug));
+  return Promise.all(posts);
+};
+
 export const getPost = async (
   groupName: string,
   postName: string,

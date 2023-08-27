@@ -7,7 +7,7 @@ import { PostPreview } from '@/components/post-preview';
 export default function Home({ groupUrls, allPosts }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
   return (
     <MainLayout navItems={groupUrls}>
-      <h1 className="font-bold text-3xl pl-2 mb-2 mt-1">Latest Posts</h1>
+      <h1 className="font-bold text-3xl px-2 mb-2 mt-1">Latest Posts</h1>
       {allPosts.map((post, i) => (
         <Link href={`/${post.group.slug}/${post.slug}`} key={i} className="drop-shadow-2xl">
           <PostPreview {...post} />
