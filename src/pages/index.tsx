@@ -11,7 +11,7 @@ export default function Home({ groupUrls, allPosts }: Awaited<ReturnType<typeof 
       <HomePage groupUrls={groupUrls} />
       <Test groupUrls={groupUrls} />
       <main className={SIZE}>
-        <h1 className="text-3xl px-2 mb-2 mt-1">Recent</h1>
+        <h1 className="hidden md:block text-2xl px-2 mb-2 mt-1 uppercase">Recent</h1>
         {allPosts.map((post, i) => (
           <Link
             href={`/${post.group.slug}/${post.slug}`}
