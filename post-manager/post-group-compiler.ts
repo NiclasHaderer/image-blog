@@ -2,19 +2,9 @@ import path from 'node:path';
 import { PostConstants } from './post-constants';
 import { PostPreferences } from '@/preferences';
 import fs from 'node:fs';
-import { ensureDir, parseFile, saveFile } from '@/utils/file';
+import { ensureDir, getItemsIn, saveFile } from '@/utils/file';
 import { PostsCompiler } from './posts-compiler';
 import { CompiledPostGroup, PostGroup } from '@/models/post-group.model';
-
-const getExistingPostGroup = async (outputDir: string) => {
-  const metadataPath = path.join(outputDir, PostConstants.CompiledPostGroupMetadataFilename);
-  if (!fs.existsSync(metadataPath)) return undefined;
-  const metadata = await parseFile(metadataPath, CompiledPostGroup, { safety: 'safe' });
-  if (metadata.success) {
-    return metadata.data;
-  }
-  return undefined;
-};
 
 const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
   const metadataPath = path.join(postGroupDir, PostConstants.CompiledPostGroupMetadataFilename);
@@ -33,23 +23,23 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
 };
 
 const compile = async (postGroup: PostGroup) => {
-  console.group(`PostGroup: ${postGroup.title}`);
+  console.log(`Compiling post-group: ${postGroup.title}`);
   const postGroupDir = path.join(PostPreferences.CompiledPostsDir, postGroup.slug);
-  const existingPostGroup = await getExistingPostGroup(postGroupDir);
-  if (!existingPostGroup) {
-    console.log(`Compiling new post-group: ${postGroup.title}`);
-    await _compile(postGroup, postGroupDir);
-  } else if (existingPostGroup.modifiedAt < postGroup.modifiedAt) {
-    // Check if the post-group was modified
-    console.log(`Compiling modified post-group: ${postGroup.title}`);
-    await _compile(postGroup, postGroupDir);
-  } else {
-    console.log(`Skipping post-group: ${postGroup.title}`);
-  }
+  await _compile(postGroup, postGroupDir);
 
   // Compile all posts
   await Promise.all(postGroup.posts.map(async (post) => PostsCompiler.compile(post, postGroupDir)));
-  console.groupEnd();
+
+  // Remove posts that were deleted
+  const existingPosts = await getItemsIn(postGroupDir, 'folder');
+  const deletedPosts = existingPosts.filter((existingPost) => {
+    const existingPostSlug = path.basename(existingPost);
+    return !postGroup.posts.find((post) => post.slug === existingPostSlug);
+  });
+  for (const deletedPost of deletedPosts) {
+    console.log(`Deleting post: ${deletedPost}`);
+    await fs.promises.rm(deletedPost, { recursive: true, force: true });
+  }
 };
 
 export const PostGroupCompiler = {

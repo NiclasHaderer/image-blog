@@ -1,4 +1,4 @@
-import { Post, PostGroupMetadata, PostImageMetadata, PostMetadata } from '@/models/post.model';
+import { Post, PostMetadata } from '@/models/post.model';
 import path from 'node:path';
 import { PostConstants } from './post-constants';
 import fs from 'node:fs';
@@ -7,6 +7,8 @@ import matter from 'gray-matter';
 import slugify from 'slugify';
 import { ImageOptimizer } from './image-optimizer';
 import { parseWith } from '@/utils/validation';
+import { PostGroupMetadata } from '@/models/post-group.model';
+import { PostImageMetadata } from '@/models/image.model';
 
 const parsePostFile = async (postFile: string): Promise<Omit<PostMetadata, 'postFolder'>> => {
   const fileContents = await fs.promises.readFile(path.join(postFile), 'utf8');

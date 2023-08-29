@@ -17,7 +17,11 @@ export const getImageProps = <T extends string | string[]>(
   postSlug: string,
 ): ((imageName: T) => T extends string[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
-    if (!imageSizes[imageName]) throw new Error(`Image ${imageName} does not exist!`);
+    if (!imageSizes[imageName]) {
+      console.log(`The post group ${postGroupSlug} and post ${postSlug} does not have image ${imageName}`);
+      console.log(`Use one of the values of ${Object.keys(imageSizes).join(', ')}.`);
+      throw new Error(`Image ${imageName} does not exist!`);
+    }
     return {
       imageName,
       getUrl(size, mode) {

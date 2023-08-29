@@ -115,7 +115,6 @@ const updateImagesIfNecessary = async (post: Post, existingPost: CompiledPost, i
 };
 
 const compile = async (post: Post, outputDir: string) => {
-  console.group(`Post: ${post.title}`);
   // Create the folders necessary for the post
   const postDir = path.join(outputDir, post.slug);
   const imagesDir = path.join(postDir, PostConstants.PostImagesFolder);
@@ -143,7 +142,6 @@ const compile = async (post: Post, outputDir: string) => {
   // Save the post-metadata
   const metadataPath = path.join(postDir, PostConstants.CompiledPostMetadataFilename);
   await saveFile(metadataPath, existingPost, CompiledPost);
-  console.groupEnd();
 };
 
 export const PostsCompiler = {

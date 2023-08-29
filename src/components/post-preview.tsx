@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import type { CompiledPost } from '@/models/post.model';
-import { PostImages } from '@/models/post.model';
 import { isUrl } from '@/utils/string';
 import { getImageProps } from '@/utils/image-props';
 import { Image } from '@/components/image';
+import { PostImages } from '@/models/image.model';
 
 export const PostPreview: FC<CompiledPost & { group: { slug: string; title: string } }> = ({
   title,
