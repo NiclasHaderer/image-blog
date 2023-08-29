@@ -31,7 +31,7 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
 };
 
 const compile = async (postGroup: PostGroup) => {
-  const postGroupDir = path.join(PostPreferences.CompiledPostsGroupDir, postGroup.slug);
+  const postGroupDir = path.join(PostPreferences.CompiledPostsRootDir, PostConstants.PostGroupsFolder, postGroup.slug);
   await ensureDir(postGroupDir);
 
   let newPostGroup = await getExistingPostGroup(postGroupDir);
@@ -68,13 +68,15 @@ const compile = async (postGroup: PostGroup) => {
   // Remove or other files that should not be in a post-group folder
   const otherFilesOrPosts = await getItemsIn(postGroupDir, undefined, false);
   otherFilesOrPosts
-    .filter(
-      (existingPost) =>
+    .filter((existingPost) => {
+      return (
         !postGroup.posts.some((post) => post.slug === existingPost) &&
-        existingPost !== PostConstants.CompiledPostGroupMetadataFilename,
-    )
+        existingPost !== PostConstants.CompiledPostGroupMetadataFilename &&
+        existingPost !== PostConstants.CompiledPostImagesFolder
+      );
+    })
     .forEach((deletedPost) => {
-      console.log(`Deleting post: ${deletedPost}`);
+      console.log(`Deleting unused post: ${deletedPost}`);
       fs.rmSync(deletedPost, { recursive: true, force: true });
     });
 };

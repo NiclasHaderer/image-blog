@@ -35,9 +35,7 @@ const collectMetadata = async (postGroup: PostGroupMetadata): Promise<PostMetada
   for (const postFolder of postFolders) {
     const postFile = path.join(postFolder, PostConstants.PostFilename);
     if (!fs.existsSync(postFile)) {
-      console.error(
-        `The post-group folder ${postGroup.folderPath} does not contain a ${PostConstants.PostFilename} file!`,
-      );
+      console.error(`The post folder ${postGroup.folderPath} does not contain a ${PostConstants.PostFilename} file!`);
       continue;
     }
     posts.push({
@@ -50,12 +48,14 @@ const collectMetadata = async (postGroup: PostGroupMetadata): Promise<PostMetada
 
 const collect = async (postGroup: PostGroupMetadata): Promise<Post[]> => {
   const posts = await collectMetadata(postGroup);
-  const imagesPath = path.join(postGroup.folderPath, PostConstants.ImagesFolder);
   return Promise.all(
-    posts.map(async (post) => ({
-      ...post,
-      images: await await ImageOptimizer.getImagesMetadata(imagesPath),
-    })),
+    posts.map(async (post) => {
+      const imagesPath = path.join(post.postFolder, PostConstants.ImagesFolder);
+      return {
+        ...post,
+        images: await await ImageOptimizer.getImagesMetadata(imagesPath),
+      };
+    }),
   );
 };
 

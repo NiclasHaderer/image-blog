@@ -5,16 +5,26 @@ import { CompiledPost } from '@/models/post.model';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import fs from 'node:fs';
 import { CompiledPostGroup } from '@/models/post-group.model';
+import path from 'node:path';
 
 export const getPostGroups = async (): Promise<CompiledPostGroup[]> => {
-  const postGroups = await getItemsIn(PostPreferences.CompiledPostsGroupDir, 'folder', false);
+  const postGroups = await getItemsIn(
+    path.join(PostPreferences.CompiledPostsRootDir, PostConstants.PostGroupsFolder),
+    'folder',
+    false,
+  );
   const groups = postGroups.map(getPostGroup);
   return Promise.all(groups).then((groups) => groups.sort((a, b) => a.index - b.index));
 };
 
 export const getPostGroup = async (groupName: string): Promise<CompiledPostGroup> => {
   const postGroup = await parseFile(
-    `${PostPreferences.CompiledPostsGroupDir}/${groupName}/${PostConstants.CompiledPostGroupMetadataFilename}`,
+    path.join(
+      PostPreferences.CompiledPostsRootDir,
+      PostConstants.PostGroupsFolder,
+      groupName,
+      PostConstants.CompiledPostGroupMetadataFilename,
+    ),
     CompiledPostGroup,
   );
   return JSON.parse(JSON.stringify(postGroup)) as CompiledPostGroup;
@@ -48,7 +58,13 @@ export const getPost = async (
   }
 > => {
   const post = await parseFile(
-    `${PostPreferences.CompiledPostsGroupDir}/${groupName}/${postName}/${PostConstants.CompiledPostMetadataFilename}`,
+    path.join(
+      PostPreferences.CompiledPostsRootDir,
+      PostConstants.PostGroupsFolder,
+      groupName,
+      postName,
+      PostConstants.CompiledPostMetadataFilename,
+    ),
     CompiledPost,
   );
 
@@ -73,7 +89,13 @@ export const getPostGroupUrls = async () => {
 
 export const getPostContent = async (groupName: string, postName: string): Promise<MDXRemoteSerializeResult> => {
   const content = await fs.promises.readFile(
-    `${PostPreferences.CompiledPostsGroupDir}/${groupName}/${postName}/${PostConstants.CompiledPostFilename}`,
+    path.join(
+      PostPreferences.CompiledPostsRootDir,
+      PostConstants.PostGroupsFolder,
+      groupName,
+      postName,
+      PostConstants.CompiledPostFilename,
+    ),
     'utf-8',
   );
   return JSON.parse(content) as MDXRemoteSerializeResult;

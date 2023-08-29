@@ -7,7 +7,7 @@ import { HomepageSettings, HomepageSettingsMetadata } from '@/models/homepage-se
 import { ImageOptimizer } from './image-optimizer';
 
 const collect = async (): Promise<HomepageSettings> => {
-  const homepageSettingsPath = path.join(PostPreferences.PostGroupDir, PostConstants.HomepageSettingsFilename);
+  const homepageSettingsPath = path.join(PostPreferences.PostRootDir, PostConstants.HomepageSettingsFilename);
   if (!fs.existsSync(homepageSettingsPath)) {
     throw new Error(`The homepage settings file ${homepageSettingsPath} does not exist!`);
   }
@@ -15,9 +15,10 @@ const collect = async (): Promise<HomepageSettings> => {
   const settings = await parseFile(homepageSettingsPath, HomepageSettingsMetadata);
 
   // Find images for the homepage
-  const imagesPath = path.join(PostPreferences.PostGroupDir, PostConstants.ImagesFolder);
+  const imagesPath = path.join(PostPreferences.PostRootDir, PostConstants.ImagesFolder);
   return {
     ...settings,
+    modifiedAt: fs.statSync(homepageSettingsPath).mtimeMs,
     images: await ImageOptimizer.getImagesMetadata(imagesPath),
   };
 };

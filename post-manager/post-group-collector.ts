@@ -13,11 +13,11 @@ const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetad
 
   const metadata: PostGroupMetadata[] = [];
   // Check if the post-group folder has a `metadata.json` file and if yes, read it
-  for (const postFolder of postGroupFolders) {
-    const metadataFile = path.join(postFolder, PostConstants.PostGroupMetadataFilename);
+  for (const groupFolder of postGroupFolders) {
+    const metadataFile = path.join(groupFolder, PostConstants.PostGroupMetadataFilename);
     if (!fs.existsSync(metadataFile)) {
       console.error(
-        `The post-group folder ${postFolder} does not contain a ${PostConstants.PostGroupMetadataFilename} file!`,
+        `The post-group folder ${groupFolder} does not contain a ${PostConstants.PostGroupMetadataFilename} file!`,
       );
       continue;
     }
@@ -26,7 +26,7 @@ const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetad
 
     metadata.push({
       ...fileContents,
-      folderPath: postFolder,
+      folderPath: groupFolder,
       slug: slugify(fileContents.title, { lower: true }),
       modifiedAt: await fs.promises.stat(metadataFile).then((stats) => stats.mtimeMs),
     });
@@ -35,7 +35,8 @@ const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetad
 };
 
 const collect = async (): Promise<PostGroup[]> => {
-  const postGroupMetadata = await getPostGroupMetadata(PostPreferences.PostGroupDir);
+  const postGroupFolder = path.join(PostPreferences.PostRootDir, PostConstants.PostGroupsFolder);
+  const postGroupMetadata = await getPostGroupMetadata(postGroupFolder);
 
   const postGroups = postGroupMetadata.map(async (postGroup): Promise<PostGroup> => {
     // Read images metadata

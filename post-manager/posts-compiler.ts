@@ -38,7 +38,7 @@ const compilePost = async (post: Post, postDir: string) => {
 const compile = async (post: Post, outputDir: string) => {
   // Create the folders necessary for the post
   const postDir = path.join(outputDir, post.slug);
-  const metadataPath = path.join(outputDir, PostConstants.CompiledPostMetadataFilename);
+  const metadataPath = path.join(postDir, PostConstants.CompiledPostMetadataFilename);
 
   await ensureDir(postDir);
   let existingPost = await getExistingPost(metadataPath);

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getAllPosts, getPostGroups, getPostGroupUrls } from '@/utils/post';
+import { getAllPosts, getPostGroupUrls } from '@/utils/post';
 import { copyImages, symlinkImages } from '@/utils/assets';
 import { PostPreview } from '@/components/post-preview';
 import { HomePage, Test } from '@/components/home-page';
@@ -27,15 +27,14 @@ export default function Home({ groupUrls, allPosts }: Awaited<ReturnType<typeof 
 }
 
 export const getStaticProps = async () => {
-  const postGroups = await getPostGroups();
   const groupUrls = await getPostGroupUrls();
   const allPosts = await getAllPosts();
 
   // Check if we are running in production
   if (process.env.NODE_ENV === 'production') {
-    await copyImages(postGroups);
+    await copyImages();
   } else {
-    await symlinkImages(postGroups);
+    await symlinkImages();
   }
 
   return {

@@ -1,19 +1,27 @@
-import { PostMetadata } from '@/models/post.model';
-import fs from 'node:fs';
-import { zip } from '@/utils/list';
-import path from 'node:path';
-import { ensureDir } from '@/utils/file';
-import { PostPreferences } from '@/preferences';
-import { PostConstants } from '../../post-manager/post-constants';
-import { CompiledPostGroup } from '@/models/post-group.model';
+import { PostMetadata } from "@/models/post.model";
+import fs from "node:fs";
+import { zip } from "@/utils/list";
+import path from "node:path";
+import { ensureDir } from "@/utils/file";
+import { PostPreferences } from "@/preferences";
+import { PostConstants } from "../../post-manager/post-constants";
+import { CompiledPostGroup } from "@/models/post-group.model";
+import { getPostGroups } from "@/utils/post";
 
-export const copyImages = async (postGroups: CompiledPostGroup[]) => {
+// TODO copy homepage images
+// TODO copy post-group images
+
+export const copyImages = async () => {
+  const postGroups = await getPostGroups();
+
   await executeImageOperation(postGroups, async (postGroup, post, imagesPath, destination) => {
     await fs.promises.cp(imagesPath, destination, { recursive: true });
   });
 };
 
-export const symlinkImages = async (postGroups: CompiledPostGroup[]) => {
+export const symlinkImages = async () => {
+  const postGroups = await getPostGroups();
+
   await executeImageOperation(postGroups, async (postGroup, post, imagesPath, destination) => {
     await fs.promises.symlink(imagesPath, destination);
   });
@@ -32,7 +40,13 @@ const executeImageOperation = async (
   groupPostPairs.map(async ([group, post]) => {
     let destination = path.resolve(`public/gen-images/${group.slug}/`);
     await ensureDir(destination);
-    const imagesPath = `${PostPreferences.CompiledPostsGroupDir}/${group.slug}/${post.slug}/${PostConstants.CompiledPostImagesFolder}`;
+    const imagesPath = path.join(
+      PostPreferences.CompiledPostsRootDir,
+      PostConstants.PostGroupsFolder,
+      group.slug,
+      post.slug,
+      PostConstants.CompiledPostImagesFolder,
+    );
     destination = `${destination}/${post.slug}`;
     if (fs.existsSync(destination)) {
       await fs.promises.rm(destination, { recursive: true, force: true });

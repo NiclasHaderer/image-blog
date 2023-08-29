@@ -16,7 +16,7 @@ export const getExistingHomepageSettings = async (path: string): Promise<Compile
 };
 
 const compile = async (homepage: HomepageSettings): Promise<void> => {
-  const settingsPath = path.join(PostPreferences.CompiledPostsGroupDir, PostConstants.CompiledHomepageSettingsFilename);
+  const settingsPath = path.join(PostPreferences.CompiledPostsRootDir, PostConstants.CompiledHomepageSettingsFilename);
   let existingSettings = await getExistingHomepageSettings(settingsPath);
   if (!existingSettings) {
     console.log('Compiling new homepage settings');
@@ -35,7 +35,7 @@ const compile = async (homepage: HomepageSettings): Promise<void> => {
   }
 
   // Compile the images
-  const imagesPath = path.join(PostPreferences.CompiledPostsGroupDir, PostConstants.CompiledPostImagesFolder);
+  const imagesPath = path.join(PostPreferences.CompiledPostsRootDir, PostConstants.CompiledPostImagesFolder);
   existingSettings = {
     ...existingSettings,
     images: await ImageCompiler.compile(homepage.images, existingSettings.images, imagesPath),
