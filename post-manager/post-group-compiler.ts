@@ -2,13 +2,23 @@ import path from 'node:path';
 import { PostConstants } from './post-constants';
 import { PostPreferences } from '@/preferences';
 import fs from 'node:fs';
-import { ensureDir, getItemsIn, saveFile } from '@/utils/file';
+import { ensureDir, getItemsIn, parseFile, saveFile } from '@/utils/file';
 import { PostsCompiler } from './posts-compiler';
 import { CompiledPostGroup, PostGroup } from '@/models/post-group.model';
+import { ImageCompiler } from './image-compiler';
+
+const getExistingPostGroup = async (outputDir: string) => {
+  const metadataPath = path.join(outputDir, PostConstants.CompiledPostGroupMetadataFilename);
+  if (!fs.existsSync(metadataPath)) return undefined;
+  const metadata = await parseFile(metadataPath, CompiledPostGroup, { safety: 'safe' });
+  if (metadata.success) {
+    return metadata.data;
+  }
+  return undefined;
+};
 
 const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
-  const metadataPath = path.join(postGroupDir, PostConstants.CompiledPostGroupMetadataFilename);
-  const compiledPostGroup: CompiledPostGroup = {
+  return {
     ...postGroup,
     posts: postGroup.posts.reduce(
       (acc, post) => {
@@ -18,28 +28,55 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
       {} as CompiledPostGroup['posts'],
     ),
   };
-  await ensureDir(postGroupDir);
-  await saveFile(metadataPath, compiledPostGroup, CompiledPostGroup);
 };
 
 const compile = async (postGroup: PostGroup) => {
-  console.log(`Compiling post-group: ${postGroup.title}`);
-  const postGroupDir = path.join(PostPreferences.CompiledPostsDir, postGroup.slug);
-  await _compile(postGroup, postGroupDir);
+  const postGroupDir = path.join(PostPreferences.CompiledPostsGroupDir, postGroup.slug);
+  await ensureDir(postGroupDir);
+
+  let newPostGroup = await getExistingPostGroup(postGroupDir);
+  if (!newPostGroup) {
+    console.log(`Compiling new post-group: ${postGroup.title}`);
+    newPostGroup = {
+      ...(await _compile(postGroup, postGroupDir)),
+      images: {},
+    };
+  } else if (newPostGroup.modifiedAt < postGroup.modifiedAt) {
+    console.log(`Compiling updated post-group: ${postGroup.title}`);
+    newPostGroup = {
+      ...(await _compile(postGroup, postGroupDir)),
+      images: newPostGroup.images,
+    };
+  } else {
+    console.log(`Skipping post-group: ${postGroup.title}`);
+  }
+
+  // Compile the post-group images
+  const imagesPath = path.join(postGroupDir, PostConstants.CompiledPostImagesFolder);
+  newPostGroup = {
+    ...newPostGroup,
+    images: await ImageCompiler.compile(postGroup.images, newPostGroup.images, imagesPath),
+  };
+
+  // Save the post-group metadata
+  const metadataPath = path.join(postGroupDir, PostConstants.CompiledPostGroupMetadataFilename);
+  await saveFile(metadataPath, newPostGroup, CompiledPostGroup);
 
   // Compile all posts
   await Promise.all(postGroup.posts.map(async (post) => PostsCompiler.compile(post, postGroupDir)));
 
-  // Remove posts that were deleted
-  const existingPosts = await getItemsIn(postGroupDir, 'folder');
-  const deletedPosts = existingPosts.filter((existingPost) => {
-    const existingPostSlug = path.basename(existingPost);
-    return !postGroup.posts.find((post) => post.slug === existingPostSlug);
-  });
-  for (const deletedPost of deletedPosts) {
-    console.log(`Deleting post: ${deletedPost}`);
-    await fs.promises.rm(deletedPost, { recursive: true, force: true });
-  }
+  // Remove or other files that should not be in a post-group folder
+  const otherFilesOrPosts = await getItemsIn(postGroupDir, undefined, false);
+  otherFilesOrPosts
+    .filter(
+      (existingPost) =>
+        !postGroup.posts.some((post) => post.slug === existingPost) &&
+        existingPost !== PostConstants.CompiledPostGroupMetadataFilename,
+    )
+    .forEach((deletedPost) => {
+      console.log(`Deleting post: ${deletedPost}`);
+      fs.rmSync(deletedPost, { recursive: true, force: true });
+    });
 };
 
 export const PostGroupCompiler = {

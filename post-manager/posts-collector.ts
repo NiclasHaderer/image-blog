@@ -8,7 +8,6 @@ import slugify from 'slugify';
 import { ImageOptimizer } from './image-optimizer';
 import { parseWith } from '@/utils/validation';
 import { PostGroupMetadata } from '@/models/post-group.model';
-import { PostImageMetadata } from '@/models/image.model';
 
 const parsePostFile = async (postFile: string): Promise<Omit<PostMetadata, 'postFolder'>> => {
   const fileContents = await fs.promises.readFile(path.join(postFile), 'utf8');
@@ -49,40 +48,13 @@ const collectMetadata = async (postGroup: PostGroupMetadata): Promise<PostMetada
   return posts;
 };
 
-const collectImageMetadata = async (post: PostMetadata): Promise<PostImageMetadata[]> => {
-  const imagesPath = path.join(post.postFolder, PostConstants.PostImagesFolder);
-  if (!fs.existsSync(imagesPath)) {
-    return [];
-  }
-
-  let images = await getItemsIn(imagesPath, 'file');
-  images = images.filter((image) => {
-    const isSupported = ImageOptimizer.isSupportedImageFile(image);
-    if (!isSupported) {
-      console.error(`Image ${image} is not supported!`);
-    }
-    return isSupported;
-  });
-
-  return Promise.all(
-    images.map(async (image) => {
-      const imageName = path.parse(image).name;
-
-      return {
-        modifiedAt: await fs.promises.stat(image).then((stats) => stats.mtimeMs),
-        path: image,
-        name: imageName,
-      };
-    }),
-  );
-};
-
 const collect = async (postGroup: PostGroupMetadata): Promise<Post[]> => {
   const posts = await collectMetadata(postGroup);
+  const imagesPath = path.join(postGroup.folderPath, PostConstants.ImagesFolder);
   return Promise.all(
     posts.map(async (post) => ({
       ...post,
-      images: await collectImageMetadata(post),
+      images: await await ImageOptimizer.getImagesMetadata(imagesPath),
     })),
   );
 };

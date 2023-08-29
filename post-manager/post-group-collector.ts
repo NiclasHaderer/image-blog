@@ -6,6 +6,7 @@ import slugify from 'slugify';
 import { PostCollector } from './posts-collector';
 import { PostPreferences } from '@/preferences';
 import { PostGroup, PostGroupMetadata } from '@/models/post-group.model';
+import { ImageOptimizer } from './image-optimizer';
 
 const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetadata[]> => {
   const postGroupFolders = await getItemsIn(postsFolder, 'folder');
@@ -35,14 +36,18 @@ const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetad
 
 const collect = async (): Promise<PostGroup[]> => {
   const postGroupMetadata = await getPostGroupMetadata(PostPreferences.PostGroupDir);
-  return await Promise.all(
-    postGroupMetadata.map(
-      async (postGroup): Promise<PostGroup> => ({
-        ...postGroup,
-        posts: await PostCollector.collect(postGroup),
-      }),
-    ),
-  );
+
+  const postGroups = postGroupMetadata.map(async (postGroup): Promise<PostGroup> => {
+    // Read images metadata
+    const imagesPath = path.join(postGroup.folderPath, PostConstants.ImagesFolder);
+    return {
+      ...postGroup,
+      posts: await PostCollector.collect(postGroup),
+      images: await ImageOptimizer.getImagesMetadata(imagesPath),
+    };
+  });
+
+  return await Promise.all(postGroups);
 };
 
 export const PostGroupCollector = {

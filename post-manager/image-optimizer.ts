@@ -1,7 +1,16 @@
 import sharp from 'sharp';
-import { ImageResolutionsWithAspectRations } from '@/models/image.model';
+import { ImageMetadata, ImageResolutionsWithAspectRations } from '@/models/image.model';
+import { getItemsIn } from '@/utils/file';
+import path from 'node:path';
+import fs from 'node:fs';
 
-const calculateSize = (imageSize: { width: number; height: number }, maxDimension: number) => {
+const calculateSize = (
+  imageSize: {
+    width: number;
+    height: number;
+  },
+  maxDimension: number,
+) => {
   const ratio = Math.min(maxDimension / imageSize.width, maxDimension / imageSize.height, 1);
   return { width: Math.round(imageSize.width * ratio), height: Math.round(imageSize.height * ratio) };
 };
@@ -64,8 +73,14 @@ const createSquareImage = async (image: sharp.Sharp, imageOutputPath: string, si
 const createImage = async (
   image: sharp.Sharp,
   imageOutputPath: string,
-  size: { width: number; height: number },
-): Promise<{ width: number; height: number }> => {
+  size: {
+    width: number;
+    height: number;
+  },
+): Promise<{
+  width: number;
+  height: number;
+}> => {
   const newImg = image.clone().resize(size.width, size.height).webp({ quality: 80 });
   await newImg.toFile(imageOutputPath);
   const metadata = await newImg.metadata();
@@ -81,14 +96,44 @@ const isSupportedImageFile = (filename: string): boolean => {
   return supportedExtensions.includes(fileExtension);
 };
 
-const getImageMetadata = async (imagePath: string): Promise<{ width: number; height: number }> => {
+const getImageMetadata = async (
+  imagePath: string,
+): Promise<{
+  width: number;
+  height: number;
+}> => {
   const image = sharp(imagePath);
   const metadata = await image.metadata();
   return { width: metadata.width!, height: metadata.height! };
 };
 
+const getImagesMetadata = async (folderPath: string): Promise<Awaited<ImageMetadata>[]> => {
+  if (!fs.existsSync(folderPath)) return [];
+  let images = await getItemsIn(folderPath);
+  images = images.filter((image) => {
+    const isSupported = ImageOptimizer.isSupportedImageFile(image);
+    if (!isSupported) {
+      console.error(`Image ${image} is not supported!`);
+    }
+    return isSupported;
+  });
+
+  const imageMetadata = images.map(async (image) => {
+    const imageName = path.parse(image).name;
+
+    return {
+      modifiedAt: await fs.promises.stat(image).then((stats) => stats.mtimeMs),
+      path: image,
+      name: imageName,
+    };
+  });
+
+  return Promise.all(imageMetadata);
+};
+
 export const ImageOptimizer = {
   isSupportedImageFile,
   getImageMetadata,
+  getImagesMetadata,
   optimize: optimizeImage,
 };
