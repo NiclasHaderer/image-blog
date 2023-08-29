@@ -1,5 +1,5 @@
 import licenses from '../../public/licenses.json';
-import { NpmLicense } from '@/models/license';
+import { NpmLicense } from '@/models/license.model';
 
 const additionalLicenses: NpmLicense[] = [
   {

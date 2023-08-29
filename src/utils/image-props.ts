@@ -1,4 +1,5 @@
-import type { CompiledPost, ImageResolutions } from '@/models/raw-post';
+import type { CompiledPost } from '@/models/post.model';
+import { ImageResolutions } from '@/models/image.model';
 
 export interface LocalImageProps {
   imageName: string;

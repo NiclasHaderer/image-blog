@@ -1,4 +1,3 @@
-import { PostGroup, PostGroupMetadata } from '@/models/raw-post';
 import path from 'node:path';
 import fs from 'node:fs';
 import { getItemsIn, parseFile } from '@/utils/file';
@@ -6,6 +5,7 @@ import { PostConstants } from './post-constants';
 import slugify from 'slugify';
 import { PostCollector } from './posts-collector';
 import { PostPreferences } from '@/preferences';
+import { PostGroup, PostGroupMetadata } from '@/models/post-group.model';
 
 const getPostGroupMetadata = async (postsFolder: string): Promise<PostGroupMetadata[]> => {
   const postGroupFolders = await getItemsIn(postsFolder, 'folder');

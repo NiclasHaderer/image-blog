@@ -1,4 +1,4 @@
-import { Post, PostGroupMetadata, PostImageMetadata, PostMetadata } from '@/models/raw-post';
+import { Post, PostGroupMetadata, PostImageMetadata, PostMetadata } from '@/models/post.model';
 import path from 'node:path';
 import { PostConstants } from './post-constants';
 import fs from 'node:fs';

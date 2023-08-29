@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import type { CompiledPost } from '@/models/raw-post';
-import { PostImages } from '@/models/raw-post';
+import type { CompiledPost } from '@/models/post.model';
+import { PostImages } from '@/models/post.model';
 import { isUrl } from '@/utils/string';
 import { getImageProps } from '@/utils/image-props';
 import { Image } from '@/components/image';
@@ -25,8 +25,7 @@ export const PostPreview: FC<CompiledPost & { group: { slug: string; title: stri
       <div className="flex items-center h-[10rem] rounded-2xl overflow-hidden w-full md:min-w-1/3 md:w-1/3">
         <HeaderImage
           className="rounded-2xl overflow-hidden"
-          // headerImage={headerImage}
-          headerImage={'https://picsum.photos/2000/1000'}
+          headerImage={headerImage}
           images={images}
           group={group}
           slug={slug}

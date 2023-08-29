@@ -1,4 +1,4 @@
-import { CompiledPost, Post, PostContent } from '@/models/raw-post';
+import { CompiledPost, Post, PostContent } from '@/models/post.model';
 import { PostConstants } from './post-constants';
 import path from 'node:path';
 import { ensureDir, parseFile, saveFile } from '@/utils/file';
@@ -125,7 +125,7 @@ const compile = async (post: Post, outputDir: string) => {
   if (!existingPost) {
     console.log(`Compiling new post: ${post.title}`);
     return _compile(post, postDir, imagesDir);
-  } else if (existingPost.modifiedAt < post.modifiedAt) {
+  } else if (existingPost.modifiedAt < post.modifiedAt || isProd) {
     console.log(`Compiling modified post: ${post.title}`);
     await compilePost(post, postDir);
     const { images: _, ...newPostWithoutImages } = post;

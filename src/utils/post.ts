@@ -1,9 +1,10 @@
 import { getItemsIn, parseFile } from '@/utils/file';
 import { PostPreferences } from '@/preferences';
 import { PostConstants } from '../../post-manager/post-constants';
-import { CompiledPost, CompiledPostGroup } from '@/models/raw-post';
+import { CompiledPost } from '@/models/post.model';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import fs from 'node:fs';
+import { CompiledPostGroup } from '@/models/post-group.model';
 
 export const getPostGroups = async (): Promise<CompiledPostGroup[]> => {
   const postGroups = await getItemsIn(PostPreferences.CompiledPostsDir, 'folder', false);

@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { ImageResolutionsWithAspectRations } from '@/models/raw-post';
+import { ImageResolutionsWithAspectRations } from '@/models/post.model';
 
 const calculateSize = (imageSize: { width: number; height: number }, maxDimension: number) => {
   const ratio = Math.min(maxDimension / imageSize.width, maxDimension / imageSize.height, 1);

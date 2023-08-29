@@ -11,8 +11,14 @@ const config: Config = {
       2: 'var(--p-m)',
       3: 'var(--p-l)',
     },
-    minWidth: (utils) => utils.theme('width'),
-    maxWidth: (utils) => utils.theme('width'),
+    minWidth: (utils) => ({
+      ...utils.theme('width'),
+      none: 'none',
+    }),
+    maxWidth: (utils) => ({
+      ...utils.theme('width'),
+      none: 'none',
+    }),
     margin: {
       0: '0',
       1: 'var(--p)',

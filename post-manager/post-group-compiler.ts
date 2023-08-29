@@ -1,10 +1,10 @@
-import { CompiledPostGroup, PostGroup } from '@/models/raw-post';
 import path from 'node:path';
 import { PostConstants } from './post-constants';
 import { PostPreferences } from '@/preferences';
 import fs from 'node:fs';
 import { ensureDir, parseFile, saveFile } from '@/utils/file';
 import { PostsCompiler } from './posts-compiler';
+import { CompiledPostGroup, PostGroup } from '@/models/post-group.model';
 
 const getExistingPostGroup = async (outputDir: string) => {
   const metadataPath = path.join(outputDir, PostConstants.CompiledPostGroupMetadataFilename);

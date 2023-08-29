@@ -1,10 +1,11 @@
-import { CompiledPostGroup, PostMetadata } from '@/models/raw-post';
+import { PostMetadata } from '@/models/post.model';
 import fs from 'node:fs';
 import { zip } from '@/utils/list';
 import path from 'node:path';
 import { ensureDir } from '@/utils/file';
 import { PostPreferences } from '@/preferences';
 import { PostConstants } from '../../post-manager/post-constants';
+import { CompiledPostGroup } from '@/models/post-group.model';
 
 export const copyImages = async (postGroups: CompiledPostGroup[]) => {
   await executeImageOperation(postGroups, async (postGroup, post, imagesPath, destination) => {
