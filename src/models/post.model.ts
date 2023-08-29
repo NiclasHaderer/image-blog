@@ -1,5 +1,5 @@
 import { luft, LuftInfer } from '@luftschloss/validation';
-import { PostImageMetadata, PostImages } from '@/models/image.model';
+import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
 export const Post = luft
   .object({
@@ -19,7 +19,7 @@ export const Post = luft
     tags: luft.array(luft.string()).optional(),
 
     headerImage: luft.string().optional(),
-    images: luft.array(PostImageMetadata),
+    images: luft.array(ImageMetadata),
     // Information about the whereabouts of the post
     postPath: luft.string(),
     postFolder: luft.string(),
@@ -32,7 +32,7 @@ export type Post = LuftInfer<typeof Post>;
 
 export const CompiledPost = Post.omit(['images'])
   .merge({
-    images: PostImages,
+    images: CompiledImages,
   })
   .named('CompiledPost');
 export type CompiledPost = LuftInfer<typeof CompiledPost>;

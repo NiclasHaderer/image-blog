@@ -4,12 +4,15 @@ import path from 'node:path';
 import { ParsingResult } from '@luftschloss/validation/src/lib/types/base-type';
 import { parseWith } from '@/utils/validation';
 
-export const getItemsIn = async (folder: string, type: 'folder' | 'file', makeAbsolute = true) => {
-  const shouldBeFolder = type === 'folder';
+export const getItemsIn = async (folder: string, type?: 'folder' | 'file' | undefined, makeAbsolute = true) => {
   const items = await fs.promises.readdir(folder);
   const isFolderLookup = await Promise.all(
     items.map((item) =>
-      fs.promises.stat(path.join(folder, item)).then((stats) => stats.isDirectory() === shouldBeFolder),
+      fs.promises.stat(path.join(folder, item)).then((stats) => {
+        if (type === 'folder') return stats.isDirectory();
+        if (type === 'file') return !stats.isDirectory();
+        return true;
+      }),
     ),
   );
   const folders = items.filter((_, index) => isFolderLookup[index]);
@@ -20,7 +23,13 @@ export const getItemsIn = async (folder: string, type: 'folder' | 'file', makeAb
 export const parseFile = async <T extends LuftType, S extends 'safe' | 'unsafe' | undefined = undefined>(
   file: string,
   parser: T,
-  { mode, safety }: { mode?: 'validate' | 'coerce'; safety?: S } = {},
+  {
+    mode,
+    safety,
+  }: {
+    mode?: 'validate' | 'coerce';
+    safety?: S;
+  } = {},
 ): Promise<S extends 'safe' ? ParsingResult<LuftInfer<T>> : LuftInfer<T>> => {
   const fileContents = await fs.promises.readFile(file, 'utf-8');
   let jsonContents;

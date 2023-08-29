@@ -11,7 +11,7 @@ export const Navbar: FC<{
     <nav className="p-1 shadow-sm drop-shadow-2xl min-w-full">
       <div className="hidden lg:flex gap-x-6">
         <NavbarItem href={'/'}>
-          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-surface-1 transition-colors" />
+          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-elevate transition-colors" />
         </NavbarItem>
 
         {navItems.map(({ href, label }) => (
@@ -23,11 +23,11 @@ export const Navbar: FC<{
 
       <div className="lg:hidden flex justify-between items-center">
         <NavbarItem href={'/'}>
-          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-surface-1 transition-colors" />
+          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-elevate transition-colors" />
         </NavbarItem>
         <Menu as="div" className="relative inline-block text-left">
           <Menu.Button className="flex items-center">
-            <IconMenuDeep className="w-14 h-14 cursor-pointer hover:bg-surface-1 rounded-lg p-1" />
+            <IconMenuDeep className="w-14 h-14 cursor-pointer hover:bg-elevate rounded-lg p-1" />
           </Menu.Button>
 
           <Transition
@@ -66,7 +66,7 @@ const NavbarItem = forwardRef<
   return (
     <Link href={href} className="flex items-center" ref={ref}>
       {childIsText ? (
-        <span className="rounded-lg px-2 py-1 text-lg text-text-unimportant hover:bg-surface-1 transition-colors whitespace-nowrap w-full">
+        <span className="rounded-lg px-2 py-1 text-lg text-gray hover:bg-elevate transition-colors whitespace-nowrap w-full">
           {children}
         </span>
       ) : (

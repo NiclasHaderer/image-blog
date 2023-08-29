@@ -4,40 +4,43 @@ import typography from '@tailwindcss/typography';
 const config: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
-    extend: {},
+    extend: {
+      minWidth: (utils) => ({
+        ...utils.theme('width'),
+        none: 'none',
+      }),
+      maxWidth: (utils) => ({
+        ...utils.theme('width'),
+        none: 'none',
+      }),
+      fontFamily: {
+        'amsterdam-four': 'Amsterdam Four',
+      },
+    },
     padding: {
       0: '0',
       1: 'var(--p)',
       2: 'var(--p-m)',
       3: 'var(--p-l)',
     },
-    minWidth: (utils) => ({
-      ...utils.theme('width'),
-      none: 'none',
-    }),
-    maxWidth: (utils) => ({
-      ...utils.theme('width'),
-      none: 'none',
-    }),
     margin: {
       0: '0',
       1: 'var(--p)',
       2: 'var(--p-m)',
       3: 'var(--p-l)',
+      auto: 'auto',
     },
     colors: {
+      white: '#fff',
       transparent: 'transparent',
-      surface: 'var(--surface)',
-      'surface-1': 'var(--surface-1)',
-      'surface-2': 'var(--surface-2)',
-      text: 'var(--text)',
-      'text-unimportant': 'var(--text-unimportant)',
+      elevate: 'var(--elevate)',
+      'elevate-1': 'var(--elevate-1)',
+      gray: 'var(--gray)',
+      'light-gray': 'var(--light-gray)',
       primary: 'var(--primary)',
-      'primary-active': 'var(--primary-active)',
-      'text-primary': 'var(--text-primary)',
       secondary: 'var(--secondary)',
-      'secondary-active': 'var(--secondary-active)',
-      'text-secondary': 'var(--text-secondary)',
+      warning: 'var(--warning)',
+      error: 'var(--error)',
     },
   },
   plugins: [typography()],

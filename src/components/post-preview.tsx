@@ -3,19 +3,18 @@ import type { CompiledPost } from '@/models/post.model';
 import { isUrl } from '@/utils/string';
 import { getImageProps } from '@/utils/image-props';
 import { Image } from '@/components/image';
-import { PostImages } from '@/models/image.model';
+import { CompiledImages } from '@/models/image.model';
 
-export const PostPreview: FC<CompiledPost & { group: { slug: string; title: string } }> = ({
-  title,
-  date,
-  description,
-  images,
-  group,
-  slug,
-  headerImage,
-}) => {
+export const PostPreview: FC<
+  CompiledPost & {
+    group: {
+      slug: string;
+      title: string;
+    };
+  }
+> = ({ title, date, description, images, group, slug, headerImage }) => {
   return (
-    <div className="my-4 py-4 group transition-colors p-2 hover:bg-surface-1 rounded-2xl flex items-center flex-col-reverse md:flex-row">
+    <div className="my-4 py-4 group transition-colors p-2 hover:bg-elevate-1 rounded-2xl flex items-center flex-col-reverse md:flex-row bg-elevate mb-2">
       <div className="flex-grow">
         <h2 className="font-bold text-2xl my-4">{title}</h2>
         {date && <time className="text-gray-400">{date}</time>}
@@ -38,8 +37,11 @@ export const PostPreview: FC<CompiledPost & { group: { slug: string; title: stri
 
 const HeaderImage: FC<{
   headerImage?: string;
-  images: PostImages;
-  group: { slug: string; title: string };
+  images: CompiledImages;
+  group: {
+    slug: string;
+    title: string;
+  };
   slug: string;
   title: string;
   className?: string;

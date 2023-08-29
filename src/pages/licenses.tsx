@@ -21,15 +21,15 @@ export default function Licenses() {
               href={l.link.replace('git+', '').replace('ssh://', '')}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:bg-surface-1 block rounded-md transition-colors ease-in p-2"
+              className="hover:bg-elevate block rounded-md transition-colors ease-in p-2"
               aria-label={`Open GitHub repo for ${l.name}`}
             >
               <div>
                 <span className="text-2xl">{l.name}</span>
-                <span className="text-text-unimportant">{l.installedVersion}</span>
+                <span className="text-gray">{l.installedVersion}</span>
               </div>
 
-              <div className="text-text-unimportant">{[l.licenseType, l.author].filter(Boolean).join(', ')}</div>
+              <div className="text-gray">{[l.licenseType, l.author].filter(Boolean).join(', ')}</div>
             </a>
           </li>
         ))}

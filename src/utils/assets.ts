@@ -32,7 +32,7 @@ const executeImageOperation = async (
   groupPostPairs.map(async ([group, post]) => {
     let destination = path.resolve(`public/gen-images/${group.slug}/`);
     await ensureDir(destination);
-    const imagesPath = `${PostPreferences.CompiledPostsDir}/${group.slug}/${post.slug}/${PostConstants.CompiledPostImagesFolder}`;
+    const imagesPath = `${PostPreferences.CompiledPostsGroupDir}/${group.slug}/${post.slug}/${PostConstants.CompiledPostImagesFolder}`;
     destination = `${destination}/${post.slug}`;
     if (fs.existsSync(destination)) {
       await fs.promises.rm(destination, { recursive: true, force: true });

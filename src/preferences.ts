@@ -35,5 +35,5 @@ const getCompiledPostsFolder = (): string => {
 
 export const PostPreferences = {
   PostGroupDir: getPostsFolder(),
-  CompiledPostsDir: getCompiledPostsFolder(),
+  CompiledPostsGroupDir: getCompiledPostsFolder(),
 } as const;

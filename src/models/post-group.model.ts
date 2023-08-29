@@ -1,5 +1,6 @@
 import { luft, LuftInfer } from '@luftschloss/validation';
 import { Post, PostMetadata } from '@/models/post.model';
+import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
 export const PostGroup = luft
   .object({
@@ -13,7 +14,9 @@ export const PostGroup = luft
     layout: luft.literal(['post', 'images']),
     // Information about the whereabouts of the post-group
     folderPath: luft.string(),
-
+    // Index of the post-group in the list of post-groups
+    index: luft.number(),
+    images: luft.array(ImageMetadata),
     // The date the post-group was modified. This does not necessarily have to be the latest date one of the posts was
     // modified. It only tracks the date the post-group was modified.
     modifiedAt: luft.number(),
@@ -21,12 +24,13 @@ export const PostGroup = luft
   .named('PostGroup');
 export type PostGroup = LuftInfer<typeof PostGroup>;
 
-export const CompiledPostGroup = PostGroup.omit(['posts'])
+export const CompiledPostGroup = PostGroup.omit(['posts', 'images'])
   .merge({
     posts: luft.record(luft.string(), PostMetadata),
+    images: CompiledImages,
   })
   .named('CompiledPostGroup');
 export type CompiledPostGroup = LuftInfer<typeof CompiledPostGroup>;
 
-export const PostGroupMetadata = PostGroup.omit(['posts']).named('PostGroupMetadata');
+export const PostGroupMetadata = PostGroup.omit(['posts', 'images']).named('PostGroupMetadata');
 export type PostGroupMetadata = LuftInfer<typeof PostGroupMetadata>;
