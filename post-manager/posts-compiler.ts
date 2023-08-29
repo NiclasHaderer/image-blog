@@ -50,6 +50,7 @@ const _compile = async (post: Post, postDir: string, imagesDir: string) => {
   // Write the images
   const imageResolutions = await Promise.all(
     post.images.map(async (image) => {
+      console.log(`Compiling image: ${image.name}`);
       const imageDir = path.join(imagesDir, image.name);
       await ensureDir(imageDir);
       return compileImage(image, imageDir);
@@ -114,12 +115,12 @@ const updateImagesIfNecessary = async (post: Post, existingPost: CompiledPost, i
 };
 
 const compile = async (post: Post, outputDir: string) => {
+  console.group(`Post: ${post.title}`);
   // Create the folders necessary for the post
   const postDir = path.join(outputDir, post.slug);
   const imagesDir = path.join(postDir, PostConstants.PostImagesFolder);
 
   await ensureDir([postDir, imagesDir]);
-  console.group(`Post: ${post.title}`);
   let existingPost = await getExistingPost(postDir);
   if (!existingPost) {
     console.log(`Compiling new post: ${post.title}`);
@@ -142,6 +143,7 @@ const compile = async (post: Post, outputDir: string) => {
   // Save the post-metadata
   const metadataPath = path.join(postDir, PostConstants.CompiledPostMetadataFilename);
   await saveFile(metadataPath, existingPost, CompiledPost);
+  console.groupEnd();
 };
 
 export const PostsCompiler = {

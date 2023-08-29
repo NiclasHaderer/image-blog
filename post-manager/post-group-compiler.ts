@@ -33,9 +33,9 @@ const _compile = async (postGroup: PostGroup, postGroupDir: string) => {
 };
 
 const compile = async (postGroup: PostGroup) => {
+  console.group(`PostGroup: ${postGroup.title}`);
   const postGroupDir = path.join(PostPreferences.CompiledPostsDir, postGroup.slug);
   const existingPostGroup = await getExistingPostGroup(postGroupDir);
-  console.group(`PostGroup: ${postGroup.title}`);
   if (!existingPostGroup) {
     console.log(`Compiling new post-group: ${postGroup.title}`);
     await _compile(postGroup, postGroupDir);
@@ -49,6 +49,7 @@ const compile = async (postGroup: PostGroup) => {
 
   // Compile all posts
   await Promise.all(postGroup.posts.map(async (post) => PostsCompiler.compile(post, postGroupDir)));
+  console.groupEnd();
 };
 
 export const PostGroupCompiler = {
