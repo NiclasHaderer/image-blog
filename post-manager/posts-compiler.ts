@@ -7,6 +7,7 @@ import { serialize } from 'next-mdx-remote/serialize';
 import remarkGfm from 'remark-gfm';
 import remarkEmoji from 'remark-emoji';
 import { ImageCompiler } from './image-compiler';
+import matter from 'gray-matter';
 
 const isProd = process.argv.includes('--prod');
 
@@ -22,8 +23,10 @@ const getExistingPost = async (metadataPath: string): Promise<CompiledPost | und
 
 const compilePost = async (post: Post, postDir: string) => {
   // Compile and save the post
-  const postContent = await fs.promises.readFile(post.postPath, 'utf-8');
-  const serializedPost = await serialize(postContent, {
+  const postContentStr = await fs.promises.readFile(post.postPath, 'utf-8');
+  const { content } = matter(postContentStr);
+
+  const serializedPost = await serialize(content, {
     mdxOptions: {
       // Depending on the environment (next prod/dev), we have to enable/disable, otherwise this will result in
       // jsx not defined errors

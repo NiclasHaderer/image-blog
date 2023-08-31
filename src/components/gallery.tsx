@@ -4,17 +4,17 @@ import { useInitialRender } from '@/hooks/initial-render';
 import { Gallery as PhotoswipeGallery, Item as PhotoswipeItem } from 'react-photoswipe-gallery';
 import type { LocalImageProps } from '@/utils/image-props';
 import { getActiveImage, getImageSizes, getImageSrcSet } from '@/hooks/image';
+import { useBreakpoint } from '@/hooks/breakpoints';
 
 interface ImageGalleryProps {
   images: LocalImageProps[];
-  layout?: 'columns' | 'rows' | 'masonry';
   mode?: 'normal' | 'square';
 }
 
-export const Gallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mode = 'normal' }) => {
+export const Gallery: FC<ImageGalleryProps> = ({ images, mode = 'normal' }) => {
   const initialRender = useInitialRender();
   return initialRender ? (
-    <InternalGallery images={images} layout={layout} mode={mode} />
+    <InternalGallery images={images} mode={mode} />
   ) : (
     <PhotoswipeGallery
       options={{
@@ -25,18 +25,34 @@ export const Gallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mod
         loop: true,
       }}
     >
-      <InternalGallery images={images} layout={layout} mode={mode} />
+      <InternalGallery images={images} mode={mode} />
     </PhotoswipeGallery>
   );
 };
 
-export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'masonry', mode = 'normal' }) => {
+const useLayout = () => {
+  const matcher = useBreakpoint();
+
+  let layout: 'masonry' | 'columns' | 'rows' = 'columns';
+  let spacing = 5;
+  let columns = 4;
+  if (matcher.matchDown('md')) {
+    layout = 'columns';
+    spacing = 8;
+    columns = 2;
+  }
+
+  return { layout, spacing, columns };
+};
+
+export const InternalGallery: FC<ImageGalleryProps> = ({ images, mode = 'normal' }) => {
   const initialRender = useInitialRender();
+  const layout = useLayout();
 
   return (
     <PhotoAlbum
       defaultContainerWidth={800}
-      spacing={3}
+      {...layout}
       photos={images.map((image) => ({
         srcSet: image.sizes(mode),
         src: image.getUrl('original', mode),
@@ -95,7 +111,6 @@ export const InternalGallery: FC<ImageGalleryProps> = ({ images, layout = 'mason
           </PhotoswipeItem>
         );
       }}
-      layout={layout}
     />
   );
 };

@@ -9,6 +9,7 @@
     "post-manager:watch": "nodemon -e '*' --exec 'npm run post-manager'",
     "start": "next start",
     "lint": "next lint",
+    "touch-posts": "find \"posts\" -type f \\( -name \"*.md\" -o -name \"*.mdx\" -o -name \"*.json\" \\) -exec touch {} \\;",
     "postinstall": "license-report --output=json > public/licenses.json"
   },
   "nodemonConfig": {

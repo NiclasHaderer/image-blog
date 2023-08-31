@@ -15,6 +15,7 @@ export default function Home({
   return (
     <>
       <Header
+        isPostHeader={false}
         capabilities={homepage.capabilities}
         title={homepage.title}
         groupUrls={groupUrls}

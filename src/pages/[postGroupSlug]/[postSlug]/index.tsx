@@ -24,6 +24,7 @@ export default function Post({
         <meta name="description" content={post.description} />
       </Head>
       <Header
+        isPostHeader={true}
         capabilities={homepage.capabilities}
         groupUrls={groupUrls}
         title={post.title}

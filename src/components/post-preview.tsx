@@ -1,9 +1,7 @@
 import { FC, Fragment, useEffect, useState } from 'react';
 import type { CompiledPost } from '@/models/post.model';
-import { isUrl } from '@/utils/string';
 import { getImageProps } from '@/utils/image-props';
 import { Image } from '@/components/image';
-import { CompiledImages } from '@/models/image.model';
 import Link from 'next/link';
 import { getPost } from '@/utils/post';
 
@@ -48,14 +46,11 @@ export const PostPreview: FC<
           {date && <time className="italic text-gray">{formattedDate}</time>}
           {description && <p className="mt-4 line-clamp-3 md:line-clamp-4">{description}</p>}
         </div>
-        <div className="flex w-full items-center md:w-1/3 md:min-w-1/3">
-          <PostPreviewImage
-            className="h-[10rem] w-full overflow-hidden rounded-2xl"
-            headerImage={headerImage}
-            images={images}
-            group={group}
-            slug={slug}
-            title={title}
+        <div className="flex w-full items-center pl-1 md:w-1/3 md:min-w-1/3">
+          <Image
+            className="h-[10rem] w-full overflow-hidden rounded-xl"
+            image={getImageProps<string>(images, `${group.slug}/${slug}`)(headerImage)}
+            alt={`Header image: ${title}`}
           />
         </div>
       </div>
@@ -77,35 +72,5 @@ export const PostList: FC<{ posts: Awaited<ReturnType<typeof getPost>>[] }> = ({
         </Fragment>
       ))}
     </>
-  );
-};
-
-const PostPreviewImage: FC<{
-  headerImage: string;
-  images: CompiledImages;
-  group: {
-    slug: string;
-    title: string;
-  };
-  slug: string;
-  title: string;
-  className?: string;
-}> = ({ headerImage, images, className, group, slug, title }) => {
-  if (isUrl(headerImage)) {
-    return (
-      <div
-        className={`h-full bg-cover ${className}`}
-        style={{
-          backgroundImage: `url(${headerImage})`,
-        }}
-      ></div>
-    );
-  }
-  return (
-    <Image
-      className={className}
-      image={getImageProps<string>(images, `${group.slug}/${slug}`)(headerImage)}
-      alt={`Header image: ${title}`}
-    />
   );
 };

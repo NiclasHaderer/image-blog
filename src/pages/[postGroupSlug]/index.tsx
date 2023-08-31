@@ -15,6 +15,7 @@ export default function PostGroupPage({
   return (
     <>
       <Header
+        isPostHeader={false}
         capabilities={homepage.capabilities}
         groupUrls={groupUrls}
         title={postGroup.title}

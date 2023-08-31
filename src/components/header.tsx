@@ -1,10 +1,11 @@
-import { FC, Fragment } from 'react';
-import Link from 'next/link';
-import { LocalImageProps } from '@/utils/image-props';
-import { useImageSizes, useImageSrcSet } from '@/hooks/image';
-import { Menu, Transition } from '@headlessui/react';
-import { IconMenuDeep } from '@tabler/icons-react';
+import { FC, Fragment } from "react";
+import Link from "next/link";
+import { LocalImageProps } from "@/utils/image-props";
+import { useImageSizes, useImageSrcSet } from "@/hooks/image";
+import { Menu, Transition } from "@headlessui/react";
+import { IconMenuDeep } from "@tabler/icons-react";
 
+// TODO if there are multiple background-images create a carousel
 export const Header: FC<{
   groupUrls: {
     label: string;
@@ -16,7 +17,17 @@ export const Header: FC<{
   backgroundImage: LocalImageProps;
   backgroundColor?: string | undefined;
   secondMenuBelow?: boolean;
-}> = ({ groupUrls, capabilities, backgroundImage, className, title, secondMenuBelow = false, backgroundColor }) => {
+  isPostHeader: boolean;
+}> = ({
+  groupUrls,
+  isPostHeader,
+  capabilities,
+  backgroundImage,
+  className,
+  title,
+  secondMenuBelow = false,
+  backgroundColor,
+}) => {
   groupUrls = [{ label: 'Home', href: '/' }, ...groupUrls];
 
   const images = useImageSizes(backgroundImage, 'normal');
@@ -25,22 +36,28 @@ export const Header: FC<{
     <>
       <nav
         className={`
-          h-[60vh]
-          md:h-[70vh]
-          lg:h-[80vh]
           ${className ?? ''}
-          relative w-full select-none text-white`}
+          ${isPostHeader ? 'h-[25vh] sm:h-[20vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
+          relative w-full select-none overflow-hidden text-white`}
         style={{ backgroundColor }}
       >
         {!backgroundColor && (
           <img
             className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
             {...backgroundImage.getSize('original', 'normal')}
+            style={
+              isPostHeader
+                ? {
+                    scale: '1.1',
+                    filter: 'brightness(0.7) blur(1px)',
+                  }
+                : {}
+            }
             srcSet={srcSet}
             alt="Navigation background"
           />
         )}
-        <h1 className="pb-1 pt-2 text-center font-amsterdam-four text-5xl leading-loose">{title}</h1>
+        <h1 className="mt-1 pb-1 pt-2 text-center font-amsterdam-four text-5xl leading-loose">{title}</h1>
         <div className="mt-2 hidden justify-center lg:flex">
           {groupUrls.map((group, i, arr) => (
             <Link href={group.href} key={i} className="group uppercase">

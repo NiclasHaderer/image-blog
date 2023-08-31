@@ -53,7 +53,7 @@ const collect = async (postGroup: PostGroupMetadata): Promise<Post[]> => {
       const imagesPath = path.join(post.postFolder, PostConstants.ImagesFolder);
       return {
         ...post,
-        images: await await ImageOptimizer.getImagesMetadata(imagesPath),
+        images: await ImageOptimizer.getImagesMetadata(imagesPath),
       };
     }),
   );
