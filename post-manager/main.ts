@@ -1,7 +1,7 @@
-import { PostGroupCollector } from "./post-group-collector";
-import { PostGroupCompiler } from "./post-group-compiler";
-import { HomePageCollector } from "./homepage-collector";
-import { HomePageCompiler } from "./homepage-compiler";
+import { PostGroupCollector } from './post-group-collector';
+import { PostGroupCompiler } from './post-group-compiler';
+import { HomePageCollector } from './homepage-collector';
+import { HomePageCompiler } from './homepage-compiler';
 
 // TODO hash images to avoid caching issues (perhaps not needed, as the new images should have a new name)
 const collectAndCompile = async () => {

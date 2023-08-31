@@ -9,10 +9,10 @@ const Navbar: FC<{
   navItems: { href: string; label: string }[];
 }> = ({ navItems }) => {
   return (
-    <nav className="p-1 shadow-sm drop-shadow-2xl min-w-full">
-      <div className="hidden lg:flex gap-x-6">
+    <nav className="min-w-full p-1 shadow-sm drop-shadow-2xl">
+      <div className="hidden gap-x-6 lg:flex">
         <NavbarItem href={'/'}>
-          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-elevate transition-colors" />
+          <Logo className="w-20 rounded-lg transition-colors hover:bg-elevate lg:h-20" />
         </NavbarItem>
 
         {navItems.map(({ href, label }) => (
@@ -22,13 +22,13 @@ const Navbar: FC<{
         ))}
       </div>
 
-      <div className="lg:hidden flex justify-between items-center">
+      <div className="flex items-center justify-between lg:hidden">
         <NavbarItem href={'/'}>
-          <Logo className="w-20 lg:h-20 rounded-lg hover:bg-elevate transition-colors" />
+          <Logo className="w-20 rounded-lg transition-colors hover:bg-elevate lg:h-20" />
         </NavbarItem>
         <Menu as="div" className="relative inline-block text-left">
           <Menu.Button className="flex items-center">
-            <IconMenuDeep className="w-14 h-14 cursor-pointer hover:bg-elevate rounded-lg p-1" />
+            <IconMenuDeep className="h-14 w-14 cursor-pointer rounded-lg p-1 hover:bg-elevate" />
           </Menu.Button>
 
           <Transition
@@ -40,7 +40,7 @@ const Navbar: FC<{
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-surface divide-y divide-surface-1 rounded-md shadow-lg focus:outline-none">
+            <Menu.Items className="bg-surface divide-surface-1 absolute right-0 mt-2 w-56 origin-top-right divide-y rounded-md shadow-lg focus:outline-none">
               <div className="px-1 py-1 ">
                 {navItems.map(({ href, label }) => (
                   <Menu.Item key={href}>
@@ -67,7 +67,7 @@ const NavbarItem = forwardRef<
   return (
     <Link href={href} className="flex items-center" ref={ref}>
       {childIsText ? (
-        <span className="rounded-lg px-2 py-1 text-lg text-gray hover:bg-elevate transition-colors whitespace-nowrap w-full">
+        <span className="w-full whitespace-nowrap rounded-lg px-2 py-1 text-lg text-gray transition-colors hover:bg-elevate">
           {children}
         </span>
       ) : (

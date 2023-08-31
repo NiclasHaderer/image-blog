@@ -22,7 +22,7 @@ export default function Home({
         secondMenuBelow={true}
       />
       <MainOutlet>
-        <h1 className="hidden md:block my-1 uppercase">Recent</h1>
+        <h1 className="my-1 hidden uppercase md:block">Recent</h1>
         <PostList posts={homepagePosts} />
       </MainOutlet>
     </>

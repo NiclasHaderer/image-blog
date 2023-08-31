@@ -1,13 +1,14 @@
 @font-face {
   font-family: 'Amsterdam Four';
-  src: url('../../public/fonts/Amsterdam Four_ttf.woff2') format('woff'),
-  url('../../public/fonts/Amsterdam Four_ttf.woff2') format('truetype');
+  src:
+    url('../../public/fonts/Amsterdam Four_ttf.woff2') format('woff'),
+    url('../../public/fonts/Amsterdam Four_ttf.woff2') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 
-@import "ubuntu-fontface/ubuntu-base";
+@import 'ubuntu-fontface/ubuntu-base';
 
 body {
-  font-family: "Ubuntu", sans-serif;
+  font-family: 'Ubuntu', sans-serif;
 }

@@ -22,8 +22,8 @@ export default function PostGroupPage({
         backgroundColor={postGroup.headerColor}
       />
       <MainOutlet>
-        <h1 className="font-bold text-3xl px-2 mb-2 mt-1">{postGroup.title}</h1>
-        <p className="pb-2 px-2">{postGroup.description}</p>
+        <h1 className="mb-2 mt-1 px-2 text-3xl font-bold">{postGroup.title}</h1>
+        <p className="px-2 pb-2">{postGroup.description}</p>
         <PostList posts={posts} />
       </MainOutlet>
     </>

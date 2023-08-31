@@ -1,7 +1,7 @@
-import fs from "node:fs";
-import path from "node:path";
-import { ensureDir } from "@/utils/file";
-import { getHomepage, getPost, getPostGroups } from "@/utils/post";
+import fs from 'node:fs';
+import path from 'node:path';
+import { ensureDir } from '@/utils/file';
+import { getHomepage, getPost, getPostGroups } from '@/utils/post';
 
 // TODO copy homepage images
 // TODO copy post-group images

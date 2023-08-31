@@ -41,16 +41,16 @@ export const PostPreview: FC<
 > = ({ title, date, description, images, href, group, slug, headerImage }) => {
   const formattedDate = useFormatDate(date);
   return (
-    <Link href={href} className="transition-all drop-shadow-sm hover:drop-shadow-md">
-      <div className="group items-stretch transition-colors bg-white rounded-2xl flex flex-col-reverse md:flex-row py-2 px-2 pr-2 mb-2">
+    <Link href={href} className="drop-shadow-sm transition-all hover:drop-shadow-md">
+      <div className="group mb-2 flex flex-col-reverse items-stretch rounded-2xl bg-white px-2 py-2 pr-2 transition-colors md:flex-row">
         <div className="flex-grow pr-2 pt-1 md:pt-0">
-          <h2 className="text-xl my-4 font-normal">{title}</h2>
-          {date && <time className="text-gray italic">{formattedDate}</time>}
+          <h2 className="my-4 text-xl font-normal">{title}</h2>
+          {date && <time className="italic text-gray">{formattedDate}</time>}
           {description && <p className="mt-4 line-clamp-3 md:line-clamp-4">{description}</p>}
         </div>
-        <div className="flex items-center w-full md:min-w-1/3 md:w-1/3">
+        <div className="flex w-full items-center md:w-1/3 md:min-w-1/3">
           <PostPreviewImage
-            className="rounded-2xl overflow-hidden w-full h-[10rem]"
+            className="h-[10rem] w-full overflow-hidden rounded-2xl"
             headerImage={headerImage}
             images={images}
             group={group}
@@ -94,7 +94,7 @@ const PostPreviewImage: FC<{
   if (isUrl(headerImage)) {
     return (
       <div
-        className={`bg-cover h-full ${className}`}
+        className={`h-full bg-cover ${className}`}
         style={{
           backgroundImage: `url(${headerImage})`,
         }}

@@ -65,14 +65,14 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
       >
         {!hide && (
           <div
-            className={`overflow-hidden z-10 transition-opacity ease-in absolute inset-0 opacity-100 ${fadeOutDuration} ${
+            className={`absolute inset-0 z-10 overflow-hidden opacity-100 transition-opacity ease-in ${fadeOutDuration} ${
               visible ? '!opacity-0' : ''
             }`}
           >
             <img
               src={sizes.xs}
               {...image.getSize('original', mode)}
-              className="w-full h-full blur-xl scale-125"
+              className="h-full w-full scale-125 blur-xl"
               alt={`Placeholder: ${alt}`}
             />
           </div>

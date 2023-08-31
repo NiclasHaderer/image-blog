@@ -21,7 +21,7 @@ export default function Licenses() {
               href={l.link.replace('git+', '').replace('ssh://', '')}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:bg-elevate block rounded-md transition-colors ease-in p-2"
+              className="block rounded-md p-2 transition-colors ease-in hover:bg-elevate"
               aria-label={`Open GitHub repo for ${l.name}`}
             >
               <div>
