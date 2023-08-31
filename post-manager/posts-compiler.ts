@@ -8,6 +8,8 @@ import remarkGfm from 'remark-gfm';
 import remarkEmoji from 'remark-emoji';
 import { ImageCompiler } from './image-compiler';
 import matter from 'gray-matter';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 const isProd = process.argv.includes('--prod');
 
@@ -32,6 +34,7 @@ const compilePost = async (post: Post, postDir: string) => {
       // jsx not defined errors
       development: !isProd,
       remarkPlugins: [remarkGfm, remarkEmoji],
+      rehypePlugins: [rehypeSlug, rehypeAutolinkHeadings],
     },
   });
   const postPath = path.join(postDir, PostConstants.CompiledPostFilename);
