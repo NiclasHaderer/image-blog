@@ -93,7 +93,7 @@ const SecondMenu: FC<{
 }> = ({ groupUrls }) => {
   return (
     <div className="hidden md:block">
-      <h1 className="text-3xl text-center pt-3 p-2">PHOTOGRAPHER FROM AMSTERDAM</h1>
+      <h1 className="text-3xl text-center pt-3 p-2 font-normal">PHOTOGRAPHER FROM AMSTERDAM</h1>
       <div className="flex justify-center">
         {groupUrls.map((group, i, arr) => (
           <Link href={group.href} key={i} className="uppercase group">

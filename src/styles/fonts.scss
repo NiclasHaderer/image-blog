@@ -6,6 +6,8 @@
   font-style: normal;
 }
 
+@import "ubuntu-fontface/ubuntu-base";
+
 body {
-  font-family: sans-serif;
+  font-family: "Ubuntu", sans-serif;
 }

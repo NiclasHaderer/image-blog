@@ -71,9 +71,9 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
           >
             <img
               src={sizes.xs}
+              {...image.getSize('original', mode)}
               className="w-full h-full blur-xl scale-125"
               alt={`Placeholder: ${alt}`}
-              loading="lazy"
             />
           </div>
         )}

@@ -32,6 +32,7 @@ const config: Config = {
     },
     colors: {
       white: '#fff',
+      black: 'var(--black)',
       transparent: 'transparent',
       elevate: 'var(--elevate)',
       'elevate-1': 'var(--elevate-1)',
