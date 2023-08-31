@@ -6,6 +6,7 @@ export const HomepageSettingsMetadata = luft
     title: luft.string(),
     headerImage: luft.string(),
     numberOfPosts: luft.number(),
+    capabilities: luft.array(luft.string()),
   })
   .named('HomepageSettingsMetadata');
 

@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { GetStaticPaths } from 'next';
-import { getPost, getPostContent, getPostGroups, getPostGroupUrls } from '@/utils/post';
+import { getHomepage, getPost, getPostContent, getPostGroups, getPostGroupUrls } from '@/utils/post';
 import { MDXRemote } from 'next-mdx-remote';
 import { Image } from '@/components/image';
 import { LightboxImage } from '@/components/lightbox-image';
@@ -9,7 +9,12 @@ import { getImageProps } from '@/utils/image-props';
 import { Header } from '@/components/header';
 import { MainOutlet } from '@/components/main-outlet';
 
-export default function Post({ post, content, groupUrls }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+export default function Post({
+  post,
+  content,
+  groupUrls,
+  homepage,
+}: Awaited<ReturnType<typeof getStaticProps>>['props']) {
   const imageFactory = getImageProps<string>(post.images, `${post.group.slug}/${post.slug}`);
 
   return (
@@ -19,6 +24,7 @@ export default function Post({ post, content, groupUrls }: Awaited<ReturnType<ty
         <meta name="description" content={post.description} />
       </Head>
       <Header
+        capabilities={homepage.capabilities}
         groupUrls={groupUrls}
         title={post.title}
         backgroundImage={imageFactory(post.headerImage)}
@@ -53,9 +59,11 @@ export const getStaticProps = async ({ params }: { params: { postSlug: string; p
   const post = await getPost(params.postGroupSlug, params.postSlug);
   const content = await getPostContent(params.postGroupSlug, params.postSlug);
   const groupUrls = await getPostGroupUrls();
+  const homepage = await getHomepage();
 
   return {
     props: {
+      homepage,
       post,
       content,
       groupUrls,

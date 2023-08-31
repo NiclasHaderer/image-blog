@@ -36,6 +36,7 @@ const config: Config = {
       transparent: 'transparent',
       elevate: 'var(--elevate)',
       'elevate-1': 'var(--elevate-1)',
+      'elevate-2': 'var(--elevate-2)',
       gray: 'var(--gray)',
       'light-gray': 'var(--light-gray)',
       primary: 'var(--primary)',

@@ -1,6 +1,6 @@
 import { getHomepage, getHomepagePosts, getPostGroupUrls } from '@/utils/post';
 import { copyImages, symlinkImages } from '@/utils/assets';
-import { PostPreview } from '@/components/post-preview';
+import { PostList } from '@/components/post-preview';
 import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
 import { MainOutlet } from '@/components/main-outlet';
@@ -14,12 +14,16 @@ export default function Home({
 
   return (
     <>
-      <Header title={homepage.title} groupUrls={groupUrls} backgroundImage={imageProps} secondMenuBelow={true} />
+      <Header
+        capabilities={homepage.capabilities}
+        title={homepage.title}
+        groupUrls={groupUrls}
+        backgroundImage={imageProps}
+        secondMenuBelow={true}
+      />
       <MainOutlet>
         <h1 className="hidden md:block my-1 uppercase">Recent</h1>
-        {homepagePosts.map((post, i) => (
-          <PostPreview key={i} href={`/${post.group.slug}/${post.slug}`} {...post} />
-        ))}
+        <PostList posts={homepagePosts} />
       </MainOutlet>
     </>
   );
