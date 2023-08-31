@@ -1,5 +1,4 @@
-import type { CompiledPost } from '@/models/post.model';
-import { ImageResolutions } from '@/models/image.model';
+import { CompiledImages, ImageResolutions } from '@/models/image.model';
 
 export interface LocalImageProps {
   imageName: string;
@@ -12,22 +11,19 @@ export interface LocalImageProps {
 }
 
 export const getImageProps = <T extends string | string[]>(
-  imageSizes: CompiledPost['images'],
-  postGroupSlug: string,
-  postSlug: string,
+  imageSizes: CompiledImages,
+  basePath: string,
 ): ((imageName: T) => T extends string[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
     if (!imageSizes[imageName]) {
-      console.log(`The post group ${postGroupSlug} and post ${postSlug} does not have image ${imageName}`);
+      console.log(`The post ${basePath} does not have image ${imageName}`);
       console.log(`Use one of the values of ${Object.keys(imageSizes).join(', ')}.`);
       throw new Error(`Image ${imageName} does not exist!`);
     }
     return {
       imageName,
       getUrl(size, mode) {
-        return `/gen-images/${postGroupSlug}/${postSlug}/${imageName}/${size}${
-          mode === 'normal' ? '' : '_square'
-        }.webp`;
+        return `/gen-images/${basePath}/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
       },
       getSize(size, mode) {
         return imageSizes[imageName].resolutions[mode][size];

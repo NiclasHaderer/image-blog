@@ -6,6 +6,7 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import fs from 'node:fs';
 import { CompiledPostGroup } from '@/models/post-group.model';
 import path from 'node:path';
+import { CompiledHomepageSettings } from '@/models/homepage-settings.model';
 
 export const getPostGroups = async (): Promise<CompiledPostGroup[]> => {
   const postGroups = await getItemsIn(
@@ -111,4 +112,19 @@ export const getAllPosts = async (
   return awaitedAll
     .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
     .filter((post) => post.featureOnHomepage || !excludeNotFeatured);
+};
+
+export const getHomepage = async (): Promise<CompiledHomepageSettings> => {
+  const homepage = await parseFile(
+    path.join(PostPreferences.CompiledPostsRootDir, PostConstants.CompiledHomepageSettingsFilename),
+    CompiledHomepageSettings,
+  );
+  return JSON.parse(JSON.stringify(homepage)) as CompiledHomepageSettings;
+};
+
+export const getHomepagePosts = async (): Promise<Awaited<ReturnType<typeof getPost>>[]> => {
+  const homepage = await getHomepage();
+  const posts = await getAllPosts(true);
+
+  return posts.slice(0, homepage.numberOfPosts);
 };

@@ -3,7 +3,7 @@ import { PostConstants } from './post-constants';
 import path from 'node:path';
 import fs from 'node:fs';
 import { parseFile } from '@/utils/file';
-import { HomepageSettings, HomepageSettingsMetadata } from '@/models/homepage-settings';
+import { HomepageSettings, HomepageSettingsMetadata } from '@/models/homepage-settings.model';
 import { ImageOptimizer } from './image-optimizer';
 
 const collect = async (): Promise<HomepageSettings> => {

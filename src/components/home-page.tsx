@@ -1,15 +1,19 @@
 import { FC } from 'react';
 import Link from 'next/link';
+import { LocalImageProps } from '@/utils/image-props';
+import { useImageSizes, useImageSrcSet } from '@/hooks/image';
 
 export const HomePage: FC<{
   groupUrls: {
     label: string;
     href: string;
   }[];
-  backgroundImage: string;
-}> = ({ groupUrls }) => {
+  backgroundImage: LocalImageProps;
+}> = ({ groupUrls, backgroundImage }) => {
   groupUrls = [{ label: 'Home', href: '/' }, ...groupUrls];
-  const backgroundImage = 'https://wallpaperaccess.com/download/4k-nature-31189';
+
+  const images = useImageSizes(backgroundImage, 'normal');
+  const srcSet = useImageSrcSet(images);
   return (
     <>
       <nav
@@ -17,11 +21,15 @@ export const HomePage: FC<{
         h-[20vh]
         sm:h-[40vh]
         md:h-[60vh]
-        lg:h-[80vh] relative w-full bg-cover bg-center bg-no-repeat text-white select-none"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-        }}
+        lg:h-[80vh]
+        relative w-full text-white select-none"
       >
+        <img
+          className="absolute -z-10 inset-0 w-full h-full object-cover object-center"
+          {...backgroundImage.getSize('original', 'normal')}
+          srcSet={srcSet}
+          alt="Navigation background"
+        />
         <h1 className="font-amsterdam-four pt-2 pb-1 leading-loose text-4xl text-center">Sarah Lenz</h1>
         <div className="flex justify-center">
           {groupUrls.map((group, i, arr) => (

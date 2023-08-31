@@ -9,6 +9,7 @@ const compileImage = async (image: ImageMetadata, imagesDir: string): Promise<Co
   await ensureDir(imagesPath);
   return {
     ...image,
+    folder: imagesPath,
     resolutions: await ImageOptimizer.optimize(image.path, imagesPath),
   };
 };
@@ -50,7 +51,7 @@ const compile = async (
     Object.keys(existingImages).map(async (existingImageName) => {
       if (!newImages[existingImageName]) {
         console.log(`Deleting unused image: ${existingImageName}`);
-        await fs.promises.rm(existingImages![existingImageName].path);
+        await fs.promises.rm(existingImages![existingImageName].folder, { recursive: true, force: true });
       }
     }),
   );

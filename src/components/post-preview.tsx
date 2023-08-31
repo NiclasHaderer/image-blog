@@ -60,7 +60,7 @@ const HeaderImage: FC<{
     return (
       <Image
         className={className}
-        image={getImageProps<string>(images, group.slug, slug)(headerImage)}
+        image={getImageProps<string>(images, `${group.slug}/${slug}`)(headerImage)}
         alt={`Header image: ${title}`}
       />
     );

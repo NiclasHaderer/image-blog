@@ -40,7 +40,10 @@ export type ImageMetadata = LuftInfer<typeof ImageMetadata>;
 
 export const CompiledImage = ImageMetadata.merge({
   resolutions: ImageResolutionsWithAspectRations,
-}).named('CompiledImage');
+  folder: luft.string(),
+})
+  .omit(['path'])
+  .named('CompiledImage');
 export type CompiledImage = LuftInfer<typeof CompiledImage>;
 
 export const CompiledImages = luft.record(luft.string().named('imageName'), CompiledImage).named('CompiledImages');

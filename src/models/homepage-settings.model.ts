@@ -5,6 +5,7 @@ export const HomepageSettingsMetadata = luft
   .object({
     title: luft.string(),
     headerImage: luft.string(),
+    numberOfPosts: luft.number(),
   })
   .named('HomepageSettingsMetadata');
 

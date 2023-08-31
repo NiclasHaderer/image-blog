@@ -19,6 +19,7 @@ export const Post = luft
     tags: luft.array(luft.string()).optional(),
 
     headerImage: luft.string().optional(),
+    headerColor: luft.regex(/^#(?:[0-9a-fA-F]{3,4}){1,2}$/).optional(),
     images: luft.array(ImageMetadata),
     // Information about the whereabouts of the post
     postPath: luft.string(),

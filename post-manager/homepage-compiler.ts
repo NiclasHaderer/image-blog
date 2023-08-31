@@ -1,4 +1,4 @@
-import { CompiledHomepageSettings, HomepageSettings } from '@/models/homepage-settings';
+import { CompiledHomepageSettings, HomepageSettings } from '@/models/homepage-settings.model';
 import { PostPreferences } from '@/preferences';
 import fs from 'node:fs';
 import { parseFile, saveFile } from '@/utils/file';

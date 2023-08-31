@@ -23,7 +23,7 @@ export default function Post({ post, content, groupUrls }: Awaited<ReturnType<ty
             <MDXRemote
               {...content}
               components={{ Image, LightboxImage, Gallery }}
-              scope={{ getImageProps: getImageProps(post.images, post.group.slug, post.slug) }}
+              scope={{ getImageProps: getImageProps(post.images, `${post.group.slug}/${post.slug}`) }}
             />
           </article>
         </div>
