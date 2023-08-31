@@ -24,16 +24,16 @@
 
   // Color
   // https://colorhunt.co/palette/f38181fce38aeaffd095e1d3
-  --elevate-2: #f1f1f1;
-  --elevate-1: #f5f5f5;
-  --elevate: #f9f9f9;
-  --light-gray: #e1e1e1;
-  --gray: #a1a1a1;
+  --elevate-2: rgb(220, 220, 220);
+  --elevate-1: rgb(230, 230, 230);
+  --elevate: rgb(240, 240, 240);
+  --light-gray: rgb(160, 160, 160);
+  --gray: rgb(120, 120, 120);
 
-  --primary: #95E1D3;
-  --secondary: #EAFFD0;
-  --warning: #FCE38A;
-  --error: #F38181;
+  --primary: rgb(149, 225, 211);
+  --secondary: rgb(234, 255, 208);
+  --warning: rgb(252, 227, 138);
+  --error: rgb(243, 129, 129);
 }
 
 

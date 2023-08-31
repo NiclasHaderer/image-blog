@@ -1,17 +1,26 @@
 import { GetStaticPaths } from 'next';
 import Link from 'next/link';
 import { getPostGroup, getPostGroups, getPostGroupUrls, getPostsOfGroup } from '@/utils/post';
-import { MainLayout } from '@/components/main-layout';
 import { PostPreview } from '@/components/post-preview';
+import { Header } from '@/components/header';
+import { getImageProps } from '@/utils/image-props';
+import { MainOutlet } from '@/components/main-outlet';
 
 export default function PostGroupPage({
   postGroup,
   groupUrls,
   posts,
 }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+  const imageFactory = getImageProps<string>(postGroup.images, postGroup.slug);
   return (
-    <MainLayout navItems={groupUrls}>
-      <div>
+    <>
+      <Header
+        groupUrls={groupUrls}
+        title={postGroup.title}
+        backgroundImage={imageFactory(postGroup.headerImage)}
+        backgroundColor={postGroup.headerColor}
+      />
+      <MainOutlet>
         <h1 className="font-bold text-3xl px-2 mb-2 mt-1">{postGroup.title}</h1>
         <p className="pb-2 px-2">{postGroup.description}</p>
 
@@ -20,8 +29,8 @@ export default function PostGroupPage({
             <PostPreview {...post} />
           </Link>
         ))}
-      </div>
-    </MainLayout>
+      </MainOutlet>
+    </>
   );
 }
 

@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { getHomepage, getHomepagePosts, getPostGroupUrls } from '@/utils/post';
 import { copyImages, symlinkImages } from '@/utils/assets';
 import { PostPreview } from '@/components/post-preview';
-import { HomePage, Test } from '@/components/home-page';
-import { SIZE } from '@/components/main-layout';
+import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
+import { MainOutlet } from '@/components/main-outlet';
 
 export default function Home({
   groupUrls,
@@ -15,9 +15,8 @@ export default function Home({
 
   return (
     <>
-      <HomePage groupUrls={groupUrls} backgroundImage={imageProps} />
-      <Test groupUrls={groupUrls} />
-      <main className={SIZE}>
+      <Header title={homepage.title} groupUrls={groupUrls} backgroundImage={imageProps} secondMenuBelow={true} />
+      <MainOutlet>
         <h1 className="hidden md:block text-2xl px-2 mb-2 mt-1 uppercase">Recent</h1>
         {homepagePosts.map((post, i) => (
           <Link
@@ -28,7 +27,7 @@ export default function Home({
             <PostPreview {...post} />
           </Link>
         ))}
-      </main>
+      </MainOutlet>
     </>
   );
 }

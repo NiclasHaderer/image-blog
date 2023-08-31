@@ -1,10 +1,11 @@
 import { FC, forwardRef, Fragment, ReactNode } from 'react';
-import Link from 'next/link';
-import { IconMenuDeep } from '@tabler/icons-react';
-import { Menu, Transition } from '@headlessui/react';
 import { Logo } from '@/components/logo';
+import { Menu, Transition } from '@headlessui/react';
+import { IconMenuDeep } from '@tabler/icons-react';
+import Link from 'next/link';
+import { CONTENT_WIDTH } from '@/components/main-outlet';
 
-export const Navbar: FC<{
+const Navbar: FC<{
   navItems: { href: string; label: string }[];
 }> = ({ navItems }) => {
   return (
@@ -76,3 +77,24 @@ const NavbarItem = forwardRef<
   );
 });
 NavbarItem.displayName = 'NavbarItem';
+
+/*
+1. Wedding photography
+2. Animal photography
+3. Blog
+4. About
+5. Contact
+*/
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const __mainLayout: FC<{
+  children: ReactNode;
+  navItems: { href: string; label: string }[];
+}> = ({ children, navItems }) => {
+  return (
+    <div className="flex h-full flex-col items-center">
+      <Navbar navItems={navItems} />
+      <main className={`flex-grow overflow-y-auto ${CONTENT_WIDTH}`}>{children}</main>
+    </div>
+  );
+};

@@ -6,29 +6,35 @@ import { Image } from '@/components/image';
 import { LightboxImage } from '@/components/lightbox-image';
 import { Gallery } from '@/components/gallery';
 import { getImageProps } from '@/utils/image-props';
-import { MainLayout } from '@/components/main-layout';
+import { Header } from '@/components/header';
+import { MainOutlet } from '@/components/main-outlet';
 
 export default function Post({ post, content, groupUrls }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
+  const imageFactory = getImageProps<string>(post.images, `${post.group.slug}/${post.slug}`);
+
   return (
-    <MainLayout navItems={groupUrls}>
-      <main className="flex justify-center">
-        <Head>
-          <title>{post.title}</title>
-          <meta name="description" content={post.description} />
-        </Head>
+    <>
+      <Head>
+        <title>{post.title}</title>
+        <meta name="description" content={post.description} />
+      </Head>
+      <Header
+        groupUrls={groupUrls}
+        title={post.title}
+        backgroundImage={imageFactory(post.headerImage)}
+        backgroundColor={post.headerColor}
+      />
+
+      <MainOutlet>
         <div className="prose max-w-none">
           <h1>{post.title}</h1>
 
           <article>
-            <MDXRemote
-              {...content}
-              components={{ Image, LightboxImage, Gallery }}
-              scope={{ getImageProps: getImageProps(post.images, `${post.group.slug}/${post.slug}`) }}
-            />
+            <MDXRemote {...content} components={{ Image, LightboxImage, Gallery }} scope={{ getImage: imageFactory }} />
           </article>
         </div>
-      </main>
-    </MainLayout>
+      </MainOutlet>
+    </>
   );
 }
 

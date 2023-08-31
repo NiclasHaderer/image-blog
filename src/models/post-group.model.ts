@@ -9,7 +9,8 @@ export const PostGroup = luft
     // title of the post (will be transformed to a slug)
     title: luft.string(),
     description: luft.string().optional(),
-    headerImage: luft.string().optional(),
+    headerImage: luft.string(),
+    headerColor: luft.regex(/^#(?:[0-9a-fA-F]{3,4}){1,2}$/).optional(),
     posts: luft.array(Post),
     layout: luft.literal(['post', 'images']),
     // Information about the whereabouts of the post-group

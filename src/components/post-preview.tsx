@@ -36,7 +36,7 @@ export const PostPreview: FC<
 };
 
 const HeaderImage: FC<{
-  headerImage?: string;
+  headerImage: string;
   images: CompiledImages;
   group: {
     slug: string;
@@ -56,14 +56,11 @@ const HeaderImage: FC<{
       ></div>
     );
   }
-  if (headerImage) {
-    return (
-      <Image
-        className={className}
-        image={getImageProps<string>(images, `${group.slug}/${slug}`)(headerImage)}
-        alt={`Header image: ${title}`}
-      />
-    );
-  }
-  return <div> hello world</div>;
+  return (
+    <Image
+      className={className}
+      image={getImageProps<string>(images, `${group.slug}/${slug}`)(headerImage)}
+      alt={`Header image: ${title}`}
+    />
+  );
 };
