@@ -15,6 +15,31 @@ const config: Config = {
       }),
       fontFamily: {
         'amsterdam-four': 'Amsterdam Four',
+        ubuntu:
+          "'Ubuntu', sans-serif, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            color: 'var(--black)',
+            fontWeight: 'light',
+            'strong, a, th, h1, h2, h3, h4, h5, h6': {
+              fontWeight: 'normal',
+            },
+            'blockquote, code': {
+              fontWeight: 'normal',
+            },
+            'blockquote, strong, a, h1, h2, h3, h4, h5, h6': {
+              color: 'var(--black)',
+            },
+            blockquote: {
+              textAlign: 'center',
+              borderTop: '1px solid var(--tw-prose-quote-borders)',
+              borderBottom: '1px solid var(--tw-prose-quote-borders)',
+              borderLeft: 'none',
+            },
+          },
+        },
       },
     },
     padding: {
