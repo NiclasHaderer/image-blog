@@ -1,9 +1,9 @@
 import { getHomepage, getHomepagePosts, getPostGroupUrls } from '@/utils/post';
 import { copyImages, symlinkImages } from '@/utils/assets';
-import { PostList } from '@/components/post-preview';
 import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
 import { MainOutlet } from '@/components/main-outlet';
+import { ElegantList } from '@/components/elegant-preview';
 
 export default function Home({
   groupUrls,
@@ -24,7 +24,7 @@ export default function Home({
       />
       <MainOutlet>
         <h1 className="my-1 hidden uppercase md:block">Recent</h1>
-        <PostList posts={homepagePosts} />
+        <ElegantList posts={homepagePosts} />
       </MainOutlet>
     </>
   );

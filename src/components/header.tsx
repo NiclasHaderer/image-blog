@@ -112,7 +112,7 @@ const SecondMenu: FC<{
         {capabilities.map((group, i, arr) => (
           <div key={i}>
             <span className="p-2 uppercase">{group}</span>
-            {i < arr.length - 1 && <span>|</span>}
+            {i < arr.length - 1 && <span className="select-none">|</span>}
           </div>
         ))}
       </div>
