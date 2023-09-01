@@ -1,6 +1,5 @@
 import { luft, LuftInfer } from '@luftschloss/validation';
 import { Post, PostMetadata } from '@/models/post.model';
-import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
 export const PostGroup = luft
   .object({

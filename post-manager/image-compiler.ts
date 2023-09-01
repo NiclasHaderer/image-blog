@@ -1,10 +1,10 @@
 import { ImageOptimizer } from './image-optimizer';
-import { CompiledImage, CompiledImages, ImageMetadata } from '@/models/image.model';
+import { CompiledImageModel, CompiledImagesModel, ImageMetadataModel } from '@/models/image.model';
 import fs from 'node:fs';
 import { ensureDir } from '@/utils/file';
 import path from 'node:path';
 
-const compileImage = async (image: ImageMetadata, imagesDir: string): Promise<CompiledImage> => {
+const compileImage = async (image: ImageMetadataModel, imagesDir: string): Promise<CompiledImageModel> => {
   const imagesPath = path.join(imagesDir, image.name);
   await ensureDir(imagesPath);
   return {
@@ -15,14 +15,14 @@ const compileImage = async (image: ImageMetadata, imagesDir: string): Promise<Co
 };
 
 const compile = async (
-  images: ImageMetadata[],
-  existingImages: CompiledImages | undefined,
+  images: ImageMetadataModel[],
+  existingImages: CompiledImagesModel | undefined,
   imagesDir: string,
-): Promise<CompiledImages> => {
+): Promise<CompiledImagesModel> => {
   existingImages = existingImages ?? {};
 
   await ensureDir(imagesDir);
-  const newImages: CompiledImages = {};
+  const newImages: CompiledImagesModel = {};
 
   // Compile new images
   await Promise.all(

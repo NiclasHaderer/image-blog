@@ -1,11 +1,10 @@
 import { luft, LuftInfer } from '@luftschloss/validation';
 import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
-export const Post = luft
+export const PostFileMetadata = luft
   .object({
     // The title of the post -> will be used as the slug
     title: luft.string(),
-    slug: luft.string(),
     // The date of the post
     date: luft.string().beforeHook((value) => {
       return {
@@ -13,33 +12,33 @@ export const Post = luft
         action: 'continue',
       };
     }),
-    featureOnHomepage: luft.bool(),
+    featureOnCollection: luft.bool(),
     description: luft.string(),
     layout: luft.literal(['post']),
-    tags: luft.array(luft.string()).optional(),
-
-    headerImage: luft.string(),
+    headerImage: luft.union([luft.string(), luft.array(luft.string())]),
     headerColor: luft.regex(/^#(?:[0-9a-fA-F]{3,4}){1,2}$/).optional(),
-    images: luft.array(ImageMetadata),
-    // Information about the whereabouts of the post
-    postPath: luft.string(),
-    postFolder: luft.string(),
-
-    // Used to determine when the post-file itself was modified (images are not included)
-    modifiedAt: luft.number(),
   })
-  .named('Post');
-export type Post = LuftInfer<typeof Post>;
+  .named('PostFileMetadata');
+export type PostFileMetadataModel = LuftInfer<typeof PostFileMetadata>;
 
-export const CompiledPost = Post.omit(['images'])
+// TODO fix this
+export const PostMetadata: any = PostFileMetadata.merge({
+  // Information about the whereabouts of the post
+  postPath: luft.string(),
+  postFolder: luft.string(),
+  images: luft.array(ImageMetadata),
+  children: luft.lazy(() => luft.array(PostMetadata)),
+  // Used to determine when the post-file itself was modified (images are not included)
+  modifiedAt: luft.number(),
+}).named('PostMetadata');
+export type PostMetadata = LuftInfer<typeof PostMetadata>;
+
+export const CompiledPost = PostMetadata.omit(['images'])
   .merge({
     images: CompiledImages,
   })
   .named('CompiledPost');
 export type CompiledPost = LuftInfer<typeof CompiledPost>;
-
-export const PostMetadata = Post.omit(['images']).named('PostMetadata');
-export type PostMetadata = LuftInfer<typeof PostMetadata>;
 
 export const PostContent = luft
   .object({

@@ -6,7 +6,7 @@ export const ImageResolution = luft
     height: luft.int(),
   })
   .named('ImageResolution');
-export type ImageResolution = LuftInfer<typeof ImageResolution>;
+export type ImageResolutionModel = LuftInfer<typeof ImageResolution>;
 
 export const ImageResolutions = luft
   .object({
@@ -17,7 +17,7 @@ export const ImageResolutions = luft
     original: ImageResolution,
   })
   .named('ImageResolutions');
-export type ImageResolutions = LuftInfer<typeof ImageResolutions>;
+export type ImageResolutionsModel = LuftInfer<typeof ImageResolutions>;
 
 export const ImageResolutionsWithAspectRations = luft
   .object({
@@ -36,7 +36,7 @@ export const ImageMetadata = luft
     modifiedAt: luft.number(),
   })
   .named('ImageMetadata');
-export type ImageMetadata = LuftInfer<typeof ImageMetadata>;
+export type ImageMetadataModel = LuftInfer<typeof ImageMetadata>;
 
 export const CompiledImage = ImageMetadata.merge({
   resolutions: ImageResolutionsWithAspectRations,
@@ -44,7 +44,7 @@ export const CompiledImage = ImageMetadata.merge({
 })
   .omit(['path'])
   .named('CompiledImage');
-export type CompiledImage = LuftInfer<typeof CompiledImage>;
+export type CompiledImageModel = LuftInfer<typeof CompiledImage>;
 
 export const CompiledImages = luft.record(luft.string().named('imageName'), CompiledImage).named('CompiledImages');
-export type CompiledImages = LuftInfer<typeof CompiledImages>;
+export type CompiledImagesModel = LuftInfer<typeof CompiledImages>;

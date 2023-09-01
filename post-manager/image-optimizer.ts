@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { ImageMetadata, ImageResolutionsWithAspectRations } from '@/models/image.model';
+import { ImageMetadataModel, ImageResolutionsWithAspectRations } from '@/models/image.model';
 import { getItemsIn } from '@/utils/file';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -107,7 +107,7 @@ const getImageMetadata = async (
   return { width: metadata.width!, height: metadata.height! };
 };
 
-const getImagesMetadata = async (folderPath: string): Promise<Awaited<ImageMetadata>[]> => {
+const getImagesMetadata = async (folderPath: string): Promise<Awaited<ImageMetadataModel>[]> => {
   if (!fs.existsSync(folderPath)) return [];
   let images = await getItemsIn(folderPath);
   images = images.filter((image) => {

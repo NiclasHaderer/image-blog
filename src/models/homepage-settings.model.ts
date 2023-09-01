@@ -1,5 +1,4 @@
 import { luft, LuftInfer } from '@luftschloss/validation';
-import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
 export const HomepageSettingsMetadata = luft
   .object({
