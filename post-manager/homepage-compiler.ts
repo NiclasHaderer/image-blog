@@ -8,11 +8,11 @@ import { ImageCompiler } from './image-compiler';
 
 export const getExistingHomepageSettings = async (path: string): Promise<CompiledHomepageSettings | undefined> => {
   if (!fs.existsSync(path)) return undefined;
-  const compiled = await parseFile(path, CompiledHomepageSettings, { safety: 'safe' });
-  if (compiled.success) {
-    return compiled.data;
+  try {
+    return await parseFile(path, CompiledHomepageSettings);
+  } catch {
+    return undefined;
   }
-  return undefined;
 };
 
 const compile = async (homepage: HomepageSettings): Promise<void> => {

@@ -16,11 +16,11 @@ const isProd = process.argv.includes('--prod');
 const getExistingPost = async (metadataPath: string): Promise<CompiledPost | undefined> => {
   // Check if the post already exists by reading its metadata
   if (!fs.existsSync(metadataPath)) return undefined;
-  const metadata = await parseFile(metadataPath, CompiledPost, { safety: 'safe' });
-  if (metadata.success) {
-    return metadata.data;
+  try {
+    return await parseFile(metadataPath, CompiledPost);
+  } catch {
+    return undefined;
   }
-  return undefined;
 };
 
 const compilePost = async (post: Post, postDir: string) => {

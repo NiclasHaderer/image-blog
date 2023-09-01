@@ -5,6 +5,9 @@ const config: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
+      boxShadow: {
+        'top-2xl': '0 -25px 50px -12px rgb(0 0 0 / 0.25)',
+      },
       minWidth: (utils) => ({
         ...utils.theme('width'),
         none: 'none',
@@ -56,8 +59,9 @@ const config: Config = {
       auto: 'auto',
     },
     colors: {
-      white: '#fff',
+      white: 'var(--white)',
       black: 'var(--black)',
+      backdrop: 'var(--backdrop)',
       transparent: 'transparent',
       elevate: 'var(--elevate)',
       'elevate-1': 'var(--elevate-1)',

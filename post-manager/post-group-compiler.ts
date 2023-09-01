@@ -10,11 +10,11 @@ import { ImageCompiler } from './image-compiler';
 const getExistingPostGroup = async (outputDir: string) => {
   const metadataPath = path.join(outputDir, PostConstants.CompiledPostGroupMetadataFilename);
   if (!fs.existsSync(metadataPath)) return undefined;
-  const metadata = await parseFile(metadataPath, CompiledPostGroup, { safety: 'safe' });
-  if (metadata.success) {
-    return metadata.data;
+  try {
+    return await parseFile(metadataPath, CompiledPostGroup);
+  } catch {
+    return undefined;
   }
-  return undefined;
 };
 
 const _compile = async (postGroup: PostGroup, postGroupDir: string) => {

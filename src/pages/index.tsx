@@ -20,7 +20,7 @@ export default function Home({
         title={homepage.title}
         groupUrls={groupUrls}
         backgroundImage={imageProps}
-        secondMenuBelow={true}
+        capabilitiesBelow={true}
       />
       <MainOutlet>
         <h1 className="my-1 hidden uppercase md:block">Recent</h1>

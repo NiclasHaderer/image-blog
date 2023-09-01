@@ -6,9 +6,6 @@
 }
 
 :root {
-  // Shadow
-  --shadow: 0 5px 25px 10px rgba(0, 0, 0, 0.2);
-
   // Padding/Margin
   --p: 0.5rem;
   --p-m: 1rem;
@@ -27,9 +24,11 @@
   --elevate-2: rgb(220, 220, 220);
   --elevate-1: rgb(240, 240, 240);
   --elevate: rgb(247, 247, 247);
+  --backdrop: rgba(255, 255, 255, 0.5);
   --light-gray: rgb(155, 155, 155);
   --gray: rgb(120, 120, 120);
   --black: rgb(69, 68, 55);
+  --white: rgb(255, 255, 255);
 
   --primary: rgb(149, 225, 211);
   --secondary: rgb(234, 255, 208);

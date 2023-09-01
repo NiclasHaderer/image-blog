@@ -33,6 +33,11 @@ const collectMetadata = async (postGroup: PostGroupMetadata): Promise<PostMetada
 
   const posts: PostMetadata[] = [];
   for (const postFolder of postFolders) {
+    // Skip folders that are named images, as they are reserved for images
+    if (path.basename(postFolder) === PostConstants.ImagesFolder) {
+      continue;
+    }
+
     const postFile = path.join(postFolder, PostConstants.PostFilename);
     if (!fs.existsSync(postFile)) {
       console.error(`The post folder ${postGroup.folderPath} does not contain a ${PostConstants.PostFilename} file!`);
