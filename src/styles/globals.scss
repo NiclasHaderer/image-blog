@@ -48,6 +48,18 @@ a {
 
 
 .icon.icon-link {
-  padding: 1rem;
-  background: var(--black);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  padding-right: .1rem;
+
+  &:before {
+    // Set svg icon
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="20" height="20" viewBox="0 0 24 20" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 15l6 -6"></path><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path></svg>');
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  &:hover .icon-link {
+    opacity: 1;
+  }
 }
