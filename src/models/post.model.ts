@@ -8,7 +8,7 @@ export const PostFileMetadata = luft
     // The date of the post
     date: luft.string().beforeHook((value) => {
       return {
-        data: (value as any).toString(),
+        data: (value as any)?.toString(),
         action: 'continue',
       };
     }),

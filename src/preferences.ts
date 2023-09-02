@@ -28,7 +28,7 @@ const getCompiledPostsFolder = (): string => {
 
   // Make sure that the folder exists
   if (!fs.existsSync(folder)) {
-    throw new Error(`The compiled post folder ${folder} does not exist!`);
+    fs.mkdirSync(folder, { recursive: true });
   }
   return folder;
 };

@@ -1,7 +1,7 @@
 import { CompiledPost, PostContent, PostMetadata } from '@/models/post.model';
 import { PostConstants } from './post-constants';
 import path from 'node:path';
-import { parseFile, saveFile } from './utils/file';
+import { ensureDir, parseFile, saveFile } from './utils/file';
 import fs from 'node:fs';
 import { serialize } from 'next-mdx-remote/serialize';
 import remarkGfm from 'remark-gfm';
@@ -60,6 +60,7 @@ const compile = async (post: PostMetadata, outputPostDir: string, outputImagesDi
   }
 
   // Save the post-metadata
+  await ensureDir(outputPostDir);
   await saveFile(path.join(outputPostDir, PostConstants.CompiledPostMetadataFilename), newPost, CompiledPost);
 
   // Compile the children

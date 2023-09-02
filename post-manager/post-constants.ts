@@ -1,5 +1,5 @@
 export const PostConstants = {
   PostFilename: 'post.mdx',
-  ImagesFolder: 'images',
+  ImagesFolder: '_images',
   CompiledPostMetadataFilename: 'post-metadata.json',
 } as const;
