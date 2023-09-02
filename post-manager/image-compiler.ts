@@ -1,7 +1,7 @@
 import { ImageOptimizer } from './image-optimizer';
 import { CompiledImage, CompiledImages, ImageMetadata } from '@/models/image.model';
 import fs from 'node:fs';
-import { ensureDir } from '@/utils/file';
+import { ensureDir } from './utils/file';
 import path from 'node:path';
 
 const compileImage = async (image: ImageMetadata, imagesDir: string): Promise<CompiledImage> => {

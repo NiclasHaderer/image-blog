@@ -14,7 +14,9 @@ export const PostFileMetadata = luft
     }),
     description: luft.string(),
     // The header image of the post (if multiple images are provided, a carousel will be created)
-    headerImage: luft.union([luft.string(), luft.array(luft.string())]),
+    // TODO make this a union of string and array of strings
+    // headerImage: luft.union([luft.string(), luft.array(luft.string())]),
+    headerImage: luft.string(),
     // The color of the header image (will replace the header image if set)
     headerColor: luft.regex(/^#(?:[0-9a-fA-F]{3,4}){1,2}$/).optional(),
 
@@ -41,7 +43,7 @@ type _PostMetadataModel = {
   postPath: LuftString;
   postDirectory: LuftString;
   images: LuftArray<typeof ImageMetadata>;
-  children: LuftLazy<(InferObjectType<_PostMetadataModel> & PostFileMetadata)[]>;
+  childPosts: LuftLazy<(InferObjectType<_PostMetadataModel> & PostFileMetadata)[]>;
   modifiedAt: LuftNumber;
 };
 
@@ -55,7 +57,7 @@ const _PostMetadata: _PostMetadataModel = {
   // The images that are used in the post
   images: luft.array(ImageMetadata),
   // The children of the post
-  children: luft.lazy(() => luft.array(PostMetadata)),
+  childPosts: luft.lazy(() => luft.array(PostMetadata)),
   // Used to determine when the post-file itself was modified (images are not included)
   modifiedAt: luft.number(),
 };

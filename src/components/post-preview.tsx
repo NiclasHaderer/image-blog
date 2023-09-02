@@ -2,8 +2,8 @@ import { FC, Fragment, useEffect, useState } from 'react';
 import { getImageProps } from '@/utils/image-props';
 import { Image } from '@/components/image';
 import Link from 'next/link';
-import { getPost } from '@/utils/post';
 import { Divider } from '@/components/divider';
+import { CompiledPost } from '@/models/post.model';
 
 export const useFormatDate = (date: string) => {
   const formatDate = (date: string) => {
@@ -28,15 +28,15 @@ export const useFormatDate = (date: string) => {
   return formattedDate;
 };
 
-export const PostPreview: FC<Awaited<ReturnType<typeof getPost>> & { href: string }> = ({
+export const PostPreview: FC<CompiledPost & { href: string; parentPosts: string[] }> = ({
   title,
   date,
   description,
   images,
   href,
-  group,
   slug,
   headerImage,
+  parentPosts,
 }) => {
   const formattedDate = useFormatDate(date);
   return (
@@ -50,7 +50,7 @@ export const PostPreview: FC<Awaited<ReturnType<typeof getPost>> & { href: strin
         <div className="flex w-full items-center pl-1 md:w-1/3 md:min-w-1/3">
           <Image
             className="h-[10rem] w-full overflow-hidden rounded-xl"
-            image={getImageProps<string>(images, `${group.slug}/${slug}`)(headerImage)}
+            image={getImageProps<string>(images, [...parentPosts, slug].join('/'))(headerImage)}
             alt={`Header image: ${title}`}
           />
         </div>
@@ -59,12 +59,12 @@ export const PostPreview: FC<Awaited<ReturnType<typeof getPost>> & { href: strin
   );
 };
 
-export const PostList: FC<{ posts: Awaited<ReturnType<typeof getPost>>[] }> = ({ posts }) => {
+export const PostList: FC<{ posts: CompiledPost[]; parentPosts: string[] }> = ({ posts, parentPosts }) => {
   return (
     <>
       {posts.map((post, i, arr) => (
         <Fragment key={i}>
-          <PostPreview key={i} href={`/${post.group.slug}/${post.slug}`} {...post} />
+          <PostPreview key={i} href={post.slug} {...post} parentPosts={parentPosts} />
           {i !== arr.length - 1 && (
             <div className="px-[20%] pb-2 md:hidden">
               <Divider />

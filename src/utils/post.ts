@@ -1,130 +1,74 @@
-import { getItemsIn, parseFile } from '@/utils/file';
+import { parseFile } from '../../post-manager/utils/file';
 import { PostPreferences } from '@/preferences';
 import { PostConstants } from '../../post-manager/post-constants';
-import { CompiledPost } from '@/models/post.model';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import fs from 'node:fs';
-import { CompiledPostGroup } from '@/models/post-group.model';
+import { CompiledPost, PostMetadata } from '@/models/post.model';
 import path from 'node:path';
-import { CompiledHomepageSettings } from '@/models/homepage-settings.model';
 
-export const getPostGroups = async (): Promise<CompiledPostGroup[]> => {
-  const postGroups = await getItemsIn(
-    path.join(PostPreferences.CompiledPostsRootDir, PostConstants.PostGroupsFolder),
-    'folder',
-    false,
+export const getPost = async (...parentPosts: string[]): Promise<CompiledPost> => {
+  const postPath = path.join(
+    PostPreferences.CompiledPostsRootDir,
+    ...parentPosts,
+    PostConstants.CompiledPostMetadataFilename,
   );
-  const groups = postGroups.map(getPostGroup);
-  return Promise.all(groups).then((groups) => groups.sort((a, b) => a.index - b.index));
+
+  return parseFile(postPath, CompiledPost);
 };
 
-export const getPostGroup = async (groupName: string): Promise<CompiledPostGroup> => {
-  const postGroup = await parseFile(
-    path.join(
-      PostPreferences.CompiledPostsRootDir,
-      PostConstants.PostGroupsFolder,
-      groupName,
-      PostConstants.CompiledPostGroupMetadataFilename,
-    ),
-    CompiledPostGroup,
+export const getPostChildren = async (...parentPosts: string[]): Promise<CompiledPost[]> => {
+  const postPath = path.join(
+    PostPreferences.CompiledPostsRootDir,
+    ...parentPosts,
+    PostConstants.CompiledPostMetadataFilename,
   );
-  return JSON.parse(JSON.stringify(postGroup)) as CompiledPostGroup;
+
+  const post = await parseFile(postPath, CompiledPost);
+  return Promise.all(post.childPosts.map((child) => getPost(...parentPosts, child.slug)));
 };
 
-export const getPostsOfGroup = async (
-  groupName: string,
-): Promise<
-  (CompiledPost & {
-    group: {
-      slug: string;
-      title: string;
-    };
-  })[]
-> => {
-  const group = await getPostGroup(groupName);
-  const posts = Object.values(group.posts).map((post) => getPost(groupName, post.slug));
-  const postsAwaited = await Promise.all(posts);
-  return postsAwaited.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
-};
+interface NavigationItem {
+  label: string;
+  href: string;
+  slug: string;
+  children: NavigationItem[];
+}
 
-export const getPost = async (
-  groupName: string,
-  postName: string,
-): Promise<
-  CompiledPost & {
-    group: {
-      slug: string;
-      title: string;
-    };
+export const getNavigation = async (root?: Omit<PostMetadata, 'images'>, base?: string): Promise<NavigationItem[]> => {
+  if (!root) {
+    root = await getPost();
   }
+
+  const navigation: NavigationItem[] = [];
+  for (const post of root.childPosts) {
+    navigation.push({
+      label: post.title,
+      slug: post.slug,
+      href: path.join(base ?? '', post.slug),
+      children: await getNavigation(post, path.join(base ?? '', post.slug)),
+    });
+  }
+
+  return navigation;
+};
+
+export const getAllPossiblePaths = async (
+  root?: Omit<PostMetadata, 'images'>,
+  base: string[] = [],
+): Promise<
+  {
+    slug?: string[];
+  }[]
 > => {
-  const post = await parseFile(
-    path.join(
-      PostPreferences.CompiledPostsRootDir,
-      PostConstants.PostGroupsFolder,
-      groupName,
-      postName,
-      PostConstants.CompiledPostMetadataFilename,
-    ),
-    CompiledPost,
-  );
+  if (!root) {
+    root = await getPost();
+  }
 
-  const group = await getPostGroup(groupName);
+  const paths: { slug?: string[] }[] = [];
+  for (const post of root.childPosts) {
+    paths.push({
+      slug: [...base, post.slug],
+      ...(await getAllPossiblePaths(post, [...base, post.slug])),
+    });
+  }
 
-  return {
-    ...JSON.parse(JSON.stringify(post)),
-    group: {
-      slug: group.slug,
-      title: group.title,
-    },
-  };
-};
-
-export const getPostGroupUrls = async () => {
-  const postGroups = await getPostGroups();
-  return postGroups.map((group) => ({
-    label: group.title,
-    href: `/${group.slug}`,
-  }));
-};
-
-export const getPostContent = async (groupName: string, postName: string): Promise<MDXRemoteSerializeResult> => {
-  const content = await fs.promises.readFile(
-    path.join(
-      PostPreferences.CompiledPostsRootDir,
-      PostConstants.PostGroupsFolder,
-      groupName,
-      postName,
-      PostConstants.CompiledPostFilename,
-    ),
-    'utf-8',
-  );
-  return JSON.parse(content) as MDXRemoteSerializeResult;
-};
-
-export const getAllPosts = async (
-  excludeNotFeatured: boolean = true,
-): Promise<Awaited<ReturnType<typeof getPost>>[]> => {
-  const postGroups = await getPostGroups();
-  const all = postGroups.flatMap((group) => Object.values(group.posts).map((post) => getPost(group.slug, post.slug)));
-  const awaitedAll = await Promise.all(all);
-
-  return awaitedAll
-    .sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
-    .filter((post) => post.featureOnHomepage || !excludeNotFeatured);
-};
-
-export const getHomepage = async (): Promise<CompiledHomepageSettings> => {
-  const homepage = await parseFile(
-    path.join(PostPreferences.CompiledPostsRootDir, PostConstants.CompiledHomepageSettingsFilename),
-    CompiledHomepageSettings,
-  );
-  return JSON.parse(JSON.stringify(homepage)) as CompiledHomepageSettings;
-};
-
-export const getHomepagePosts = async (): Promise<Awaited<ReturnType<typeof getPost>>[]> => {
-  const homepage = await getHomepage();
-  const posts = await getAllPosts(true);
-
-  return posts.slice(0, homepage.numberOfPosts);
+  return paths;
 };

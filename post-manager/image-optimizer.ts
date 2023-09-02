@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { ImageMetadata, ImageResolutionsWithAspectRations } from '@/models/image.model';
-import { getItemsIn } from '@/utils/file';
+import { getItemsIn } from './utils/file';
 import path from 'node:path';
 import fs from 'node:fs';
 

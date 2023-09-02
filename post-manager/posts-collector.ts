@@ -2,7 +2,7 @@ import { PostFileMetadata, PostMetadata } from '@/models/post.model';
 import path from 'node:path';
 import { PostConstants } from './post-constants';
 import fs from 'node:fs';
-import { getItemsIn } from '@/utils/file';
+import { getItemsIn } from './utils/file';
 import matter from 'gray-matter';
 import { ImageOptimizer } from './image-optimizer';
 import { parseWith } from '@/utils/validation';
@@ -32,7 +32,7 @@ const getChildPosts = async (parentPostFolder: string): Promise<string[]> => {
   return items.filter((item) => path.basename(item) !== PostConstants.ImagesFolder);
 };
 
-const collectMetadata = async (postDirectory: string): Promise<Omit<PostMetadata, 'children'>> => {
+const collectMetadata = async (postDirectory: string): Promise<Omit<PostMetadata, 'childPosts'>> => {
   const postPath = path.join(postDirectory, PostConstants.PostFilename);
   const postMetadata = await parsePostFile(postPath);
 
@@ -51,7 +51,7 @@ const getModifiedAt = (posts: PostMetadata[]): number => {
 
   for (const post of posts) {
     newest = Math.max(newest, post.modifiedAt);
-    newest = Math.max(newest, getModifiedAt(post.children));
+    newest = Math.max(newest, getModifiedAt(post.childPosts));
   }
 
   return newest;
@@ -64,7 +64,7 @@ const collect = async (postDirectory: string): Promise<PostMetadata> => {
 
   return {
     ...post,
-    children: childPosts,
+    childPosts: childPosts,
     modifiedAt: Math.max(getModifiedAt(childPosts), post.modifiedAt),
   };
 };

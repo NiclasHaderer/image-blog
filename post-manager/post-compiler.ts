@@ -1,7 +1,7 @@
 import { CompiledPost, PostContent, PostMetadata } from '@/models/post.model';
 import { PostConstants } from './post-constants';
 import path from 'node:path';
-import { parseFile, saveFile } from '@/utils/file';
+import { parseFile, saveFile } from './utils/file';
 import fs from 'node:fs';
 import { serialize } from 'next-mdx-remote/serialize';
 import remarkGfm from 'remark-gfm';
@@ -64,7 +64,7 @@ const compile = async (post: PostMetadata, outputPostDir: string, outputImagesDi
 
   // Compile the children
   await Promise.all(
-    newPost.children.map((child) =>
+    newPost.childPosts.map((child) =>
       compile(child, path.join(outputPostDir, child.slug), path.join(outputImagesDir, child.slug)),
     ),
   );

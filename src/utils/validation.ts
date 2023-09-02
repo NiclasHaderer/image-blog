@@ -1,5 +1,5 @@
 import { LuftInfer, LuftType } from '@luftschloss/validation';
-import { ParsingResult } from '@luftschloss/validation/src/lib/types/base-type';
+import { ParsingResult } from '@luftschloss/validation/';
 
 export const parseWith = <T extends LuftType, S extends 'safe' | 'unsafe' | undefined = undefined>(
   content: Record<string, any>,

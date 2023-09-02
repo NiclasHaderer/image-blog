@@ -3,18 +3,17 @@ import { CompiledPost } from '@/models/post.model';
 import Link from 'next/link';
 import { Image } from '@/components/image';
 import { getImageProps } from '@/utils/image-props';
-import { getPost } from '@/utils/post';
 import { Divider } from '@/components/divider';
 
-export const ElegantPreview: FC<
-  CompiledPost & {
-    group: {
-      slug: string;
-      title: string;
-    };
-    href: string;
-  }
-> = ({ href, description, title, images, headerImage, group, slug }) => {
+export const ElegantPreview: FC<CompiledPost & { href: string; parentPosts: string[] }> = ({
+  href,
+  description,
+  title,
+  images,
+  headerImage,
+  slug,
+  parentPosts,
+}) => {
   return (
     <Link href={href}>
       <div className="mb-2 flex items-stretch justify-center rounded-2xl py-2 sm:p-2">
@@ -31,7 +30,7 @@ export const ElegantPreview: FC<
         <div className="flex min-w-1/3 max-w-1/3 items-center pl-1 md:min-w-1/4 md:max-w-1/4">
           <Image
             className="w-full overflow-hidden rounded-xl"
-            image={getImageProps<string>(images, `${group.slug}/${slug}`)(headerImage)}
+            image={getImageProps<string>(images, [...parentPosts, slug].join('/'))(headerImage)}
             alt={`Header image: ${title}`}
           />
         </div>
@@ -40,12 +39,12 @@ export const ElegantPreview: FC<
   );
 };
 
-export const ElegantList: FC<{ posts: Awaited<ReturnType<typeof getPost>>[] }> = ({ posts }) => {
+export const ElegantList: FC<{ posts: CompiledPost[]; parentPosts: string[] }> = ({ posts, parentPosts }) => {
   return (
     <>
       {posts.map((post, i) => (
         <Fragment key={i}>
-          <ElegantPreview key={i} href={`/${post.group.slug}/${post.slug}`} {...post} />
+          <ElegantPreview key={i} href={post.slug} {...post} parentPosts={parentPosts} />
         </Fragment>
       ))}
     </>
