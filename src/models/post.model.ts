@@ -1,6 +1,7 @@
-import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from '@luftschloss/validation';
-import { CompiledImages, ImageMetadata } from '@/models/image.model';
+import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from "@luftschloss/validation";
+import { CompiledImages, ImageMetadata } from "@/models/image.model";
 
+// TODO feature flags
 export const PostFileMetadata = luft
   .object({
     // The title of the post -> will be used as the slug
@@ -17,6 +18,7 @@ export const PostFileMetadata = luft
     // TODO make this a union of string and array of strings
     // headerImage: luft.union([luft.string(), luft.array(luft.string())]),
     headerImage: luft.string(),
+
     // The color of the header image (will replace the header image if set)
     headerColor: luft.regex(/^#(?:[0-9a-fA-F]{3,4}){1,2}$/).optional(),
 

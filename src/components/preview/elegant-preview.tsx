@@ -5,8 +5,7 @@ import { Image } from '@/components/image';
 import { getImageProps } from '@/utils/image-props';
 import { Divider } from '@/components/divider';
 
-export const ElegantPreview: FC<CompiledPost & { href: string; parentPosts: string[] }> = ({
-  href,
+export const ElegantPreview: FC<CompiledPost & { parentPosts: string[] }> = ({
   description,
   title,
   images,
@@ -15,7 +14,7 @@ export const ElegantPreview: FC<CompiledPost & { href: string; parentPosts: stri
   parentPosts,
 }) => {
   return (
-    <Link href={href}>
+    <Link href={[...parentPosts, slug].join('/')}>
       <div className="mb-2 flex items-stretch justify-center rounded-2xl py-2 sm:p-2">
         <div className="flex min-w-2/3 max-w-2/3 flex-wrap items-center pr-1 md:min-w-1/2 md:max-w-1/2 md:pr-3">
           <div className="mx-auto text-center">
@@ -44,7 +43,7 @@ export const ElegantList: FC<{ posts: CompiledPost[]; parentPosts: string[] }> =
     <>
       {posts.map((post, i) => (
         <Fragment key={i}>
-          <ElegantPreview key={i} href={post.slug} {...post} parentPosts={parentPosts} />
+          <ElegantPreview key={i} {...post} parentPosts={parentPosts} />
         </Fragment>
       ))}
     </>

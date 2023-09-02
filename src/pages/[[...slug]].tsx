@@ -1,9 +1,14 @@
 import { GetStaticPaths } from 'next';
-import { PostList } from '@/components/preview/post-preview';
 import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
 import { MainOutlet } from '@/components/main-outlet';
 import { getAllPossiblePaths, getNavigation, getPost, getPostChildren } from '@/utils/post';
+import React from 'react';
+import { MDXRemote } from 'next-mdx-remote';
+import { LightboxImage } from '@/components/lightbox-image';
+import { Gallery } from '@/components/gallery';
+import { Image } from '@/components/image';
+import { WithChildView } from '@/components/with-childview';
 
 export default function PostGroupPage({
   post,
@@ -24,9 +29,16 @@ export default function PostGroupPage({
       />
       <MainOutlet>
         <h1 className="mb-2 mt-1 px-2 text-3xl font-bold">{post.title}</h1>
-        <p className="px-2 pb-2">{post.description}</p>
-        {/*TODO layout*/}
-        <PostList posts={children} parentPosts={parentPosts} />
+
+        <WithChildView post={post} parentPosts={parentPosts} childPosts={children}>
+          <article>
+            <MDXRemote
+              {...post.content}
+              components={{ Image, LightboxImage, Gallery }}
+              scope={{ getImage: imageFactory }}
+            />
+          </article>
+        </WithChildView>
       </MainOutlet>
     </>
   );

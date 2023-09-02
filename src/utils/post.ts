@@ -14,6 +14,7 @@ export const getPost = async (...parentPosts: string[]): Promise<CompiledPost> =
   return JSON.parse(JSON.stringify(await parseFile(postPath, CompiledPost)));
 };
 
+// TODO sort by date, exclude
 export const getPostChildren = async (...parentPosts: string[]): Promise<CompiledPost[]> => {
   const post = await getPost(...parentPosts);
   return Promise.all(post.childPosts.map((child) => getPost(...parentPosts, child.slug)));
