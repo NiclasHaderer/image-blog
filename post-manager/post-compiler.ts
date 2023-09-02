@@ -1,7 +1,7 @@
 import { CompiledPost, PostContent, PostMetadata } from '@/models/post.model';
 import { PostConstants } from './post-constants';
 import path from 'node:path';
-import { ensureDir, parseFile, saveFile } from './utils/file';
+import { ensureDir, parseFile, saveFile } from '@/utils/file';
 import fs from 'node:fs';
 import { serialize } from 'next-mdx-remote/serialize';
 import remarkGfm from 'remark-gfm';
@@ -41,7 +41,9 @@ const serializeMarkdown = async (post: PostMetadata): Promise<PostContent> => {
 
 const compile = async (post: PostMetadata, outputPostDir: string, outputImagesDir: string) => {
   // Get the existing post
-  const existingPost = await getExistingPost(path.join(outputPostDir, PostConstants.CompiledPostMetadataFilename));
+
+  const postMetadataPath = path.join(outputPostDir, PostConstants.CompiledPostMetadataFilename);
+  const existingPost = await getExistingPost(postMetadataPath);
   let newPost: CompiledPost;
   if (!existingPost || existingPost.modifiedAt < post.modifiedAt || isProd) {
     // 1. The post does not exist yet
@@ -52,16 +54,18 @@ const compile = async (post: PostMetadata, outputPostDir: string, outputImagesDi
       content: await serializeMarkdown(post),
       images: await ImageCompiler.compile(post.images, existingPost?.images ?? {}, outputImagesDir),
     };
+    console.log(`Compiled post ${post.slug}`);
   } else {
     newPost = {
       ...existingPost,
       images: await ImageCompiler.compile(post.images, existingPost.images, outputImagesDir),
     };
+    console.log(`Skipped post ${post.slug}`);
   }
 
   // Save the post-metadata
   await ensureDir(outputPostDir);
-  await saveFile(path.join(outputPostDir, PostConstants.CompiledPostMetadataFilename), newPost, CompiledPost);
+  await saveFile(postMetadataPath, newPost, CompiledPost);
 
   // Compile the children
   await Promise.all(

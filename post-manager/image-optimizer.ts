@@ -1,8 +1,9 @@
 import sharp from 'sharp';
 import { ImageMetadata, ImageResolutionsWithAspectRations } from '@/models/image.model';
-import { getItemsIn } from './utils/file';
+import { getItemsIn } from '@/utils/file';
 import path from 'node:path';
 import fs from 'node:fs';
+import { PostUserError } from './user-error';
 
 const calculateSize = (
   imageSize: {
@@ -31,7 +32,10 @@ export const optimize = async (
   const width = imageInfo.width;
   const height = imageInfo.height;
 
-  if (!width || !height) throw new Error(`Image ${imagePath} does not have width or height`);
+  if (!width || !height) {
+    console.error(`Image ${imagePath} has no width or height!`);
+    throw new PostUserError();
+  }
   const size = { width, height };
 
   // Create original aspect ratio images

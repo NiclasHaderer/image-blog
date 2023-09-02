@@ -1,17 +1,25 @@
-export const assertUnique = (arr: string[]) => {
-  const unique = new Set(arr).size === arr.length;
-  if (!unique) {
-    // get the duplicates
-    const duplicates = arr.filter((item, index) => arr.indexOf(item) !== index);
-    throw new Error(`Duplicate items found: ${duplicates.join(', ')}`);
+export const areUniqueBy = <T>(arr: T[], func: (item: T) => unknown): T[] | undefined => {
+  const map = new Map<unknown, T>();
+  const nonUnique: T[] = [];
+
+  for (const item of arr) {
+    const key = func(item);
+    if (map.has(key)) {
+      nonUnique.push(item, map.get(key)!);
+      continue;
+    }
+    map.set(key, item);
   }
 
-  return true;
+  return nonUnique.length ? nonUnique : undefined;
 };
 
-export const zip = <T, U extends any[]>(arr: T[], func: (item: T) => U): [T, U[number]][] => {
-  return arr.flatMap((item) => {
-    const result = func(item);
-    return result.map((r) => [item, r] as const);
-  }) as [T, U[number]][];
+export const mapUnique = <T, U>(arr: T[], func: (item: T) => U): U[] => {
+  const set = new Set<U>();
+
+  for (const item of arr) {
+    set.add(func(item));
+  }
+
+  return [...set.values()];
 };

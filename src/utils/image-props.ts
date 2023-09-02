@@ -16,14 +16,14 @@ export const getImageProps = <T extends string | string[]>(
 ): ((imageName: T) => T extends string[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
     if (!imageSizes[imageName]) {
-      console.log(`The post ${basePath} does not have image ${imageName}`);
-      console.log(`Use one of the values of ${Object.keys(imageSizes).join(', ')}.`);
-      throw new Error(`Image ${imageName} does not exist!`);
+      console.error(`The post "${basePath}" does not have the image "${imageName}"`);
+      console.error(`Allowed values are: ${Object.keys(imageSizes).join(', ')}.`);
+      throw new Error();
     }
     return {
       imageName,
       getUrl(size, mode) {
-        return `/gen-images/${basePath}/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
+        return `/generated-images/${basePath}/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
       },
       getSize(size, mode) {
         return imageSizes[imageName].resolutions[mode][size];

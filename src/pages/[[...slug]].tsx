@@ -1,5 +1,5 @@
 import { GetStaticPaths } from 'next';
-import { PostList } from '@/components/post-preview';
+import { PostList } from '@/components/preview/post-preview';
 import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
 import { MainOutlet } from '@/components/main-outlet';
@@ -11,7 +11,7 @@ export default function PostGroupPage({
   parentPosts,
   children,
 }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
-  const imageFactory = getImageProps<string>(post.images, [...parentPosts, post.slug].join('/'));
+  const imageFactory = getImageProps<string>(post.images, parentPosts.join('/'));
   return (
     <>
       <Header
@@ -37,7 +37,7 @@ export const getStaticPaths: GetStaticPaths = async (): Promise<{
   fallback: false;
 }> => {
   return {
-    paths: await getAllPossiblePaths().then((paths) => paths.map((path) => ({ params: { slug: path.slug } }))),
+    paths: await getAllPossiblePaths().then((paths) => paths.map((path) => ({ params: path }))),
     fallback: false,
   };
 };
