@@ -1,5 +1,4 @@
 import { getHomepage, getHomepagePosts, getPostGroupUrls } from '@/utils/post';
-import { copyImages, symlinkImages } from '@/utils/assets';
 import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
 import { MainOutlet } from '@/components/main-outlet';
@@ -34,13 +33,6 @@ export const getStaticProps = async () => {
   const groupUrls = await getPostGroupUrls();
   const homepage = await getHomepage();
   const homepagePosts = await getHomepagePosts();
-
-  // Check if we are running in production
-  if (process.env.NODE_ENV === 'production') {
-    await copyImages();
-  } else {
-    await symlinkImages();
-  }
 
   return {
     props: {

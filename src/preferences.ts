@@ -28,7 +28,23 @@ const getCompiledPostsFolder = (): string => {
 
   // Make sure that the folder exists
   if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder);
+    throw new Error(`The compiled post folder ${folder} does not exist!`);
+  }
+  return folder;
+};
+
+const getCompiledImagesFolder = (): string => {
+  let folder = './public/generated-images';
+  if (process.env.COMPILED_IMAGES_FOLDER) {
+    folder = process.env.COMPILED_IMAGES_FOLDER;
+  }
+
+  // Resolve the absolute path to the compiled-images folder
+  folder = path.resolve(folder);
+
+  // Make sure that the folder exists
+  if (!fs.existsSync(folder)) {
+    throw new Error(`The compiled images folder ${folder} does not exist!`);
   }
   return folder;
 };
@@ -36,4 +52,5 @@ const getCompiledPostsFolder = (): string => {
 export const PostPreferences = {
   PostRootDir: getPostsFolder(),
   CompiledPostsRootDir: getCompiledPostsFolder(),
+  CompiledImagesRootDir: getCompiledImagesFolder(),
 } as const;

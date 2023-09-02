@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { ImageMetadataModel, ImageResolutionsWithAspectRations } from '@/models/image.model';
+import { ImageMetadata, ImageResolutionsWithAspectRations } from '@/models/image.model';
 import { getItemsIn } from '@/utils/file';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -21,7 +21,7 @@ const calculateSize = (
  * @param imagePath
  * @param outputDirectory
  */
-export const optimizeImage = async (
+export const optimize = async (
   imagePath: string,
   outputDirectory: string,
 ): Promise<ImageResolutionsWithAspectRations> => {
@@ -96,22 +96,11 @@ const isSupportedImageFile = (filename: string): boolean => {
   return supportedExtensions.includes(fileExtension);
 };
 
-const getImageMetadata = async (
-  imagePath: string,
-): Promise<{
-  width: number;
-  height: number;
-}> => {
-  const image = sharp(imagePath);
-  const metadata = await image.metadata();
-  return { width: metadata.width!, height: metadata.height! };
-};
-
-const getImagesMetadata = async (folderPath: string): Promise<Awaited<ImageMetadataModel>[]> => {
+const getImagesMetadata = async (folderPath: string): Promise<Awaited<ImageMetadata>[]> => {
   if (!fs.existsSync(folderPath)) return [];
   let images = await getItemsIn(folderPath);
   images = images.filter((image) => {
-    const isSupported = ImageOptimizer.isSupportedImageFile(image);
+    const isSupported = isSupportedImageFile(image);
     if (!isSupported) {
       console.error(`Image ${image} is not supported!`);
     }
@@ -132,8 +121,6 @@ const getImagesMetadata = async (folderPath: string): Promise<Awaited<ImageMetad
 };
 
 export const ImageOptimizer = {
-  isSupportedImageFile,
-  getImageMetadata,
   getImagesMetadata,
-  optimize: optimizeImage,
+  optimize,
 };

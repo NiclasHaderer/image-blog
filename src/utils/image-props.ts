@@ -1,17 +1,17 @@
-import { CompiledImagesModel, ImageResolutionsModel } from '@/models/image.model';
+import { CompiledImages, ImageResolutions } from '@/models/image.model';
 
 export interface LocalImageProps {
   imageName: string;
 
-  getUrl(size: keyof ImageResolutionsModel, mode: 'normal' | 'square'): string;
+  getUrl(size: keyof ImageResolutions, mode: 'normal' | 'square'): string;
 
-  getSize(size: keyof ImageResolutionsModel, mode: 'normal' | 'square'): { width: number; height: number };
+  getSize(size: keyof ImageResolutions, mode: 'normal' | 'square'): { width: number; height: number };
 
   sizes(mode: 'normal' | 'square'): { width: number; height: number; src: string }[];
 }
 
 export const getImageProps = <T extends string | string[]>(
-  imageSizes: CompiledImagesModel,
+  imageSizes: CompiledImages,
   basePath: string,
 ): ((imageName: T) => T extends string[] ? LocalImageProps[] : LocalImageProps) => {
   const get = (imageName: string): LocalImageProps => {
@@ -29,7 +29,7 @@ export const getImageProps = <T extends string | string[]>(
         return imageSizes[imageName].resolutions[mode][size];
       },
       sizes(mode) {
-        return (Object.keys(imageSizes[imageName].resolutions[mode]) as (keyof ImageResolutionsModel)[]).map((size) => {
+        return (Object.keys(imageSizes[imageName].resolutions[mode]) as (keyof ImageResolutions)[]).map((size) => {
           return {
             ...this.getSize(size, mode),
             src: this.getUrl(size, mode),

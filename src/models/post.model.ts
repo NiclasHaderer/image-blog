@@ -1,4 +1,4 @@
-import { luft, LuftInfer } from '@luftschloss/validation';
+import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from '@luftschloss/validation';
 import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
 export const PostFileMetadata = luft
@@ -12,34 +12,55 @@ export const PostFileMetadata = luft
         action: 'continue',
       };
     }),
-    featureOnCollection: luft.bool(),
     description: luft.string(),
-    layout: luft.literal(['post']),
+    // The header image of the post (if multiple images are provided, a carousel will be created)
     headerImage: luft.union([luft.string(), luft.array(luft.string())]),
+    // The color of the header image (will replace the header image if set)
     headerColor: luft.regex(/^#(?:[0-9a-fA-F]{3,4}){1,2}$/).optional(),
+
+    // Should the title of the post be capitalized in the post-preview list?
+    capitalizeTitle: luft.bool().default(true),
+
+    // The layout of the post
+    postLayout: luft.literal(['post']).default('post'),
+
+    // The layout that the children of this post should have
+    childPostLayout: luft.literal(['blog', 'elegant']).default('blog'),
+
+    // Where should the children be placed in the parent post
+    childPostPosition: luft.literal(['top', 'bottom']).default('bottom'),
+
+    // Whether the post should be featured in the parent collection
+    featureInParentCollection: luft.bool().default(true),
   })
   .named('PostFileMetadata');
-export type PostFileMetadataModel = LuftInfer<typeof PostFileMetadata>;
+export type PostFileMetadata = LuftInfer<typeof PostFileMetadata>;
 
-// TODO fix this
-export const PostMetadata: any = PostFileMetadata.merge({
+type _PostMetadataModel = {
+  slug: LuftString;
+  postPath: LuftString;
+  postDirectory: LuftString;
+  images: LuftArray<typeof ImageMetadata>;
+  children: LuftLazy<(InferObjectType<_PostMetadataModel> & PostFileMetadata)[]>;
+  modifiedAt: LuftNumber;
+};
+
+const _PostMetadata: _PostMetadataModel = {
+  // The slug of the post (title will be used to generate the slug)
+  slug: luft.string(),
   // Information about the whereabouts of the post
   postPath: luft.string(),
-  postFolder: luft.string(),
+  // The folder in which the post is located
+  postDirectory: luft.string(),
+  // The images that are used in the post
   images: luft.array(ImageMetadata),
+  // The children of the post
   children: luft.lazy(() => luft.array(PostMetadata)),
   // Used to determine when the post-file itself was modified (images are not included)
   modifiedAt: luft.number(),
-}).named('PostMetadata');
-export type PostMetadata = LuftInfer<typeof PostMetadata>;
+};
 
-export const CompiledPost = PostMetadata.omit(['images'])
-  .merge({
-    images: CompiledImages,
-  })
-  .named('CompiledPost');
-export type CompiledPost = LuftInfer<typeof CompiledPost>;
-
+// The serialized content by next-mdx-remote
 export const PostContent = luft
   .object({
     compiledSource: luft.string(),
@@ -48,3 +69,16 @@ export const PostContent = luft
   })
   .named('PostContent');
 export type PostContent = LuftInfer<typeof PostContent>;
+
+export const PostMetadata = PostFileMetadata.merge(_PostMetadata as _PostMetadataModel).named('PostMetadata');
+export type PostMetadata = LuftInfer<typeof PostMetadata>;
+
+// A compiled post is not different from a post, except that it has the image resolutions
+// and the compiled content
+export const CompiledPost = PostMetadata.omit(['images'])
+  .merge({
+    images: CompiledImages,
+    content: PostContent,
+  })
+  .named('CompiledPost');
+export type CompiledPost = LuftInfer<typeof CompiledPost>;

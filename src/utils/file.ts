@@ -1,7 +1,6 @@
-import { LuftInfer, LuftType } from '@luftschloss/validation';
+import { LuftInfer, LuftType, ParsingResult } from '@luftschloss/validation';
 import fs from 'node:fs';
 import path from 'node:path';
-import { ParsingResult } from '@luftschloss/validation/src/lib/types/base-type';
 import { parseWith } from '@/utils/validation';
 
 export const getItemsIn = async (folder: string, type?: 'folder' | 'file' | undefined, makeAbsolute = true) => {
