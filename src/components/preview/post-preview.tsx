@@ -2,7 +2,6 @@ import { FC, Fragment, useEffect, useState } from 'react';
 import { getImageProps } from '@/utils/image-props';
 import { Image } from '@/components/image';
 import Link from 'next/link';
-import { Divider } from '@/components/divider';
 import { CompiledPost } from '@/models/post.model';
 
 export const useFormatDate = (date: string) => {
@@ -36,13 +35,14 @@ export const PostPreview: FC<CompiledPost & { parentPosts: string[] }> = ({
   slug,
   headerImage,
   parentPosts,
+  capitalizeTitle,
 }) => {
   const formattedDate = useFormatDate(date);
   return (
     <Link href={[...parentPosts, slug].join('/')} className="drop-shadow-sm transition-all hover:drop-shadow-md">
       <div className="group mb-2 flex flex-col-reverse items-stretch rounded-2xl bg-white p-2 transition-colors md:flex-row">
         <div className="flex-grow pr-2 pt-1 md:pt-0">
-          <h2 className="text-xl font-normal">{title}</h2>
+          <h2 className={`text-xl font-normal ${capitalizeTitle ? 'uppercase' : ''}`}>{title}</h2>
           {date && <time className="italic text-gray">{formattedDate}</time>}
           {description && <p className="line-clamp-3 md:line-clamp-4">{description}</p>}
         </div>
@@ -64,11 +64,6 @@ export const PostList: FC<{ posts: CompiledPost[]; parentPosts: string[] }> = ({
       {posts.map((post, i, arr) => (
         <Fragment key={i}>
           <PostPreview key={i} {...post} parentPosts={parentPosts} />
-          {i !== arr.length - 1 && (
-            <div className="px-[20%] pb-2 md:hidden">
-              <Divider />
-            </div>
-          )}
         </Fragment>
       ))}
     </>

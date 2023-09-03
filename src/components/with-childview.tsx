@@ -14,8 +14,6 @@ export const WithChildView: FC<{
     blog: PostList,
   }[post.childPostLayout];
 
-  console.log(post.childPostLayout);
-
   return (
     <>
       {post.childPostPosition === 'top' && <ListView posts={childPosts} parentPosts={parentPosts} />}

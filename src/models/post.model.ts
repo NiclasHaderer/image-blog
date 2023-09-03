@@ -1,5 +1,5 @@
-import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from "@luftschloss/validation";
-import { CompiledImages, ImageMetadata } from "@/models/image.model";
+import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from '@luftschloss/validation';
+import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
 // TODO feature flags
 export const PostFileMetadata = luft

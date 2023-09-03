@@ -73,6 +73,12 @@ const config: Config = {
       warning: 'var(--warning)',
       error: 'var(--error)',
     },
+    minWidth: {
+      '1/7': '14.2%',
+    },
+    maxWidth: {
+      '1/7': '14.2%',
+    },
   },
   plugins: [typography()],
 };

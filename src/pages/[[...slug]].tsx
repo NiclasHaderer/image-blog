@@ -27,8 +27,11 @@ export default function PostGroupPage({
         backgroundImage={imageFactory(post.headerImage)}
         backgroundColor={post.headerColor}
       />
+      <p>People | Weddings | Animals | Travel</p>
       <MainOutlet>
-        <h1 className="mb-2 mt-1 px-2 text-3xl font-bold">{post.title}</h1>
+        <h1 className={`mb-2 mt-1 px-2 text-2xl font-normal ${post.capitalizeTitle ? 'uppercase' : ''}`}>
+          {post.title}
+        </h1>
 
         <WithChildView post={post} parentPosts={parentPosts} childPosts={children}>
           <article>

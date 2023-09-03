@@ -46,11 +46,10 @@ a {
   display: inline-block;
 }
 
-
 .icon.icon-link {
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
-  padding-right: .1rem;
+  padding-right: 0.1rem;
 
   &:before {
     // Set svg icon
@@ -58,7 +57,12 @@ a {
   }
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   &:hover .icon-link {
     opacity: 1;
   }

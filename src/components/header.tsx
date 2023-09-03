@@ -126,7 +126,7 @@ const MenuSmall: FC<{ groupUrls: GroupUrl[] }> = ({ groupUrls }) => {
       <button
         onClick={() => setIsOpen(true)}
         style={{ '--tw-shadow': '0 25px 50px 5px rgba(0, 0, 0, 0.25)' } as any}
-        className="fixed bottom-0 left-1/2 mb-1 -translate-x-1/2 cursor-pointer rounded-xl bg-elevate p-1 text-black shadow-2xl drop-shadow-2xl"
+        className="fixed bottom-0 left-1/2 z-50 mb-1 -translate-x-1/2 cursor-pointer rounded-xl bg-elevate p-1 text-black shadow-2xl drop-shadow-2xl"
       >
         <IconMenuDeep className="h-10 w-10" />
       </button>
@@ -142,7 +142,7 @@ const MenuSmall: FC<{ groupUrls: GroupUrl[] }> = ({ groupUrls }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="bg-backdrop fixed inset-0" />
+            <div className="fixed inset-0 bg-backdrop" />
           </Transition.Child>
 
           <Transition.Child
@@ -155,9 +155,9 @@ const MenuSmall: FC<{ groupUrls: GroupUrl[] }> = ({ groupUrls }) => {
             leaveFrom="translate-y-0"
             leaveTo="translate-y-full"
           >
-            <Dialog.Panel className="shadow-top-2xl w-full bg-white">
+            <Dialog.Panel className="w-full bg-white shadow-top-2xl">
               {groupUrls.map(({ href, label }, i) => (
-                <Link href={href} className="flex items-center" key={i}>
+                <Link href={href} className="flex items-center" key={i} onClick={() => setIsOpen(false)}>
                   <span className="w-full whitespace-nowrap rounded-lg p-2 text-xl uppercase text-gray transition-colors hover:bg-elevate-1">
                     {label}
                   </span>
