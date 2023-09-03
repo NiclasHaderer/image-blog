@@ -21,20 +21,16 @@ export default function PostGroupPage({
     <>
       <Header
         isPostHeader={false}
-        capabilities={['TODO', 'YOU', 'ARE', 'STATIC!!!!!']}
+        capabilities={['People', 'Wedding', 'Animals', 'Travel']}
+        capabilitiesBelow={parentPosts.length === 0}
         groupUrls={navigation}
         title={post.title}
         backgroundImage={imageFactory(post.headerImage)}
         backgroundColor={post.headerColor}
       />
-      <p>People | Weddings | Animals | Travel</p>
       <MainOutlet>
-        <h1 className={`mb-2 mt-1 px-2 text-2xl font-normal ${post.capitalizeTitle ? 'uppercase' : ''}`}>
-          {post.title}
-        </h1>
-
         <WithChildView post={post} parentPosts={parentPosts} childPosts={children}>
-          <article>
+          <article className="prose max-w-none">
             <MDXRemote
               {...post.content}
               components={{ Image, LightboxImage, Gallery }}

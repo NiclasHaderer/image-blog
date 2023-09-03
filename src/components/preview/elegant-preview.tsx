@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import React, { FC, Fragment } from 'react';
 import { CompiledPost } from '@/models/post.model';
 import Link from 'next/link';
 import { Image } from '@/components/image';
@@ -27,7 +27,7 @@ export const ElegantPreview: FC<CompiledPost & { parentPosts: string[] }> = ({
             <Divider />
           </div>
         </div>
-        <div className="flex min-w-1/3 max-w-1/3 items-center pl-1 md:min-w-1/4 md:max-w-1/4 lg:min-w-1/5 lg:max-w-1/5 xl:min-w-1/6 xl:max-w-1/6 2xl:min-w-1/7 2xl:max-w-1/7">
+        <div className="2xl:min-w-1/7 2xl:max-w-1/7 flex min-w-1/3 max-w-1/3 items-center pl-1 md:min-w-1/4 md:max-w-1/4 lg:min-w-1/5 lg:max-w-1/5 xl:min-w-1/6 xl:max-w-1/6">
           <Image
             className="w-full overflow-hidden rounded-xl"
             image={getImageProps<string>(images, [...parentPosts, slug].join('/'))(headerImage)}
@@ -42,6 +42,8 @@ export const ElegantPreview: FC<CompiledPost & { parentPosts: string[] }> = ({
 export const ElegantList: FC<{ posts: CompiledPost[]; parentPosts: string[] }> = ({ posts, parentPosts }) => {
   return (
     <>
+      <h3 className="pb-1 uppercase">Recent</h3>
+
       {posts.map((post, i) => (
         <Fragment key={i}>
           <ElegantPreview key={i} {...post} parentPosts={parentPosts} />

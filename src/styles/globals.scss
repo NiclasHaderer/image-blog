@@ -67,3 +67,9 @@ h6 {
     opacity: 1;
   }
 }
+
+
+// Used if there are links in a list
+.prose li > a {
+  margin: 0;
+}

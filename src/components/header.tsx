@@ -18,7 +18,7 @@ export const Header: FC<{
   title: string;
   backgroundImage: LocalImageProps;
   backgroundColor?: string | undefined;
-  capabilitiesBelow?: boolean;
+  capabilitiesBelow: boolean;
   isPostHeader: boolean;
 }> = ({
   groupUrls,
@@ -27,7 +27,7 @@ export const Header: FC<{
   backgroundImage,
   className,
   title,
-  capabilitiesBelow = false,
+  capabilitiesBelow,
   backgroundColor,
 }) => {
   groupUrls = [{ label: 'Home', href: '/' }, ...groupUrls];
