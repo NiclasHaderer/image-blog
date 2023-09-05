@@ -29,6 +29,7 @@ export const ElegantPreview: FC<CompiledChildPost & { parentPosts: string[] }> =
         </div>
         <div className="flex min-w-1/3 max-w-1/3 items-center pl-1 md:min-w-1/4 md:max-w-1/4 lg:min-w-1/5 lg:max-w-1/5 xl:min-w-1/6 xl:max-w-1/6 2xl:min-w-1/7 2xl:max-w-1/7">
           <Image
+            sizes="33vw, (min-width: 768px) 25vw, (min-width: 1024px) 20vw, (min-width: 1280px) 16vw, (min-width: 1536px) 14vw"
             className="w-full overflow-hidden rounded-xl"
             image={getImageProps<string>(images, [...parentPosts, slug].join('/'))(headerImage)}
             alt={`Header image: ${title}`}

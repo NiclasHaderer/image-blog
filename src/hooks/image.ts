@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { Ref, useEffect, useRef, useState } from 'react';
 import { LocalImageProps } from '@/utils/image-props';
+import { useGlobalEvent } from '@/hooks/global-events';
 
-export interface ImageSizes {
-  original: string;
-  xs: string;
-  s: string;
-  md: string;
-  l: string;
+export interface ImageSizes<T = string> {
+  original: T;
+  xs: T;
+  s: T;
+  md: T;
+  l: T;
 }
 
 export const getActiveImage = (sizes: ImageSizes) => {
@@ -53,4 +54,33 @@ export const useImageSrcSet = (sizes: ImageSizes): string => {
   const [srcSet, setSrcSet] = useState(getImageSrcSet(sizes));
   useEffect(() => setSrcSet(getImageSrcSet(sizes)), [sizes]);
   return srcSet;
+};
+
+export const useImageSizesAttr = (image: LocalImageProps, mode: 'normal' | 'square'): Ref<HTMLImageElement | null> => {
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const sizes = image.getAllSizes(mode);
+  const calculateSizesProperty = (img: HTMLImageElement) => {
+    return sizes
+      .map((size) => {
+        // Get the percentage that the image takes up of the screen at the given size
+        const imageWidthPercentage = img.getBoundingClientRect().width / window.innerWidth;
+
+        // Now the max-width for the image the width
+        // where the image rect would be larger than the source size of the image
+        const maxWidth = size.width / imageWidthPercentage;
+        return `${maxWidth}px ${size.src}`;
+      })
+      .join(', ');
+  };
+
+  useGlobalEvent('resize', () => {
+    if (!imageRef.current) return;
+    imageRef.current.sizes = calculateSizesProperty(imageRef.current);
+  });
+
+  return (instance) => {
+    if (!instance) return;
+    imageRef.current = instance;
+    instance.sizes = calculateSizesProperty(instance);
+  };
 };

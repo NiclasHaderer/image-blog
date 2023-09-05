@@ -7,6 +7,8 @@ export interface LocalImageProps {
 
   getSize(size: keyof ImageResolutions, mode: 'normal' | 'square'): { width: number; height: number };
 
+  getAllSizes(mode: 'normal' | 'square'): { width: number; height: number; src: string }[];
+
   sizes(mode: 'normal' | 'square'): { width: number; height: number; src: string }[];
 }
 
@@ -24,6 +26,14 @@ export const getImageProps = <T extends string | string[]>(
       imageName,
       getUrl(size, mode) {
         return `/generated-images/${basePath}/${imageName}/${size}${mode === 'normal' ? '' : '_square'}.webp`;
+      },
+      getAllSizes(mode: 'normal' | 'square'): { width: number; height: number; src: string }[] {
+        return (Object.keys(imageSizes[imageName].resolutions[mode]) as (keyof ImageResolutions)[]).map((size) => {
+          return {
+            ...this.getSize(size, mode),
+            src: this.getUrl(size, mode),
+          };
+        });
       },
       getSize(size, mode) {
         return imageSizes[imageName].resolutions[mode][size];

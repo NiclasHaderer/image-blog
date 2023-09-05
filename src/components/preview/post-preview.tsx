@@ -50,9 +50,9 @@ export const PostPreview: FC<CompiledChildPost & { parentPosts: string[] }> = ({
           {description && <p className="line-clamp-3 md:line-clamp-4">{description}</p>}
         </div>
         <div className="flex w-full items-center pl-1 md:w-1/3 md:min-w-1/3 lg:min-w-1/4 lg:max-w-1/4">
-          {/*TODO sometimes the border bottom is not rounded */}
           <Image
-            className="h-[10rem] w-full overflow-hidden rounded-xl"
+            sizes="100vw, (min-width:768px) 33vw, (min-width: 1024px) 20w , (min-width: 1280px) 16vw, (min-width: 1536px) 14vw"
+            className="max-h-[10rem] w-full overflow-hidden rounded-xl md:h-auto"
             image={getImageProps<string>(images, [...parentPosts, slug].join('/'))(headerImage)}
             alt={`Header image: ${title}`}
           />

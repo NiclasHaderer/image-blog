@@ -8,6 +8,7 @@ export interface ImageProps extends HTMLAttributes<HTMLDivElement> {
   alt: string;
   mode?: 'normal' | 'square';
   fadeInDuration?: 300 | 500 | 700 | 1000;
+  sizes?: string;
 }
 
 interface ImageSizes {
@@ -31,7 +32,7 @@ const fadeDurations = {
  * loads the full image when it comes into view.
  */
 export const Image = forwardRef<HTMLElement, ImageProps>(
-  ({ image, mode = 'normal', fadeInDuration = 500, alt, className, ...props }, ref) => {
+  ({ image, mode = 'normal', fadeInDuration = 500, alt, sizes: srcsetSizes, className, ...props }, ref) => {
     const sizes: ImageSizes = useImageSizes(image, mode);
     const fadeOutDuration = fadeDurations[fadeInDuration];
     const srcSet = useImageSrcSet(sizes);
@@ -82,6 +83,7 @@ export const Image = forwardRef<HTMLElement, ImageProps>(
           className="w-full"
           {...image.getSize('original', mode)}
           srcSet={srcSet}
+          sizes={srcsetSizes}
           alt={alt}
           onLoad={() => setLoaded(true)}
           loading="lazy"
