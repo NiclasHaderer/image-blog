@@ -2,7 +2,7 @@ import { GetStaticPaths } from 'next';
 import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
 import { MainOutlet } from '@/components/main-outlet';
-import { getAllPossiblePaths, getNavigation, getPost, getPostChildren } from '@/utils/post';
+import { getAllPossiblePaths, getNavigation, getPostWitchChildren } from '@/utils/post';
 import React from 'react';
 import { MDXRemote } from 'next-mdx-remote';
 import { LightboxImage } from '@/components/lightbox-image';
@@ -14,7 +14,6 @@ export default function PostGroupPage({
   post,
   navigation,
   parentPosts,
-  children,
 }: Awaited<ReturnType<typeof getStaticProps>>['props']) {
   const imageFactory = getImageProps<string>(post.images, parentPosts.join('/'));
   return (
@@ -29,7 +28,7 @@ export default function PostGroupPage({
         backgroundColor={post.headerColor}
       />
       <MainOutlet>
-        <WithChildView post={post} parentPosts={parentPosts} childPosts={children}>
+        <WithChildView post={post} parentPosts={parentPosts}>
           <article className="prose max-w-none">
             <MDXRemote
               {...post.content}
@@ -56,14 +55,12 @@ export const getStaticPaths: GetStaticPaths = async (): Promise<{
 export const getStaticProps = async ({ params }: { params: { slug?: string[] } }) => {
   const slug = params.slug ?? [];
   const navigation = await getNavigation();
-  const post = await getPost(...slug);
-  const children = await getPostChildren(...slug);
+  const post = await getPostWitchChildren(...slug);
 
   return {
     props: {
       navigation,
       post,
-      children,
       parentPosts: slug,
     },
   };

@@ -1,14 +1,13 @@
 import React, { FC, ReactNode } from 'react';
-import { CompiledPost } from '@/models/post.model';
+import { DetailedCompiledPost } from '@/models/post.model';
 import { PostList } from '@/components/preview/post-preview';
 import { ElegantList } from '@/components/preview/elegant-preview';
 
 export const WithChildView: FC<{
-  post: CompiledPost;
+  post: DetailedCompiledPost;
   parentPosts: string[];
-  childPosts: CompiledPost[];
   children: ReactNode;
-}> = ({ post, parentPosts, childPosts, children }) => {
+}> = ({ post, parentPosts, children }) => {
   const ListView = {
     elegant: ElegantList,
     blog: PostList,
@@ -16,11 +15,11 @@ export const WithChildView: FC<{
 
   return (
     <>
-      {post.childPostPosition === 'top' && <ListView posts={childPosts} parentPosts={parentPosts} />}
+      {post.childPostPosition === 'top' && <ListView posts={post.childPosts} parentPosts={parentPosts} />}
 
       {children}
 
-      {post.childPostPosition === 'bottom' && <ListView posts={childPosts} parentPosts={parentPosts} />}
+      {post.childPostPosition === 'bottom' && <ListView posts={post.childPosts} parentPosts={parentPosts} />}
     </>
   );
 };

@@ -2,7 +2,7 @@ import React, { FC, Fragment, useEffect, useState } from 'react';
 import { getImageProps } from '@/utils/image-props';
 import { Image } from '@/components/image';
 import Link from 'next/link';
-import { CompiledPost } from '@/models/post.model';
+import { CompiledChildPost } from '@/models/post.model';
 
 export const useFormatDate = (date: string) => {
   const formatDate = (date: string) => {
@@ -27,7 +27,7 @@ export const useFormatDate = (date: string) => {
   return formattedDate;
 };
 
-export const PostPreview: FC<CompiledPost & { parentPosts: string[] }> = ({
+export const PostPreview: FC<CompiledChildPost & { parentPosts: string[] }> = ({
   title,
   date,
   description,
@@ -62,11 +62,11 @@ export const PostPreview: FC<CompiledPost & { parentPosts: string[] }> = ({
   );
 };
 
-export const PostList: FC<{ posts: CompiledPost[]; parentPosts: string[] }> = ({ posts, parentPosts }) => {
+export const PostList: FC<{ posts: CompiledChildPost[]; parentPosts: string[] }> = ({ posts, parentPosts }) => {
   return (
     <>
       <h3 className="pb-1 uppercase">Recent</h3>
-      
+
       {posts.map((post, i, arr) => (
         <Fragment key={i}>
           <PostPreview key={i} {...post} parentPosts={parentPosts} />

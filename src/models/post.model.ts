@@ -1,5 +1,5 @@
-import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from '@luftschloss/validation';
-import { CompiledImages, ImageMetadata } from '@/models/image.model';
+import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from "@luftschloss/validation";
+import { CompiledImages, ImageMetadata } from "@/models/image.model";
 
 // TODO feature flags
 export const PostFileMetadata = luft
@@ -86,3 +86,13 @@ export const CompiledPost = PostMetadata.omit(['images'])
   })
   .named('CompiledPost');
 export type CompiledPost = LuftInfer<typeof CompiledPost>;
+
+export const CompiledChildPost = CompiledPost.omit(['childPosts']).named('CompiledChildPost');
+export type CompiledChildPost = LuftInfer<typeof CompiledChildPost>;
+
+export const DetailedCompiledPost = CompiledPost.omit(['childPosts'])
+  .merge({
+    childPosts: luft.array(CompiledChildPost),
+  })
+  .named('DetailedCompiledPost');
+export type DetailedCompiledPost = LuftInfer<typeof DetailedCompiledPost>;

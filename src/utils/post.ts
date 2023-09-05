@@ -1,23 +1,36 @@
 import { parseFile } from './file';
 import { PostPreferences } from '@/preferences';
 import { PostConstants } from '../../post-manager/post-constants';
-import { CompiledPost, PostMetadata } from '@/models/post.model';
+import { CompiledChildPost, CompiledPost, DetailedCompiledPost, PostMetadata } from '@/models/post.model';
 import path from 'node:path';
+import { removeSensitivePaths } from '@/utils/security';
 
-export const getPost = async (...parentPosts: string[]): Promise<CompiledPost> => {
+const getPost = async (...parentPosts: string[]): Promise<CompiledPost> => {
   const postPath = path.join(
     PostPreferences.CompiledPostsRootDir,
     ...parentPosts,
     PostConstants.CompiledPostMetadataFilename,
   );
 
-  return JSON.parse(JSON.stringify(await parseFile(postPath, CompiledPost)));
+  return removeSensitivePaths(await parseFile(postPath, CompiledPost));
 };
 
-// TODO sort by date, exclude
-export const getPostChildren = async (...parentPosts: string[]): Promise<CompiledPost[]> => {
-  const post = await getPost(...parentPosts);
-  return Promise.all(post.childPosts.map((child) => getPost(...parentPosts, child.slug)));
+export const getPostWitchChildren = async (...parentPosts: string[]): Promise<DetailedCompiledPost> => {
+  const parsedPost = await getPost(...parentPosts);
+  const postChildren: CompiledChildPost[] = await Promise.all(
+    parsedPost.childPosts.map((child) => {
+      const postPath = path.join(
+        PostPreferences.CompiledPostsRootDir,
+        ...parentPosts,
+        child.slug,
+        PostConstants.CompiledPostMetadataFilename,
+      );
+
+      return parseFile(postPath, CompiledChildPost);
+    }),
+  );
+
+  return removeSensitivePaths({ ...parsedPost, childPosts: postChildren });
 };
 
 interface NavigationItem {
