@@ -34,14 +34,14 @@ export const PostFileMetadata = luft
     // Where should the children be placed in the parent post
     childPostPosition: luft.literal(['top', 'bottom']).default('bottom'),
 
-    // Whether the post should be featured in the parent collection
+    // TODO Whether the post should be featured in the parent collection
     featureInParentCollection: luft.bool().default(true),
 
     // Keywords for the post (will be added at the top of the post)
     topKeywords: luft.array(luft.string()).default([]),
 
     // Whether the header image should be smaller
-    smallHeaderImage: luft.bool().default(false),
+    smallHeader: luft.bool().default(false),
 
     // A sub-heading for the post
     subheader: luft.string().optional(),

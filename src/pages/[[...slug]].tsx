@@ -20,12 +20,12 @@ export default function PostGroupPage({
   return (
     <>
       <Header
-        smallHeaderImage={post.smallHeaderImage}
+        smallHeader={post.smallHeader}
         keywords={post.topKeywords}
         groupUrls={navigation}
         title={post.title}
         backgroundImage={imageFactory(post.headerImage)}
-        backgroundColor={post.headerColor}
+        headerColor={post.headerColor}
         subheader={post.subheader}
       />
       <MainOutlet>

@@ -18,10 +18,10 @@ export const Header: FC<{
   className?: string;
   title: string;
   backgroundImage: LocalImageProps;
-  backgroundColor: string | undefined;
-  smallHeaderImage: boolean;
+  headerColor: string | undefined;
+  smallHeader: boolean;
   subheader: string | undefined;
-}> = ({ groupUrls, smallHeaderImage, keywords, backgroundImage, subheader, className, title, backgroundColor }) => {
+}> = ({ groupUrls, smallHeader, keywords, backgroundImage, subheader, className, title, headerColor }) => {
   groupUrls = [{ label: 'Home', href: '/' }, ...groupUrls];
 
   const images = useImageSizes(backgroundImage, 'normal');
@@ -31,16 +31,16 @@ export const Header: FC<{
       <nav
         className={`
           ${className ?? ''}
-          ${smallHeaderImage ? 'h-[25vh] sm:h-[20vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
+          ${smallHeader ? 'h-[25vh] sm:h-[20vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
           relative w-full select-none overflow-hidden text-white`}
-        style={{ backgroundColor }}
+        style={{ backgroundColor: headerColor }}
       >
-        {!backgroundColor && (
+        {!headerColor && (
           <img
             className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
             {...backgroundImage.getSize('original', 'normal')}
             style={
-              smallHeaderImage
+              smallHeader
                 ? {
                     scale: '1.1',
                     filter: 'brightness(0.7) blur(1px)',
