@@ -33,6 +33,8 @@ const serializeMarkdown = async (post: PostMetadata): Promise<PostContent> => {
       // Depending on the environment (next prod/dev), we have to enable/disable, otherwise this will result in
       // jsx not defined errors
       development: !isProd,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       remarkPlugins: [remarkGfm, remarkEmoji],
       rehypePlugins: [rehypeSlug, rehypeAutolinkHeadings],
     },
