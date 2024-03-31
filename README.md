@@ -1,17 +1,17 @@
 ## Writing Blog-Posts
 
-Blog posts have to be placed in a single root folder that contains all the blog posts.
+Blog posts have to be placed in a single root folder which contains all other blog posts.
 Every folder (that is not an `_image` folder) is considered a blog post and therefore has to contain a *post.mdx* file.
 
-The structore is therefore the following:
+The structure is therefore the following:
 
 ```
 .
 └── root-folder/
-    ├── _images
-    ├── post.mdx
-    ├── blog-post-1/
-    │   ├── post.mdx
+    ├── _images                 <- Images for the root-post
+    ├── post.mdx                <- The root-post itself
+    ├── blog-post-1/            <- A child-post of the root-post
+    │   ├── post.mdx       
     │   └── _images/
     │       ├── image-1.jpg
     │       └── image-2.jpg
@@ -23,7 +23,7 @@ The structore is therefore the following:
 ```
 
 + The `_images` folder contains images for the blog post. The names of the images files are the ones you can reference in
-the image or gallery component (see below).
+the image or gallery component (see below). Images will be resized and optimized automatically.
 
 + The `post.mdx` file has to follow a specific structure:
 
@@ -65,14 +65,14 @@ the image or gallery component (see below).
      // Keywords for the post (will be added at the top of the post)
      topKeywords: string[] = []
      ```
-  2. The content of the blog post. This content can be written in markdown format.
+  2. The content of the blog post. This content can be written in Markdown format.
      ```mdx
      # My first blog post
 
      This is the content of my first blog post.
      ```
-     You have access to two components that can be used in your blog posts:
-      1. The gallery component
+     You have access to three components that can be used in your blog posts:
+      1. The gallery component displaying multiple images
          ```mdx
          <Gallery images={
            getImage([
@@ -87,7 +87,7 @@ the image or gallery component (see below).
                "IMG_5985",
              ]
            )
-         } mode='square' /> // If not specified the mode is to leave the images as they are
+         } mode='square' /> // If not specified the image dimensions will not be changed
          ```
       2. The image component (for a single image)
          ```mdx
