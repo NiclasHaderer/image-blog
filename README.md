@@ -47,7 +47,7 @@ the image or gallery component (see below).
      // The header image of the post 
      headerImage: string
      // The color of the header image (will replace the header image if set)
-     headerColor: "a hex color" | undefined = undefined
+     headerColor: "a hex color - has to be quoted and starts with #" | undefined = undefined
      // Should the title of the post be capitalized in the post-preview list?
      capitalizeTitle: boolean = true
      // The layout of the post
