@@ -51,7 +51,7 @@ export const Header: FC<{
             alt="Navigation background"
           />
         )}
-        <h1 className="mt-1 pb-1 pt-2 text-center font-amsterdam-four text-5xl leading-loose">{title}</h1>
+        <h1 className="mt-1 pb-1 pt-2 text-center font-amsterdam-four text-7xl leading-loose">{title}</h1>
 
         <MenuLarge groupUrls={groupUrls} />
         <MenuMedium groupUrls={groupUrls} />

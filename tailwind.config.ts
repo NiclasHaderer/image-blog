@@ -68,10 +68,6 @@ const config: Config = {
       'elevate-2': 'var(--elevate-2)',
       gray: 'var(--gray)',
       'light-gray': 'var(--light-gray)',
-      primary: 'var(--primary)',
-      secondary: 'var(--secondary)',
-      warning: 'var(--warning)',
-      error: 'var(--error)',
     },
     minWidth: {
       '1/7': '14.2%',
