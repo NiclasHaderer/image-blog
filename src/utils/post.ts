@@ -12,7 +12,7 @@ const getPost = async (...parentPosts: string[]): Promise<CompiledPost> => {
     PostConstants.CompiledPostMetadataFilename,
   );
 
-  return removeSensitivePaths(await parseFile(postPath, CompiledPost));
+  return removeSensitivePaths(await parseFile(postPath, CompiledPost, { ignoreUnknownKeys: true }));
 };
 
 export const getPostWitchChildren = async (...parentPosts: string[]): Promise<DetailedCompiledPost> => {
@@ -26,14 +26,14 @@ export const getPostWitchChildren = async (...parentPosts: string[]): Promise<De
         PostConstants.CompiledPostMetadataFilename,
       );
 
-      return parseFile(postPath, CompiledChildPost);
+      return parseFile(postPath, CompiledChildPost, { ignoreUnknownKeys: true });
     }),
   );
 
   return removeSensitivePaths({ ...parsedPost, childPosts: postChildren });
 };
 
-interface NavigationItem {
+export interface NavigationItem {
   label: string;
   href: string;
   slug: string;

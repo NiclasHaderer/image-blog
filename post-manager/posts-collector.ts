@@ -27,10 +27,16 @@ const parsePostFile = async (postFile: string): Promise<PostFileMetadata> => {
   const parsingResult = parseWith(data, PostFileMetadata, {
     file: postFile,
     safety: 'safe',
+    ignoreUnknownKeys: false,
   });
 
   if (!parsingResult.success) {
     console.error(`Failed to parse post file ${postFile}!`);
+    if (PostFileMetadata.validationStorage.name !== undefined) {
+      console.error(
+        `Provided metadata does not match the expected schema "${PostFileMetadata.validationStorage.name}"!`,
+      );
+    }
     console.error(JSON.stringify(parsingResult.issues, null, 2));
     throw new PostUserError();
   }

@@ -2,13 +2,14 @@ import { GetStaticPaths } from 'next';
 import { Header } from '@/components/header';
 import { getImageProps } from '@/utils/image-props';
 import { MainOutlet } from '@/components/main-outlet';
-import { getAllPossiblePaths, getNavigation, getPostWitchChildren } from '@/utils/post';
+import { getAllPossiblePaths, getNavigation, getPostWitchChildren, NavigationItem } from '@/utils/post';
 import React from 'react';
 import { MDXRemote } from 'next-mdx-remote';
 import { LightboxImage } from '@/components/lightbox-image';
 import { Gallery } from '@/components/gallery';
 import { Image } from '@/components/image';
 import { WithChildView } from '@/components/with-childview';
+import type { DetailedCompiledPost } from '@/models/post.model';
 
 export default function PostGroupPage({
   post,
@@ -19,13 +20,13 @@ export default function PostGroupPage({
   return (
     <>
       <Header
-        isPostHeader={false}
-        capabilities={['People', 'Wedding', 'Animals', 'Travel']}
-        capabilitiesBelow={parentPosts.length === 0}
+        smallHeaderImage={post.smallHeaderImage}
+        keywords={post.topKeywords}
         groupUrls={navigation}
         title={post.title}
         backgroundImage={imageFactory(post.headerImage)}
         backgroundColor={post.headerColor}
+        subheader={post.subheader}
       />
       <MainOutlet>
         <WithChildView post={post} parentPosts={parentPosts}>
@@ -52,7 +53,17 @@ export const getStaticPaths: GetStaticPaths = async (): Promise<{
   };
 };
 
-export const getStaticProps = async ({ params }: { params: { slug?: string[] } }) => {
+export const getStaticProps = async ({
+  params,
+}: {
+  params: { slug?: string[] };
+}): Promise<{
+  props: {
+    navigation: NavigationItem[];
+    post: DetailedCompiledPost;
+    parentPosts: string[];
+  };
+}> => {
   const slug = params.slug ?? [];
   const navigation = await getNavigation();
   const post = await getPostWitchChildren(...slug);

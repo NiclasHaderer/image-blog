@@ -11,25 +11,17 @@ type GroupUrl = {
 };
 
 // TODO if there are multiple background-images create a carousel
+// TODO nested navigation
 export const Header: FC<{
   groupUrls: GroupUrl[];
-  capabilities: string[];
+  keywords: string[];
   className?: string;
   title: string;
   backgroundImage: LocalImageProps;
-  backgroundColor?: string | undefined;
-  capabilitiesBelow: boolean;
-  isPostHeader: boolean;
-}> = ({
-  groupUrls,
-  isPostHeader,
-  capabilities,
-  backgroundImage,
-  className,
-  title,
-  capabilitiesBelow,
-  backgroundColor,
-}) => {
+  backgroundColor: string | undefined;
+  smallHeaderImage: boolean;
+  subheader: string | undefined;
+}> = ({ groupUrls, smallHeaderImage, keywords, backgroundImage, subheader, className, title, backgroundColor }) => {
   groupUrls = [{ label: 'Home', href: '/' }, ...groupUrls];
 
   const images = useImageSizes(backgroundImage, 'normal');
@@ -39,7 +31,7 @@ export const Header: FC<{
       <nav
         className={`
           ${className ?? ''}
-          ${isPostHeader ? 'h-[25vh] sm:h-[20vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
+          ${smallHeaderImage ? 'h-[25vh] sm:h-[20vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
           relative w-full select-none overflow-hidden text-white`}
         style={{ backgroundColor }}
       >
@@ -48,7 +40,7 @@ export const Header: FC<{
             className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
             {...backgroundImage.getSize('original', 'normal')}
             style={
-              isPostHeader
+              smallHeaderImage
                 ? {
                     scale: '1.1',
                     filter: 'brightness(0.7) blur(1px)',
@@ -65,7 +57,7 @@ export const Header: FC<{
         <MenuMedium groupUrls={groupUrls} />
         <MenuSmall groupUrls={groupUrls} />
       </nav>
-      {capabilitiesBelow && <Capabilities capabilities={capabilities} />}
+      <Keywords keywords={keywords} subheader={subheader} />
     </>
   );
 };
@@ -126,13 +118,13 @@ const MenuSmall: FC<{ groupUrls: GroupUrl[] }> = ({ groupUrls }) => {
       <button
         onClick={() => setIsOpen(true)}
         style={{ '--tw-shadow': '0 25px 50px 5px rgba(0, 0, 0, 0.25)' } as any}
-        className="fixed bottom-0 left-1/2 z-50 mb-1 -translate-x-1/2 cursor-pointer rounded-xl bg-elevate p-1 text-black shadow-2xl drop-shadow-2xl"
+        className="fixed bottom-0 left-1/2 z-40 mb-1 -translate-x-1/2 cursor-pointer rounded-xl bg-elevate p-1 text-black shadow-2xl drop-shadow-2xl"
       >
         <IconMenuDeep className="h-10 w-10" />
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
+        <Dialog as="div" className="relative z-50" onClose={() => setIsOpen(false)}>
           <Transition.Child
             as={Fragment}
             enter="ease-in duration-300"
@@ -171,14 +163,15 @@ const MenuSmall: FC<{ groupUrls: GroupUrl[] }> = ({ groupUrls }) => {
   );
 };
 
-const Capabilities: FC<{
-  capabilities: string[];
-}> = ({ capabilities }) => {
+const Keywords: FC<{
+  keywords: string[];
+  subheader: string | undefined;
+}> = ({ keywords, subheader }) => {
   return (
     <>
-      <h1 className="p-2 pt-3 text-center text-2xl font-normal uppercase">Photographer based in Amsterdam</h1>
+      {subheader && <h1 className="p-2 pt-3 text-center text-2xl font-normal uppercase">{subheader}</h1>}
       <div className="flex flex-wrap justify-center py-2">
-        {capabilities.map((group, i, arr) => (
+        {keywords.map((group, i, arr) => (
           <div key={i}>
             <span className="p-2 uppercase">{group}</span>
             {i < arr.length - 1 && <span className="select-none">|</span>}

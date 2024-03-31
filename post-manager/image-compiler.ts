@@ -31,7 +31,7 @@ const compile = async (
       if (existingImages![newImage.name]) {
         const existingImage = existingImages![newImage.name];
         if (existingImage.modifiedAt < newImage.modifiedAt) {
-          console.log(`Compiling modified image: ${newImage.name}`);
+          console.log(`Resizing modified image: ${newImage.name}`);
           newImages[newImage.name] = await compileImage(newImage, imagesDir);
         } else {
           console.log(`Skipping image: ${newImage.name}`);
@@ -40,7 +40,7 @@ const compile = async (
       }
       // If the image does not exist, compile it
       else {
-        console.log(`Compiling new image: ${newImage.name}`);
+        console.log(`Resizing new image: ${newImage.name}`);
         newImages[newImage.name] = await compileImage(newImage, imagesDir);
       }
     }),

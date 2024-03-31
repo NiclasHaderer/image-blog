@@ -1,4 +1,4 @@
-import { LuftInfer, LuftType, ParsingResult } from '@luftschloss/validation';
+import { LuftInfer, LuftObject, ParsingResult } from '@luftschloss/validation';
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseWith } from '@/utils/validation';
@@ -19,16 +19,18 @@ export const getItemsIn = async (folder: string, type?: 'folder' | 'file' | unde
   return folders.map((f) => path.join(folder, f));
 };
 
-export const parseFile = async <T extends LuftType, S extends 'safe' | 'unsafe' | undefined = undefined>(
+export const parseFile = async <T extends LuftObject<any>, S extends 'safe' | 'unsafe' | undefined = undefined>(
   file: string,
   parser: T,
   {
     mode,
     safety,
+    ignoreUnknownKeys,
   }: {
     mode?: 'validate' | 'coerce';
     safety?: S;
-  } = {},
+    ignoreUnknownKeys: boolean;
+  },
 ): Promise<S extends 'safe' ? ParsingResult<LuftInfer<T>> : LuftInfer<T>> => {
   const fileContents = await fs.promises.readFile(file, 'utf-8');
   let jsonContents;
@@ -38,11 +40,11 @@ export const parseFile = async <T extends LuftType, S extends 'safe' | 'unsafe' 
     console.error(`File ${file} is not a valid JSON file!`);
     throw e;
   }
-  return parseWith(jsonContents, parser, { file, safety, mode });
+  return parseWith(jsonContents, parser, { file, safety, mode, ignoreUnknownKeys: ignoreUnknownKeys });
 };
 
-export const saveFile = async <T extends LuftType, D extends LuftInfer<T>>(file: string, data: D, parser: T) => {
-  const parsed = parseWith(data, parser, { file, safety: 'unsafe', mode: 'validate' });
+export const saveFile = async <T extends LuftObject<any>, D extends LuftInfer<T>>(file: string, data: D, parser: T) => {
+  const parsed = parseWith(data, parser, { file, safety: 'unsafe', mode: 'validate', ignoreUnknownKeys: false });
   await fs.promises.writeFile(file, JSON.stringify(parsed));
 };
 

@@ -17,7 +17,7 @@ const getExistingPost = async (metadataPath: string): Promise<CompiledPost | und
   // Check if the post already exists by reading its metadata
   if (!fs.existsSync(metadataPath)) return undefined;
   try {
-    return await parseFile(metadataPath, CompiledPost);
+    return await parseFile(metadataPath, CompiledPost, { ignoreUnknownKeys: false });
   } catch {
     return undefined;
   }

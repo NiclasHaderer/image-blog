@@ -1,5 +1,5 @@
-import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from "@luftschloss/validation";
-import { CompiledImages, ImageMetadata } from "@/models/image.model";
+import { InferObjectType, luft, LuftArray, LuftInfer, LuftLazy, LuftNumber, LuftString } from '@luftschloss/validation';
+import { CompiledImages, ImageMetadata } from '@/models/image.model';
 
 // TODO feature flags
 export const PostFileMetadata = luft
@@ -36,6 +36,15 @@ export const PostFileMetadata = luft
 
     // Whether the post should be featured in the parent collection
     featureInParentCollection: luft.bool().default(true),
+
+    // Keywords for the post (will be added at the top of the post)
+    topKeywords: luft.array(luft.string()).default([]),
+
+    // Whether the header image should be smaller
+    smallHeaderImage: luft.bool().default(false),
+
+    // A sub-heading for the post
+    subheader: luft.string().optional(),
   })
   .named('PostFileMetadata');
 export type PostFileMetadata = LuftInfer<typeof PostFileMetadata>;
