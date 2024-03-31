@@ -100,7 +100,7 @@ the image or gallery component (see below).
 
     The following is an example of a valid `post.mdx` file:
     ```mdx
-      ---
+    ---
     title: Portfolio
     date: 2019-01-01
     description: The portfolio page of the website.
