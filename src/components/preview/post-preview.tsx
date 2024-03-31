@@ -65,8 +65,6 @@ export const PostPreview: FC<CompiledChildPost & { parentPosts: string[] }> = ({
 export const PostList: FC<{ posts: CompiledChildPost[]; parentPosts: string[] }> = ({ posts, parentPosts }) => {
   return (
     <>
-      <h3 className="pb-1 uppercase">Recent</h3>
-
       {posts.map((post, i, arr) => (
         <Fragment key={i}>
           <PostPreview key={i} {...post} parentPosts={parentPosts} />

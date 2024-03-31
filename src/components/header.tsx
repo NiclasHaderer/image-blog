@@ -19,19 +19,25 @@ export const Header: FC<{
   title: string;
   backgroundImage: LocalImageProps;
   headerColor: string | undefined;
-  smallHeader: boolean;
+  headerSize: 'small' | 'medium' | 'large';
   subheader: string | undefined;
-}> = ({ groupUrls, smallHeader, keywords, backgroundImage, subheader, className, title, headerColor }) => {
+}> = ({ groupUrls, headerSize, keywords, backgroundImage, subheader, className, title, headerColor }) => {
   groupUrls = [{ label: 'Home', href: '/' }, ...groupUrls];
 
   const images = useImageSizes(backgroundImage, 'normal');
   const srcSet = useImageSrcSet(images);
+  const headerSizeClasses = {
+    small: 'h-[20vh] md:h-[25vh]',
+    medium: 'h-[40vh] md:h-[50vh] lg:h-[60vh]',
+    large: 'h-[60vh] md:h-[70vh] lg:h-[80vh]',
+  }[headerSize];
+
   return (
     <>
       <nav
         className={`
           ${className ?? ''}
-          ${smallHeader ? 'h-[20vh] md:h-[25vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
+          ${headerSizeClasses}
           relative w-full select-none overflow-hidden text-white`}
         style={{ backgroundColor: headerColor }}
       >
@@ -40,7 +46,7 @@ export const Header: FC<{
             className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
             {...backgroundImage.getSize('original', 'normal')}
             style={
-              smallHeader
+              headerSize
                 ? {
                     scale: '1.1',
                     filter: 'brightness(0.7) blur(1px)',
@@ -51,7 +57,7 @@ export const Header: FC<{
             alt="Navigation background"
           />
         )}
-        <h1 className="mt-1 pb-1 pt-2 text-center font-amsterdam-four text-7xl leading-loose">{title}</h1>
+        <h1 className="mt-1 pb-1 pt-2 text-center font-amsterdam-four text-5xl leading-loose">{title}</h1>
 
         <MenuLarge groupUrls={groupUrls} />
         <MenuMedium groupUrls={groupUrls} />

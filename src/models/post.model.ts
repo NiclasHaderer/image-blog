@@ -29,7 +29,7 @@ export const PostFileMetadata = luft
     postLayout: luft.literal(['post']).default('post'),
 
     // The layout that the children of this post should have
-    childPostLayout: luft.literal(['blog', 'elegant']).default('blog'),
+    childPostLayout: luft.literal(['blog']).default('blog'),
 
     // Where should the children be placed in the parent post
     childPostPosition: luft.literal(['top', 'bottom']).default('bottom'),
@@ -40,8 +40,8 @@ export const PostFileMetadata = luft
     // Keywords for the post (will be added at the top of the post)
     topKeywords: luft.array(luft.string()).default([]),
 
-    // Whether the header image should be smaller
-    smallHeader: luft.bool().default(false),
+    // The size of the header (image)
+    headerSize: luft.literal(['small', 'medium', 'large']).default('medium'),
 
     // A sub-heading for the post
     subheader: luft.string().optional(),

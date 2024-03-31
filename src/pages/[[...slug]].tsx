@@ -20,7 +20,7 @@ export default function PostGroupPage({
   return (
     <>
       <Header
-        smallHeader={post.smallHeader}
+        headerSize={post.headerSize}
         keywords={post.topKeywords}
         groupUrls={navigation}
         title={post.title}
