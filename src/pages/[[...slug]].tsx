@@ -30,7 +30,7 @@ export default function PostGroupPage({
       />
       <MainOutlet>
         <WithChildView post={post} parentPosts={parentPosts}>
-          <article className="prose max-w-none">
+          <article className="prose prose-lg max-w-none">
             <MDXRemote
               {...post.content}
               components={{ Image, LightboxImage, Gallery }}

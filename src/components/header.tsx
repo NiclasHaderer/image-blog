@@ -31,7 +31,7 @@ export const Header: FC<{
       <nav
         className={`
           ${className ?? ''}
-          ${smallHeader ? 'h-[25vh] sm:h-[20vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
+          ${smallHeader ? 'h-[20vh] md:h-[25vh]' : 'h-[60vh] md:h-[70vh] lg:h-[80vh]'}
           relative w-full select-none overflow-hidden text-white`}
         style={{ backgroundColor: headerColor }}
       >
