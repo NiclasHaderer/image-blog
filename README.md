@@ -33,7 +33,7 @@ the image or gallery component (see below).
      ---
      title: "My first blog post"
      date: "2021-01-01"
-     tags: ["first", "blog", "post"]
+     topKeywords: ["first", "blog", "post"]
      ---
      ```
      The following metadata fields are available:
