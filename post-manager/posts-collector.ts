@@ -10,6 +10,8 @@ import slugify from 'slugify';
 import { areUniqueBy, mapUnique } from './utils/list';
 import { PostUserError } from './user-error';
 
+const IGNORED_FOLDERS = ['.git', PostConstants.ImagesFolder];
+
 const parsePostFile = async (postFile: string): Promise<PostFileMetadata> => {
   if (!fs.existsSync(postFile)) {
     console.error(`Post file ${postFile} does not exist!`);
@@ -46,8 +48,11 @@ const parsePostFile = async (postFile: string): Promise<PostFileMetadata> => {
 const getChildPosts = async (parentPostFolder: string): Promise<string[]> => {
   const items = await getItemsIn(parentPostFolder, 'folder');
 
-  // Ignore the images folder
-  return items.filter((item) => path.basename(item) !== PostConstants.ImagesFolder);
+  return (
+    items
+      // Ignore the images folder and other folders that are not posts
+      .filter((item) => !IGNORED_FOLDERS.includes(path.basename(item)))
+  );
 };
 
 const collectMetadata = async (postDirectory: string): Promise<Omit<PostMetadata, 'childPosts'>> => {
