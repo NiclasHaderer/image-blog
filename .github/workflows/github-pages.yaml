@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
       - name: Check if POST_URL is set
         run: |
           if [ -z "${{ vars.POST_URL }}" ]; then
@@ -20,9 +21,10 @@ jobs:
           fi
       - name: Fetch and clone posts repository
         run: git clone ${{ vars.POST_URL }} my_posts
+      - run: pwd
+      - run: ls -al
 
       # Build and deploy
-      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
