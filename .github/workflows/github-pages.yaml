@@ -11,14 +11,14 @@ jobs:
     steps:
       - name: Check if POST_URL is set
         run: |
-          if [ -z "${{ env.POST_URL }}" ]; then
+          if [ -z "${{ vars.POST_URL }}" ]; then
             echo "POST_URL is not set."
             exit 1
           else
-            echo "POST_URL is set to ${{ env.POST_URL }}."
+            echo "POST_URL is set to ${{ vars.POST_URL }}."
           fi
       - name: Fetch and clone posts repository
-        run: git clone ${{ env.POST_URL }} my_posts
+        run: git clone ${{ vars.POST_URL }} my_posts
   build:
     runs-on: ubuntu-latest
 
